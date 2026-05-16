@@ -298,20 +298,40 @@
    }
  }
 
+ // --- 同步状态提示 ---
+ function showSyncTip(msg, ok) {
+   let tip = document.getElementById('syncTip');
+   if (!tip) {
+     tip = document.createElement('div');
+     tip.id = 'syncTip';
+     tip.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:999;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,0.12);transition:all .3s;opacity:0;transform:translateY(10px);';
+     document.body.appendChild(tip);
+   }
+   tip.textContent = msg;
+   tip.style.background = ok ? '#f0fdf4' : '#fef2f2';
+   tip.style.color = ok ? '#166534' : '#991b1b';
+   tip.style.opacity = '1';
+   tip.style.transform = 'translateY(0)';
+   setTimeout(() => { tip.style.opacity = '0'; tip.style.transform = 'translateY(10px)'; }, 3000);
+ }
+
  // --- 云端保存 ---
  async function saveAll() {
    localStorage.setItem('artisan_categories', JSON.stringify(categories));
    localStorage.setItem('furniture_gallery_db', JSON.stringify(products));
+   if (!GH.token) { showSyncTip('⚠️ 未设置 Token，数据仅保存在本地', false); return; }
    try {
      const dataStr = JSON.stringify({ categories, products }, null, 2);
      const base64 = btoa(unescape(encodeURIComponent(dataStr)));
      const apiUrl = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${GH.dataFile}`;
+     // 获取当前 SHA
      const res = await fetch(apiUrl, {
        headers: { 'Authorization': `token ${GH.token}` }
      });
+     if (!res.ok) { showSyncTip('❌ Token 无效或权限不足', false); return; }
      const fileData = await res.json();
-     GH.dataSha = fileData.sha;
-     await fetch(apiUrl, {
+     // 更新文件
+     const putRes = await fetch(apiUrl, {
        method: 'PUT',
        headers: {
          'Authorization': `token ${GH.token}`,
@@ -320,13 +340,18 @@
        body: JSON.stringify({
          message: 'Update gallery data: ' + new Date().toLocaleString(),
          content: base64,
-         sha: GH.dataSha,
+         sha: fileData.sha,
          branch: GH.branch
        })
      });
-     console.log('✅ 数据已同步到 GitHub 云端');
+     if (putRes.ok) {
+       showSyncTip('✅ 已同步到云端', true);
+     } else {
+       const err = await putRes.json();
+       showSyncTip('❌ 同步失败: ' + (err.message || '未知错误'), false);
+     }
    } catch (e) {
-     console.error('❌ GitHub 保存失败', e);
+     showSyncTip('❌ 同步失败: ' + e.message, false);
    }
  }
 
