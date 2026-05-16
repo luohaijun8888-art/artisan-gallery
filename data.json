@@ -1,0 +1,31 @@
+{
+    "products":  [
+                     {
+                         "id":  1,
+                         "name":  "极简原木餐台",
+                         "tags":  "NEW",
+                         "images":  [
+                                        "https://images.unsplash.com/photo-1577145900557-e6ffed986c88?auto=format\u0026fit=crop\u0026q=80\u0026w=800"
+                                    ],
+                         "price":  "8999",
+                         "category":  "餐台"
+                     },
+                     {
+                         "id":  2,
+                         "name":  "浮岛艺术茶几",
+                         "tags":  "HOT",
+                         "images":  [
+                                        "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format\u0026fit=crop\u0026q=80\u0026w=800"
+                                    ],
+                         "price":  "3200",
+                         "category":  "茶几"
+                     }
+                 ],
+    "categories":  [
+                       "餐台",
+                       "茶几",
+                       "餐椅",
+                       "床",
+                       "学习桌"
+                   ]
+}
