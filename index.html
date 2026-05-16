@@ -227,6 +227,8 @@
    set token(v) { localStorage.setItem('gh_token', v); }
  };
 
+ let ghLoaded = false; // 标记云端数据是否已加载
+
  // --- Token 管理弹窗 ---
  function showTokenModal() {
    const existing = GH.token;
@@ -251,8 +253,16 @@
    GH.token = val;
    document.getElementById('tokenModal').remove();
    if (val) {
-     await saveAll();
-     alert('Token 已保存！数据已同步到云端 ✅');
+     // 先从云端拉取最新数据
+     await loadFromGitHub();
+     if (ghLoaded) {
+       renderCategories();
+       renderProducts();
+       lucide.createIcons();
+       showSyncTip('✅ Token 验证成功，已从云端加载最新数据', true);
+     } else {
+       showSyncTip('❌ Token 验证失败，请检查 Token 是否正确', false);
+     }
    }
  }
 
@@ -285,16 +295,19 @@
  // --- 云端加载 ---
  async function loadFromGitHub() {
    try {
-     const url = `https://raw.githubusercontent.com/${GH.owner}/${GH.repo}/${GH.branch}/${GH.dataFile}?t=` + Date.now();
+     const url = `https://raw.githubusercontent.com/${GH.owner}/${GH.repo}/${GH.branch}/${GH.dataFile}`;
      const res = await fetch(url);
      if (res.ok) {
        const data = await res.json();
        if (data.categories) categories = data.categories;
        if (data.products) products = data.products;
-       console.log('✅ 数据已从 GitHub 云端加载');
+       ghLoaded = true;
+       console.log('✅ 云端数据加载成功', categories.length, '分类', products.length, '作品');
+     } else {
+       console.warn('⚠️ 云端数据加载失败 HTTP', res.status);
      }
    } catch (e) {
-     console.warn('⚠️ GitHub 加载失败，使用默认数据', e);
+     console.warn('⚠️ 云端加载失败', e.message);
    }
  }
 
@@ -653,12 +666,22 @@
  document.getElementById('searchInput').oninput = (e) => { currentSearch = e.target.value; renderProducts(); };
 
  window.onload = async () => {
-   document.getElementById('productGrid').innerHTML = '<div class="col-span-3 text-center py-20 opacity-40"><p class="text-lg">正在从云端加载数据...</p></div>';
    addTokenButton();
-   await loadFromGitHub();
+   // 先从 localStorage 恢复
+   const lsCats = localStorage.getItem('artisan_categories');
+   const lsProds = localStorage.getItem('furniture_gallery_db');
+   if (lsCats) categories = JSON.parse(lsCats);
+   if (lsProds) products = JSON.parse(lsProds);
    renderCategories();
    renderProducts();
    lucide.createIcons();
+   // 然后异步拉取云端数据，覆盖本地
+   await loadFromGitHub();
+   if (ghLoaded) {
+     renderCategories();
+     renderProducts();
+     lucide.createIcons();
+   }
  }
  </script>
 </body>
