@@ -8,6 +8,17 @@
   ],
   "products": [
     {
+      "id": 1779028304219,
+      "name": "2",
+      "price": "2",
+      "category": "餐台",
+      "page": "灵感",
+      "images": [
+        "https://raw.githubusercontent.com/luohaijun8888-art/image-bed/main/img/18_847.jpg"
+      ],
+      "tags": "NEW"
+    },
+    {
       "id": 1779028276939,
       "name": "1",
       "price": "1",
