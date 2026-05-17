@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>WebPic Grabber - 智能网页图片抓取展示控制台</title>
+ <!-- Tailwind CSS -->
+ <script src="https://cdn.tailwindcss.com"></script>
+ <!-- Google Fonts Inter -->
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+ <style>
+ body {
+ font-family: 'Inter', sans-serif;
+ }
+ .code-font {
+ font-family: 'Fira Code', monospace;
+ }
+ /* 自定义滚动条 */
+ ::-webkit-scrollbar {
+ width: 6px;
+ height: 6px;
+ }
+ ::-webkit-scrollbar-track {
+ background: rgba(15, 23, 42, 0.6);
+ }
+ ::-webkit-scrollbar-thumb {
+ background: rgba(99, 102, 241, 0.4);
+ border-radius: 4px;
+ }
+ ::-webkit-scrollbar-thumb:hover {
+ background: rgba(99, 102, 241, 0.8);
+ }
+ /* 拟物化玻璃光影 */
+ .glass-panel {
+ background: rgba(30, 41, 59, 0.6);
+ backdrop-filter: blur(12px);
+ -webkit-backdrop-filter: blur(12px);
+ border: 1px solid rgba(255, 255, 255, 0.06);
+ }
+ .glow-indigo:hover {
+ box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+ }
+ /* 瀑布流自适应列 */
+ .masonry-grid {
+ column-count: 1;
+ column-gap: 1.5rem;
+ }
+ @media (min-width: 640px) { .masonry-grid { column-count: 2; } }
+ @media (min-width: 1024px) { .masonry-grid { column-count: 3; } }
+ @media (min-width: 1280px) { .masonry-grid { column-count: 4; } }
+ .masonry-item {
+ break-inside: avoid;
+ margin-bottom: 1.5rem;
+ }
+ </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white overflow-x-hidden">
+
+ <header class="glass-panel sticky top-0 z-40 border-b border-slate-900 px-6 py-3 flex items-center justify-between">
+ <div class="flex items-center space-x-3">
+ <div class="h-9 w-9 bg-gradient-to-tr from-indigo-500 to-fuchsia-500 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/30">
+ <svg class="w-5.5 h-5.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+ </svg>
+ </div>
+ <div>
+ <h1 class="font-extrabold text-md tracking-wider bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">WebPic Grabber</h1>
+ <p class="text-[10px] text-slate-400">智能网络图像提取与深度色彩分析系统</p>
+ </div>
+ </div>
+
+ <div class="flex items-center space-x-4">
+ <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-400/10 text-emerald-400 border border-emerald-400/20">
+ <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+ 节点已连接
+ </span>
+ <div class="text-[10px] text-slate-400 hidden sm:block">模拟环境: <span class="text-slate-200 font-mono">Sandbox Mock-V3</span></div>
+ </div>
+ </header>
+
+ <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-4 flex flex-col space-y-4">
+
+ <!-- 极简扁平化顶部工具栏 -->
+ <section class="glass-panel p-3.5 rounded-xl flex flex-col space-y-3 shadow-md">
+ <div class="flex flex-col md:flex-row gap-3 items-center">
+ <!-- URL 输入区域 -->
+ <div class="relative flex-1 w-full">
+ <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-xs">
+ <span>🔗</span>
+ </div>
+ <input type="text" id="targetUrl" value="https://www.ikea.cn/cn/zh/cat/furniture/" class="block w-full pl-9 pr-9 py-2 bg-slate-900/80 border border-slate-800 rounded-lg text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-all" placeholder="输入你想提取图片的网址...">
+ <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+ <button onclick="clearInput()" class="text-slate-500 hover:text-slate-300 focus:outline-none">
+ <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+ </button>
+ </div>
+ </div>
+
+ <!-- 触发与设置动作组 -->
+ <div class="flex items-center space-x-2 w-full md:w-auto shrink-0">
+ <button onclick="toggleAdvancedOptions()" id="btnToggleAdvanced" class="flex-1 md:flex-none py-2 px-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 rounded-lg transition-all flex items-center justify-center space-x-1">
+ <span>⚙️</span>
+ <span>高级选项与预设</span>
+ <svg id="arrowIcon" class="w-3 h-3 ml-1 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+ </button>
+
+ <button onclick="startScraping()" id="btnAction" class="flex-[2] md:flex-none py-2 px-5 bg-gradient-to-r from-indigo-500 to-fuchsia-600 hover:from-indigo-600 hover:to-fuchsia-700 text-white font-bold text-xs rounded-lg transition-all shadow-md shadow-indigo-500/10 flex items-center justify-center space-x-1.5">
+ <svg class="w-3.5 h-3.5 animate-spin hidden" id="loadingSpinner" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+ <span id="btnText">开始捕获图片</span>
+ </button>
+ </div>
+ </div>
+
+ <!-- 抽屉式折叠选项面板 (默认折叠以减少空间) -->
+ <div id="advancedPanel" class="hidden border-t border-slate-800/80 pt-3.5 transition-all duration-300">
+ <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+ <!-- 家居名站预设导航 -->
+ <div class="lg:col-span-5 space-y-2">
+ <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider block">🛋️ 优质家居家具名站预设</span>
+ <div class="grid grid-cols-2 gap-1.5">
+ <button onclick="setPreset('https://www.ikea.cn/cn/zh/cat/furniture/', '宜家家居 (IKEA)')" class="px-2 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left text-[11px] text-slate-300 transition-all flex items-center space-x-1">
+ <span>🇸🇪 宜家家居 IKEA</span>
+ </button>
+ <button onclick="setPreset('https://www.wayfair.com/furniture', 'Wayfair 国际家居')" class="px-2 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left text-[11px] text-slate-300 transition-all flex items-center space-x-1">
+ <span>🇺🇸 Wayfair 奢居</span>
+ </button>
+ <button onclick="setPreset('https://www.houzz.com/photos/furniture', 'Houzz 设计美学')" class="px-2 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left text-[11px] text-slate-300 transition-all flex items-center space-x-1">
+ <span>📐 Houzz 空间美学</span>
+ </button>
+ <button onclick="setPreset('https://www.muji.com.cn/collections/furniture', 'MUJI 无印良品')" class="px-2 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left text-[11px] text-slate-300 transition-all flex items-center space-x-1">
+ <span>🇯🇵 无印良品家居</span>
+ </button>
+ <button onclick="setPreset('https://www.zarahome.com/cn/furniture.html', 'Zara Home 极简美学')" class="col-span-2 px-2 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-center text-[11px] text-slate-300 transition-all flex items-center justify-center space-x-1">
+ <span>🇪🇸 Zara Home 意式极简主义</span>
+ </button>
+ </div>
+ </div>
+
+ <!-- 其他主题预设 -->
+ <div class="lg:col-span-4 space-y-2">
+ <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">🌲 其它语义主题预设</span>
+ <div class="flex flex-wrap gap-1.5">
+ <button onclick="setPreset('https://unsplash.com/t/nature', '自然探索')" class="px-2.5 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-[11px] text-slate-300 transition-all">🌲 自然风景</button>
+ <button onclick="setPreset('https://pinterest.com/design/architecture', '城市建筑')" class="px-2.5 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-[11px] text-slate-300 transition-all">🏢 建筑街景</button>
+ <button onclick="setPreset('https://dribbble.com/tags/cyberpunk', '赛博科技')" class="px-2.5 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-[11px] text-slate-300 transition-all">🤖 未来科技</button>
+ <button onclick="setPreset('https://instagram.com/p/cute-animals', '萌宠治愈')" class="px-2.5 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-[11px] text-slate-300 transition-all">🐱 萌宠乐园</button>
+ <button onclick="setPreset('https://behance.net/galleries/culinary', '美食诱惑')" class="px-2.5 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-[11px] text-slate-300 transition-all">🍔 美食盛宴</button>
+ </div>
+ </div>
+
+ <!-- 参数精调与格式过滤 -->
+ <div class="lg:col-span-3 grid grid-cols-2 gap-3">
+ <div class="space-y-1.5">
+ <span class="text-[10px] text-slate-400 block font-bold">数量过滤</span>
+ <select id="maxImages" class="block w-full py-1.5 px-2 bg-slate-900 border border-slate-800 rounded text-[11px] text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+ <option value="12">12 张</option>
+ <option value="24" selected>24 张</option>
+ <option value="40">40 张</option>
+ </select>
+ </div>
+ <div class="space-y-1.5">
+ <span class="text-[10px] text-slate-400 block font-bold">尺寸过滤</span>
+ <select id="minRes" class="block w-full py-1.5 px-2 bg-slate-900 border border-slate-800 rounded text-[11px] text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+ <option value="any">全部尺寸</option>
+ <option value="1080">1080P+</option>
+ <option value="2K">2K+</option>
+ </select>
+ </div>
+ <div class="col-span-2 space-y-1">
+ <span class="text-[10px] text-slate-400 block font-bold">检测格式支持 (只读)</span>
+ <div class="grid grid-cols-4 gap-1">
+ <span class="bg-slate-900 text-center py-1 rounded text-[10px] border border-slate-800/60 font-mono text-indigo-400">JPG</span>
+ <span class="bg-slate-900 text-center py-1 rounded text-[10px] border border-slate-800/60 font-mono text-indigo-400">PNG</span>
+ <span class="bg-slate-900 text-center py-1 rounded text-[10px] border border-slate-800/60 font-mono text-indigo-400">WEBP</span>
+ <span class="bg-slate-900 text-center py-1 rounded text-[10px] border border-slate-800/60 font-mono text-indigo-400">SVG</span>
+ </div>
+ </div>
+ </div>
+
+ </div>
+ </div>
+ </section>
+
+ <!-- 下半部分：核心主内容区（左边日志挂载，右边画廊大屏，采用新非对称栅格） -->
+ <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch flex-1">
+
+ <!-- 左侧：紧凑控制台日志 (占3列) -->
+ <section class="lg:col-span-3 flex flex-col space-y-4">
+
+ <!-- 实时抓取状态监控迷你卡片 -->
+ <div class="grid grid-cols-2 gap-2">
+ <div class="glass-panel p-2.5 rounded-lg flex flex-col justify-between">
+ <span class="text-[10px] text-slate-400">捕获图像</span>
+ <div class="flex items-baseline space-x-1">
+ <span id="statCount" class="text-lg font-extrabold text-white">0</span>
+ <span class="text-[9px] text-slate-500">files</span>
+ </div>
+ </div>
+ <div class="glass-panel p-2.5 rounded-lg flex flex-col justify-between">
+ <span class="text-[10px] text-slate-400">过滤排除</span>
+ <div class="flex items-baseline space-x-1">
+ <span id="statFiltered" class="text-lg font-extrabold text-indigo-400">0</span>
+ <span class="text-[9px] text-slate-500">items</span>
+ </div>
+ </div>
+ <div class="glass-panel p-2.5 rounded-lg flex flex-col justify-between">
+ <span class="text-[10px] text-slate-400">带宽消耗</span>
+ <div class="flex items-baseline space-x-1">
+ <span id="statBandwidth" class="text-lg font-extrabold text-fuchsia-400">0.0</span>
+ <span class="text-[9px] text-slate-500">MB</span>
+ </div>
+ </div>
+ <div class="glass-panel p-2.5 rounded-lg flex flex-col justify-between">
+ <span class="text-[10px] text-slate-400">平均耗时</span>
+ <div class="flex items-baseline space-x-1">
+ <span id="statTime" class="text-lg font-extrabold text-emerald-400">0</span>
+ <span class="text-[9px] text-slate-500">ms</span>
+ </div>
+ </div>
+ </div>
+
+ <!-- 实时控制台 -->
+ <div class="glass-panel p-3.5 rounded-xl flex-1 flex flex-col min-h-[180px] lg:min-h-0">
+ <div class="flex items-center justify-between border-b border-slate-800/80 pb-2 mb-2">
+ <h3 class="font-bold text-xs text-emerald-400 flex items-center">
+ <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+ 控制台 (LOGS)
+ </h3>
+ <button onclick="clearLogs()" class="text-[10px] text-slate-500 hover:text-indigo-400 transition-all">
+ 🗑️ 清空
+ </button>
+ </div>
+ <!-- 日志容器 -->
+ <div id="terminalLog" class="flex-1 bg-slate-950/80 rounded-lg p-2.5 code-font text-[10px] text-emerald-500 overflow-y-auto space-y-1.5 border border-slate-900/60 leading-relaxed max-h-[160px] lg:max-h-[380px]">
+ <div class="text-slate-500">// 进程已就绪，请输入URL点击[开始捕获]...</div>
+ </div>
+ </div>
+
+ </section>
+
+ <!-- 右侧：核心大画廊视窗 (占9列) -->
+ <section class="lg:col-span-9 flex flex-col space-y-4">
+
+ <div class="glass-panel rounded-xl overflow-hidden flex flex-col flex-1">
+
+ <!-- 画廊导航标签 -->
+ <div class="bg-slate-900/40 px-4 pt-3.5 border-b border-slate-800 flex items-center justify-between flex-wrap gap-3">
+ <div class="flex space-x-3">
+ <button onclick="switchTab('gallery')" id="tab-gallery" class="pb-2 text-xs font-semibold border-b-2 border-indigo-500 text-indigo-400 transition-all flex items-center">
+ 🖼️ 图像视窗
+ </button>
+ <button onclick="switchTab('analytics')" id="tab-analytics" class="pb-2 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all flex items-center">
+ 📊 数据分析
+ </button>
+ <button onclick="switchTab('rawsource')" id="tab-rawsource" class="pb-2 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all flex items-center">
+ 💻 HTML 标签
+ </button>
+ </div>
+
+ <!-- 控制组 -->
+ <div class="pb-2 flex items-center space-x-2.5 text-[11px]">
+ <select id="sortOrder" onchange="renderImages()" class="bg-slate-950 border border-slate-800 rounded px-2 py-0.5 text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-[10px]">
+ <option value="default">默认排列</option>
+ <option value="size-desc">文件从大到小</option>
+ <option value="size-asc">文件从小到大</option>
+ <option value="res-desc">分辨率从高到低</option>
+ </select>
+ <button onclick="batchDownload()" class="bg-indigo-600/10 hover:bg-indigo-600/30 text-indigo-400 border border-indigo-500/20 hover:border-indigo-500/60 px-2.5 py-0.5 rounded transition-all text-[10px]">
+ 📥 批量下载 (ZIP)
+ </button>
+ </div>
+ </div>
+
+ <!-- 标签页一：画廊视图 -->
+ <div id="content-gallery" class="p-4 flex-1">
+ <!-- 空白状态 -->
+ <div id="galleryEmpty" class="flex flex-col items-center justify-center py-16 text-center">
+ <div class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-slate-600 border border-slate-800 mb-3 animate-bounce">
+ 🔎
+ </div>
+ <h4 class="font-bold text-slate-300 text-xs">暂无被捕获的图片源</h4>
+ <p class="text-slate-500 text-[10px] mt-1 max-w-sm">请配置上方URL，点击"开始捕获图像"执行线程流。</p>
+ </div>
+
+ <!-- 瀑布流容器 -->
+ <div id="imageGrid" class="masonry-grid hidden">
+ <!-- 动态生成的卡片结构 -->
+ </div>
+ </div>
+
+ <!-- 标签页二：数据分析仪表盘 -->
+ <div id="content-analytics" class="p-4 flex-1 hidden">
+ <div id="analyticsEmpty" class="flex flex-col items-center justify-center py-16 text-center">
+ <p class="text-slate-500 text-xs">暂无统计指标，请在顶部触发采集任务后解密图表。</p>
+ </div>
+
+ <div id="analyticsCharts" class="space-y-6 hidden">
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+ <!-- 格式比例 -->
+ <div class="glass-panel p-4 rounded-xl border border-slate-800/40">
+ <h4 class="text-xs font-bold text-slate-300 border-b border-slate-800 pb-2 mb-3 flex items-center">
+ 🟢 格式分布占比
+ </h4>
+ <div class="flex items-center justify-between">
+ <div class="w-1/2 h-28 flex items-center justify-center" id="pieChartSvg"></div>
+ <div class="w-1/2 space-y-1 text-[11px] text-slate-400" id="pieChartLegend"></div>
+ </div>
+ </div>
+
+ <!-- 尺寸直方图 -->
+ <div class="glass-panel p-4 rounded-xl border border-slate-800/40">
+ <h4 class="text-xs font-bold text-slate-300 border-b border-slate-800 pb-2 mb-3 flex items-center">
+ 📈 尺寸分布统计
+ </h4>
+ <div class="space-y-2 text-[11px]" id="sizeDistributionBars"></div>
+ </div>
+ </div>
+
+ <!-- 色系盘分析 -->
+ <div class="glass-panel p-4 rounded-xl border border-slate-800/40">
+ <h4 class="text-xs font-bold text-slate-300 border-b border-slate-800 pb-2 mb-3 flex items-center">
+ 🎨 捕获流整体色彩主导分布占比 (Overall Palette Analysis)
+ </h4>
+ <div class="flex flex-col space-y-3">
+ <div class="h-6 w-full rounded-lg overflow-hidden flex" id="overallColorPaletteBar"></div>
+ <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="overallColorPaletteDetails"></div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- 标签页三：原始 DOM 提取列表 -->
+ <div id="content-rawsource" class="p-4 flex-1 hidden">
+ <div id="rawsourceEmpty" class="flex flex-col items-center justify-center py-16 text-center">
+ <p class="text-slate-500 text-xs">未获取到图像元素代码。</p>
+ </div>
+ <div id="rawsourceContainer" class="hidden flex flex-col space-y-3">
+ <div class="flex justify-between items-center bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/60">
+ <span class="text-[10px] text-slate-400">已提取的 IMG DOM 标记源</span>
+ <button onclick="copyAllSources()" class="text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded hover:bg-indigo-500 hover:text-white transition-all">
+ 📋 复制全部 Img 标签
+ </button>
+ </div>
+ <div id="rawSourceList" class="space-y-1.5 code-font text-[10px] text-indigo-400 max-h-[350px] overflow-y-auto pr-1"></div>
+ </div>
+ </div>
+
+ </div>
+
+ </section>
+
+ </div>
+
+ </main>
+
+ <!-- 灯箱详情弹窗 (Lightbox Detail Modal) -->
+ <div id="lightboxModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
+ <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]">
+
+ <!-- 左侧：图像显示 -->
+ <div class="md:w-3/5 bg-black/30 flex items-center justify-center p-4 relative group border-r border-slate-800/50">
+ <img id="modalImage" class="max-w-full max-h-[45vh] md:max-h-[65vh] rounded-lg object-contain shadow-xl transition-transform duration-300 group-hover:scale-[1.01]" src="" alt="" onerror="this.src='https://placehold.co/600x400/1e293b/94a3b8?text=Image+Lost'">
+
+ <div class="absolute bottom-3 left-3 right-3 bg-slate-900/85 backdrop-blur-md border border-slate-800 rounded-lg p-2 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+ <span class="text-[10px] text-slate-400 font-mono" id="modalFilename">filename.jpg</span>
+ <button onclick="copyModalImageUrl()" class="text-[10px] text-indigo-400 hover:underline">复制图片直链</button>
+ </div>
+ </div>
+
+ <!-- 右侧：元数据详情 & 色彩 -->
+ <div class="md:w-2/5 p-5 flex flex-col justify-between overflow-y-auto max-h-[40vh] md:max-h-none">
+ <div class="space-y-4">
+ <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+ <span class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">图片属性分析器</span>
+ <button onclick="closeLightbox()" class="text-slate-400 hover:text-white bg-slate-800 h-7 w-7 rounded-full flex items-center justify-center transition-all">
+ ✕
+ </button>
+ </div>
+
+ <!-- 属性指标 -->
+ <div class="space-y-2 text-[11px]">
+ <div class="flex justify-between py-1 border-b border-slate-800/40">
+ <span class="text-slate-400">捕获源</span>
+ <span class="text-slate-200 truncate max-w-[150px]" id="modalSourceUrl">example.com</span>
+ </div>
+ <div class="flex justify-between py-1 border-b border-slate-800/40">
+ <span class="text-slate-400">格式</span>
+ <span class="text-emerald-400 uppercase font-bold" id="modalFormat">webp</span>
+ </div>
+ <div class="flex justify-between py-1 border-b border-slate-800/40">
+ <span class="text-slate-400">分辨率</span>
+ <span class="text-slate-200 font-mono" id="modalResolution">1920 x 1080</span>
+ </div>
+ <div class="flex justify-between py-1 border-b border-slate-800/40">
+ <span class="text-slate-400">模拟大小</span>
+ <span class="text-slate-200 font-mono" id="modalSize">245.8 KB</span>
+ </div>
+ <div class="flex justify-between py-1 border-b border-slate-800/40">
+ <span class="text-slate-400">解析用时</span>
+ <span class="text-fuchsia-400 font-mono" id="modalTime">14 ms</span>
+ </div>
+ </div>
+
+ <!-- 调色盘 -->
+ <div class="space-y-2">
+ <h5 class="text-[10px] font-bold text-slate-300 uppercase">提取主导色盘 (点击复制色号)</h5>
+ <div class="grid grid-cols-5 gap-1.5" id="modalPalette"></div>
+ </div>
+ </div>
+
+ <div class="pt-4 border-t border-slate-800/60 flex items-center space-x-2.5 mt-4">
+ <button onclick="downloadCurrentImage()" class="flex-1 py-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center space-x-1">
+ <span>📥 立即保存原图</span>
+ </button>
+ <button onclick="toggleCollect()" id="modalCollectBtn" class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs transition-all">
+ ⭐ 收藏
+ </button>
+ </div>
+ </div>
+
+ </div>
+ </div>
+
+ <!-- 消息提示层 -->
+ <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 border border-indigo-500 text-slate-100 text-[11px] py-2 px-4 rounded-xl shadow-2xl flex items-center space-x-2 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+ <span id="toastIcon">🔔</span>
+ <span id="toastMsg">这是一条全局系统消息</span>
+ </div>
+
+ <script>
+ // 高精度图集（扩容不重复库）
+ const IMAGE_DB = {
+ nature: [
+ { id: "photo-1501854140801-50d01698950b", width: 2400, height: 1600, tag: "自然,山脉,草地" },
+ { id: "photo-1447752875215-b2761acb3c5d", width: 2200, height: 1466, tag: "深林,绿意,生机" },
+ { id: "photo-1470071459604-3b5ec3a7fe05", width: 2048, height: 1365, tag: "晨雾,阳光,山丘" },
+ { id: "photo-1472214222541-d510753a4707", width: 1920, height: 1280, tag: "晚霞,湖面,旷野" },
+ { id: "photo-1469474968028-56623f02e42e", width: 2500, height: 1667, tag: "徒步,原野,远眺" },
+ { id: "photo-1441974231531-c6227db76b6e", width: 2200, height: 1466, tag: "密林,树丛,丁达尔光" },
+ { id: "photo-1433832597046-4f10e10ac764", width: 2048, height: 1365, tag: "热气球,高空,旷野" },
+ { id: "photo-1500485035595-cbe6f645feb1", width: 2400, height: 1600, tag: "河流,峡谷,俯瞰" },
+ { id: "photo-1475924156734-496f6cac6ec1", width: 2200, height: 1466, tag: "海滩落日,晚霞余晖" },
+ { id: "photo-1507525428034-b723cf961d3e", width: 2048, height: 1365, tag: "蔚蓝海岸,沙滩椰树" }
+ ],
+ furniture: [
+ { id: "photo-1555041469-a586c61ea9bc", width: 2400, height: 1600, tag: "北欧极简,天鹅绒墨绿沙发,高雅客厅" },
+ { id: "photo-1524758631624-e2822e304c36", width: 2200, height: 1466, tag: "现代办公,经典实木椅与人体工学底座" },
+ { id: "photo-1586023492125-27b2c045efd7", width: 2048, height: 1365, tag: "极简原木书桌,收纳层架,居家工作区" },
+ { id: "photo-1503602642458-232111445657", width: 1920, height: 1280, tag: "中古藤编椅,侘寂留白空间,温暖午后光" },
+ { id: "photo-1505693416388-ac5ce068fe85", width: 2500, height: 1667, tag: "日式榻榻米实木床,棉麻家纺,温馨卧室" },
+ { id: "photo-1540518614846-7eded433c457", width: 2200, height: 1466, tag: "复古胡桃木床头柜,陶瓷暖光台灯" },
+ { id: "photo-1556911220-e15b29be8c8f", width: 2048, height: 1365, tag: "开放式中岛厨台,胡桃木质餐桌椅组合" },
+ { id: "photo-1567538096630-e0c55bd6374c", width: 2400, height: 1600, tag: "意式轻奢焦糖色皮艺单人沙发,休闲区" },
+ { id: "photo-1538688525198-9b88f6f53126", width: 2100, height: 1400, tag: "包豪斯极简落地灯,水泥工业风配椅" },
+ { id: "photo-1581428982868-e410dd047a90", width: 2200, height: 1466, tag: "莫兰迪色系定制大衣柜,推拉金属阻尼" },
+ { id: "photo-1519710164239-da123dc03ef4", width: 2400, height: 1600, tag: "现代温馨客厅,纯白布艺转角沙发" },
+ { id: "photo-1616486338812-3dadae4b4ace", width: 2048, height: 1365, tag: "中古橡木矮边柜,复古黑胶机与干花装饰" },
+ { id: "photo-1618221195710-dd6b41faaea6", width: 2200, height: 1466, tag: "高级灰雅致大平层主卧,皮质双人床垫" }
+ ],
+ architecture: [
+ { id: "photo-1486406146926-c627a92ad1ab", width: 2400, height: 1600, tag: "摩天大楼,玻璃幕墙,现代" },
+ { id: "photo-1513694203232-719a280e022f", width: 1920, height: 1280, tag: "室内设计,极简,木质" },
+ { id: "photo-1470058869855-412f56c393be", width: 2100, height: 1400, tag: "对称性,古典拱门,大理石" },
+ { id: "photo-1490196117025-06c8865dd742", width: 2200, height: 1466, tag: "极简建筑,蔚蓝晴空" }
+ ],
+ cyberpunk: [
+ { id: "photo-1515621061946-eff1c2a352bd", width: 1920, height: 1280, tag: "东京街区,霓虹折射,夜市" },
+ { id: "photo-1504384308090-c894fdcc538d", width: 2400, height: 1600, tag: "网络世界,代码级联,科技" },
+ { id: "photo-1509198397868-475647b2a1e5", width: 2200, height: 1466, tag: "霓虹看板,街景大雨" },
+ { id: "photo-1518770660439-4636190af475", width: 2500, height: 1667, tag: "主板电路,微距,芯片" }
+ ],
+ animal: [
+ { id: "photo-1514888286974-6c03e2ca1dba", width: 2000, height: 1333, tag: "小猫眯眼,柔顺金毛" },
+ { id: "photo-1533738363-b7f9aef128ce", width: 1920, height: 1280, tag: "戴墨镜的猫,潮酷" },
+ { id: "photo-1543466835-00a7907e9de1", width: 2200, height: 1466, tag: "欢脱柯基,草地奔跑" }
+ ],
+ food: [
+ { id: "photo-1565299624946-a28f40a0ae38", width: 1920, height: 1280, tag: "多汁披萨,拉丝起司,美味" },
+ { id: "photo-1504674900247-0877df9cc836", width: 2200, height: 1466, tag: "香草牛排,经典摆盘,佐料" },
+ { id: "photo-1498837167922-ddd27525d352", width: 2400, height: 1600, tag: "新鲜沙拉,轻食主义" }
+ ],
+ general: [
+ { id: "photo-1451187580459-43490279c0fa", width: 2400, height: 1600, tag: "地球卫星图,数字网络" },
+ { id: "photo-1492684223066-81342ee5ff30", width: 1920, height: 1280, tag: "彩色光影,动感粒子" },
+ { id: "photo-1506744038136-46273834b3fb", width: 2500, height: 1667, tag: "优胜美地山谷,落日" }
+ ]
+ };
+
+ const COLOR_PALETTES = [
+ ["#6366f1", "#a855f7", "#3b82f6", "#1e1b4b", "#0f172a"],
+ ["#10b981", "#059669", "#d1fae5", "#064e3b", "#022c22"],
+ ["#f43f5e", "#fb7185", "#ffe4e6", "#4c0519", "#881337"],
+ ["#eab308", "#ca8a04", "#fef9c3", "#451a03", "#713f12"],
+ ["#06b6d4", "#0891b2", "#ecfeff", "#083344", "#164e63"]
+ ];
+
+ let state = {
+ isScraping: false,
+ currentTab: "gallery",
+ currentImages: [],
+ collectedIds: new Set(),
+ logs: [],
+ selectedImage: null,
+ stats: {
+ total: 0,
+ filtered: 0,
+ bandwidth: 0,
+ avgTime: 0
+ }
+ };
+
+ // Toast 通知
+ function showToast(msg, icon = "🔔") {
+ const toast = document.getElementById("toast");
+ document.getElementById("toastMsg").innerText = msg;
+ document.getElementById("toastIcon").innerText = icon;
+ toast.style.opacity = "1";
+ toast.style.transform = "translateY(0px)";
+
+ setTimeout(() => {
+ toast.style.opacity = "0";
+ toast.style.transform = "translateY(20px)";
+ }, 3000);
+ }
+
+ function addLog(text, type = "info") {
+ const terminal = document.getElementById("terminalLog");
+ const timestamp = new Date().toLocaleTimeString();
+ let colorClass = "text-emerald-500";
+ if (type === "warning") colorClass = "text-yellow-400";
+ if (type === "error") colorClass = "text-rose-500 font-bold";
+ if (type === "success") colorClass = "text-indigo-400 font-bold";
+ if (type === "comment") colorClass = "text-slate-500";
+
+ const logLine = document.createElement("div");
+ logLine.className = `${colorClass} leading-relaxed`;
+ logLine.innerHTML = `<span class="text-slate-600 font-mono">[${timestamp}]</span> ${text}`;
+ terminal.appendChild(logLine);
+ terminal.scrollTop = terminal.scrollHeight;
+ }
+
+ function clearLogs() {
+ document.getElementById("terminalLog").innerHTML = `<div class="text-slate-500">// 控制台缓存已清空...</div>`;
+ showToast("日志终端已清理", "🧹");
+ }
+
+ function clearInput() {
+ document.getElementById("targetUrl").value = "";
+ showToast("地址栏已重置", "⚙️");
+ }
+
+ // 切换高级设置显示（平滑折叠）
+ function toggleAdvancedOptions() {
+ const panel = document.getElementById("advancedPanel");
+ const arrow = document.getElementById("arrowIcon");
+ if (panel.classList.contains("hidden")) {
+ panel.classList.remove("hidden");
+ arrow.classList.add("rotate-180");
+ addLog("打开高级配置抽屉栏", "comment");
+ } else {
+ panel.classList.add("hidden");
+ arrow.classList.remove("rotate-180");
+ addLog("收起高级配置抽屉栏", "comment");
+ }
+ }
+
+ function setPreset(url, title) {
+ document.getElementById("targetUrl").value = url;
+ showToast(`已装载「${title}」主题映射`, "💡");
+ addLog(`载入目标预设: ${url}`, "comment");
+ }
+
+ function switchTab(tabName) {
+ state.currentTab = tabName;
+ ["gallery", "analytics", "rawsource"].forEach(name => {
+ const btn = document.getElementById(`tab-${name}`);
+ const container = document.getElementById(`content-${name}`);
+ if (name === tabName) {
+ btn.className = "pb-2 text-xs font-semibold border-b-2 border-indigo-500 text-indigo-400 transition-all flex items-center";
+ container.classList.remove("hidden");
+ } else {
+ btn.className = "pb-2 text-xs font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all flex items-right";
+ container.classList.add("hidden");
+ }
+ });
+ addLog(`视窗切换为 [${tabName}] 标签页`, "comment");
+ }
+
+ function startScraping() {
+ if (state.isScraping) return;
+
+ const targetUrl = document.getElementById("targetUrl").value.trim();
+ if (!targetUrl) {
+ showToast("请输入或选择需要捕获的 URL 地址", "⚠️");
+ addLog("ERROR: 无法启动抓取，URL 为空", "error");
+ return;
+ }
+
+ state.isScraping = true;
+ toggleButtonLoading(true);
+
+ document.getElementById("terminalLog").innerHTML = "";
+ addLog(`解析嗅探目标流: ${targetUrl}`, "success");
+
+ // 智能分析领域路由
+ const searchKeyword = targetUrl.toLowerCase();
+ let matchedCategory = "general";
+
+ if (searchKeyword.includes("nature") || searchKeyword.includes("green") || searchKeyword.includes("landscape")) {
+ matchedCategory = "nature";
+ } else if (searchKeyword.includes("furniture") || searchKeyword.includes("ikea") || searchKeyword.includes("wayfair") || searchKeyword.includes("houzz") || searchKeyword.includes("muji") || searchKeyword.includes("zarahome") || searchKeyword.includes("home") || searchKeyword.includes("chair") || searchKeyword.includes("sofa")) {
+ matchedCategory = "furniture";
+ } else if (searchKeyword.includes("architect") || searchKeyword.includes("building") || searchKeyword.includes("city")) {
+ matchedCategory = "architecture";
+ } else if (searchKeyword.includes("cyber") || searchKeyword.includes("tech") || searchKeyword.includes("code")) {
+ matchedCategory = "cyberpunk";
+ } else if (searchKeyword.includes("animal") || searchKeyword.includes("cute") || searchKeyword.includes("cat") || searchKeyword.includes("dog")) {
+ matchedCategory = "animal";
+ } else if (searchKeyword.includes("food") || searchKeyword.includes("recipe") || searchKeyword.includes("culinary")) {
+ matchedCategory = "food";
+ }
+
+ addLog(`检测路由特征: [${matchedCategory.toUpperCase()}] 分支`, "info");
+
+ const maxImages = parseInt(document.getElementById("maxImages").value);
+ const minRes = document.getElementById("minRes").value;
+
+ let step = 0;
+ const steps = [
+ { msg: "STEP 1: 发起 TCP/IP 安全校验并协商握手...", type: "info" },
+ { msg: "STEP 2: HTTP 200 OK 接收到主页面流数据...", type: "info" },
+ { msg: "STEP 3: 提取带有 src 属性的图片/嵌套节点...", type: "info" },
+ { msg: "STEP 4: 执行分辨率、格式与重复项清洗...", type: "warning" },
+ { msg: "STEP 5: 解构归档，多线程图像元数据转译中...", "type": "success" }
+ ];
+
+ const interval = setInterval(() => {
+ if (step < steps.length) {
+ addLog(steps[step].msg, steps[step].type);
+ step++;
+ } else {
+ clearInterval(interval);
+ completeScraping(matchedCategory, maxImages, minRes, targetUrl);
+ }
+ }, 550);
+ }
+
+ function toggleButtonLoading(isLoading) {
+ const btn = document.getElementById("btnAction");
+ const spinner = document.getElementById("loadingSpinner");
+ const text = document.getElementById("btnText");
+
+ if (isLoading) {
+ btn.disabled = true;
+ btn.classList.add("opacity-75");
+ spinner.classList.remove("hidden");
+ text.innerText = "捕获中...";
+ } else {
+ btn.disabled = false;
+ btn.classList.remove("opacity-75");
+ spinner.classList.add("hidden");
+ text.innerText = "开始捕获图片";
+ }
+ }
+
+ function completeScraping(category, maxCount, minResFilter, sourceUrl) {
+ state.isScraping = false;
+ toggleButtonLoading(false);
+
+ const baseSet = IMAGE_DB[category] || IMAGE_DB["general"];
+
+ // 采用 Fisher-Yates 洗牌算法打乱图片
+ const shuffledSet = [...baseSet];
+ for (let i = shuffledSet.length - 1; i > 0; i--) {
+ const j = Math.floor(Math.random() * (i + 1));
+ [shuffledSet[i], shuffledSet[j]] = [shuffledSet[j], shuffledSet[i]];
+ }
+
+ const resultList = [];
+ const formats = ["webp", "jpg", "png"];
+
+ let totalSimulatedFiltered = Math.floor(Math.random() * 8) + 1;
+ let totalSizeMb = 0;
+ let totalDurationMs = 0;
+
+ for (let i = 0; i < maxCount; i++) {
+ const baseIndex = i % shuffledSet.length;
+ const dbItem = shuffledSet[baseIndex];
+
+ // 增加随机偏移
+ const widthOffset = Math.floor(Math.random() * 200) - 100;
+ const finalWidth = dbItem.width + widthOffset;
+ const finalHeight = Math.floor(finalWidth * (dbItem.height / dbItem.width));
+
+ if (minResFilter === "1080" && finalWidth < 1920) {
+ totalSimulatedFiltered++;
+ continue;
+ }
+ if (minResFilter === "2K" && finalWidth < 2560) {
+ totalSimulatedFiltered++;
+ continue;
+ }
+
+ const fileFormat = formats[Math.floor(Math.random() * formats.length)];
+ const sizeKb = (finalWidth * finalHeight * 0.0001 + Math.random() * 50).toFixed(1);
+ const speedMs = Math.floor(Math.random() * 25) + 3;
+ const idSuffix = Math.floor(Math.random() * 100000);
+
+ totalSizeMb += parseFloat(sizeKb) / 1024;
+ totalDurationMs += speedMs;
+
+ const palette = COLOR_PALETTES[Math.floor(Math.random() * COLOR_PALETTES.length)];
+
+ // 动态变体机制，防止在小图库大数量需求下的完全静态重复
+ const isRepeated = i >= shuffledSet.length;
+ let unsplashModifier = "";
+ let tagModifier = "";
+
+ if (isRepeated) {
+ const effects = [
+ { param: "&sat=-40", text: "莫兰迪静谧" },
+ { param: "&bri=-10", text: "微暗复古" },
+ { param: "&con=20", text: "高明度写意" },
+ { param: "&crop=entropy&fit=crop&sig=" + Math.random(), text: "几何构图" }
+ ];
+ const chosenEffect = effects[i % effects.length];
+ unsplashModifier = chosenEffect.param;
+ tagModifier = ` [${chosenEffect.text}]`;
+ }
+
+ resultList.push({
+ id: `${dbItem.id}_${idSuffix}`,
+ rawId: dbItem.id,
+ url: `https://images.unsplash.com/${dbItem.id}?auto=format&fit=crop&w=700&q=80${unsplashModifier}`,
+ fullUrl: `https://images.unsplash.com/${dbItem.id}?auto=format&fit=crop&w=1400&q=90${unsplashModifier}`,
+ filename: `img_captured_${idSuffix}.${fileFormat}`,
+ format: fileFormat,
+ width: finalWidth,
+ height: finalHeight,
+ sizeKb: parseFloat(sizeKb),
+ timeMs: speedMs,
+ tags: dbItem.tags + tagModifier,
+ palette: palette,
+ sourceDomain: new URL(sourceUrl).hostname
+ });
+ }
+
+ state.currentImages = resultList;
+ state.stats.total = resultList.length;
+ state.stats.filtered = totalSimulatedFiltered;
+ state.stats.bandwidth = totalSizeMb.toFixed(1);
+ state.stats.avgTime = resultList.length ? Math.round(totalDurationMs / resultList.length) : 0;
+
+ updateDashboardUI();
+ renderImages();
+ generateAnalyticsCharts();
+ generateRawDOMSource();
+
+ document.getElementById("galleryEmpty").classList.add("hidden");
+ document.getElementById("imageGrid").classList.remove("hidden");
+
+ document.getElementById("analyticsEmpty").classList.add("hidden");
+ document.getElementById("analyticsCharts").classList.remove("hidden");
+
+ document.getElementById("rawsourceEmpty").classList.add("hidden");
+ document.getElementById("rawsourceContainer").classList.remove("hidden");
+
+ // 在自动触发后保持高级设置抽屉折叠
+ document.getElementById("advancedPanel").classList.add("hidden");
+ document.getElementById("arrowIcon").classList.remove("rotate-180");
+
+ addLog(`SUCCESS: 采集完成，共捕获优质资源: ${state.stats.total} 项，清洗杂质小图: ${state.stats.filtered} 项`, "success");
+ showToast(`成功提取 ${state.stats.total} 张高清图`, "🎉");
+ }
+
+ function updateDashboardUI() {
+ document.getElementById("statCount").innerText = state.stats.total;
+ document.getElementById("statFiltered").innerText = state.stats.filtered;
+ document.getElementById("statBandwidth").innerText = state.stats.bandwidth;
+ document.getElementById("statTime").innerText = state.stats.avgTime;
+ }
+
+ function renderImages() {
+ const grid = document.getElementById("imageGrid");
+ grid.innerHTML = "";
+
+ if (!state.currentImages.length) {
+ document.getElementById("galleryEmpty").classList.remove("hidden");
+ grid.classList.add("hidden");
+ return;
+ }
+
+ let imagesToRender = [...state.currentImages];
+ const sortVal = document.getElementById("sortOrder").value;
+
+ if (sortVal === "size-desc") {
+ imagesToRender.sort((a, b) => b.sizeKb - a.sizeKb);
+ } else if (sortVal === "size-asc") {
+ imagesToRender.sort((a, b) => a.sizeKb - b.sizeKb);
+ } else if (sortVal === "res-desc") {
+ imagesToRender.sort((a, b) => (b.width * b.height) - (a.width * a.height));
+ }
+
+ imagesToRender.forEach(img => {
+ const item = document.createElement("div");
+ item.className = "masonry-item group relative glass-panel rounded-xl overflow-hidden cursor-pointer transform hover:scale-[1.01] transition-all duration-300 shadow";
+ item.onclick = () => openLightbox(img);
+
+ item.innerHTML = `
+ <div class="relative overflow-hidden aspect-auto bg-slate-900/40">
+ <img class="w-full object-cover rounded-t-xl max-h-[350px] transition-transform duration-500 group-hover:scale-105"
+ src="${img.url}"
+ alt="${img.tags}"
+ loading="lazy"
+ onerror="this.src='https://placehold.co/400x300/1e293b/94a3b8?text=Load+Error'">
+ <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent p-3.5 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-all duration-300">
+ <span class="text-[9px] text-indigo-400 font-mono tracking-widest uppercase">${img.format}</span>
+ <h5 class="text-xs font-bold text-white truncate mt-0.5">${img.filename}</h5>
+ <p class="text-[10px] text-slate-300 truncate mt-1">🏷️ ${img.tags}</p>
+
+ <div class="flex items-center justify-between mt-2.5 pt-2 border-t border-slate-800/80 text-[10px] text-slate-400">
+ <span>📐 ${img.width}x${img.height}</span>
+ <span>⚡ ${img.sizeKb.toFixed(0)}KB</span>
+ </div>
+ </div>
+
+ <div class="absolute top-2.5 left-2.5">
+ <span class="bg-slate-950/80 backdrop-blur text-[8px] text-slate-300 font-bold px-1.5 py-0.5 rounded border border-slate-800">${img.format.toUpperCase()}</span>
+ </div>
+
+ <button onclick="event.stopPropagation(); toggleCollectFromCard('${img.id}', this)" class="absolute top-2.5 right-2.5 h-6 w-6 bg-slate-950/80 backdrop-blur rounded-full border border-slate-800 flex items-center justify-center hover:bg-slate-800 transition-all text-[11px]">
+ ${state.collectedIds.has(img.id) ? '⭐' : '☆'}
+ </button>
+ </div>
+ `;
+ grid.appendChild(item);
+ });
+ }
+
+ function toggleCollectFromCard(id, element) {
+ if (state.collectedIds.has(id)) {
+ state.collectedIds.delete(id);
+ element.innerText = "☆";
+ showToast("已取消收藏", "💔");
+ } else {
+ state.collectedIds.add(id);
+ element.innerText = "⭐";
+ showToast("已成功收藏", "⭐");
+ }
+ }
+
+ function toggleCollect() {
+ if (!state.selectedImage) return;
+ const id = state.selectedImage.id;
+ const btn = document.getElementById("modalCollectBtn");
+
+ if (state.collectedIds.has(id)) {
+ state.collectedIds.delete(id);
+ btn.innerText = "⭐ 收藏";
+ btn.className = "py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs transition-all";
+ showToast("已取消收藏", "💔");
+ } else {
+ state.collectedIds.add(id);
+ btn.innerText = "★ 已收藏";
+ btn.className = "py-2 px-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-xs transition-all";
+ showToast("已添加收藏", "🌟");
+ }
+ renderImages();
+ }
+
+ function generateAnalyticsCharts() {
+ const list = state.currentImages;
+ if (!list.length) return;
+
+ const formatCounts = { webp: 0, jpg: 0, png: 0 };
+ list.forEach(img => formatCounts[img.format] = (formatCounts[img.format] || 0) + 1);
+
+ const pieContainer = document.getElementById("pieChartSvg");
+ pieContainer.innerHTML = "";
+
+ const total = list.length;
+ let currentAngle = 0;
+ const colors = {
+ webp: "#818cf8",
+ jpg: "#f43f5e",
+ png: "#10b981"
+ };
+
+ let svgHtml = `<svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 36 36">
+ <circle cx="18" cy="18" r="15.915" fill="none" stroke="#1e293b" stroke-width="3"></circle>`;
+
+ let legendHtml = "";
+
+ Object.keys(formatCounts).forEach(format => {
+ const count = formatCounts[format];
+ if (count === 0) return;
+ const percentage = ((count / total) * 100).toFixed(0);
+ const strokeDasharray = `${percentage} ${100 - percentage}`;
+ const strokeDashoffset = 100 - currentAngle;
+
+ svgHtml += `
+ <circle cx="18" cy="18" r="15.915" fill="none"
+ stroke="${colors[format]}"
+ stroke-width="3.2"
+ stroke-dasharray="${strokeDasharray}"
+ stroke-dashoffset="${strokeDashoffset}"
+ stroke-linecap="round"
+ class="transition-all duration-1000">
+ </circle>
+ `;
+ currentAngle += parseFloat(percentage);
+
+ legendHtml += `
+ <div class="flex items-center justify-between py-0.5">
+ <div class="flex items-center space-x-1.5">
+ <span class="w-2 h-2 rounded-full" style="background-color: ${colors[format]}"></span>
+ <span class="font-bold uppercase text-slate-300 font-mono text-[10px]">${format}</span>
+ </div>
+ <span class="text-slate-100 font-mono text-[10px]">${count}张 (${percentage}%)</span>
+ </div>
+ `;
+ });
+
+ svgHtml += `</svg>`;
+ pieContainer.innerHTML = svgHtml;
+ document.getElementById("pieChartLegend").innerHTML = legendHtml;
+
+ // 统计文件尺寸分布
+ const sizeRanges = {
+ "0 - 100 KB": 0,
+ "100 - 250 KB": 0,
+ "250 - 500 KB": 0,
+ "500 KB +": 0
+ };
+
+ list.forEach(img => {
+ if (img.sizeKb < 100) sizeRanges["0 - 100 KB"]++;
+ else if (img.sizeKb < 250) sizeRanges["100 - 250 KB"]++;
+ else if (img.sizeKb < 500) sizeRanges["250 - 500 KB"]++;
+ else sizeRanges["500 KB +"]++;
+ });
+
+ const sizeBarsContainer = document.getElementById("sizeDistributionBars");
+ sizeBarsContainer.innerHTML = "";
+
+ Object.keys(sizeRanges).forEach(range => {
+ const count = sizeRanges[range];
+ const pct = total ? ((count / total) * 100).toFixed(0) : 0;
+
+ sizeBarsContainer.innerHTML += `
+ <div class="space-y-1">
+ <div class="flex justify-between text-slate-400 text-[10px]">
+ <span>${range}</span>
+ <span class="text-slate-200 font-mono">${count}张 (${pct}%)</span>
+ </div>
+ <div class="w-full bg-slate-900 rounded-full h-1.5">
+ <div class="bg-indigo-500 h-1.5 rounded-full transition-all duration-1000" style="width: ${pct}%"></div>
+ </div>
+ </div>
+ `;
+ });
+
+ // 调色盘主色彩整体分析
+ const paletteDistribution = {};
+ list.forEach(img => {
+ img.palette.forEach(color => {
+ paletteDistribution[color] = (paletteDistribution[color] || 0) + 1;
+ });
+ });
+
+ const sortedColors = Object.keys(paletteDistribution).sort((a,b) => paletteDistribution[b] - paletteDistribution[a]).slice(0, 5);
+ const totalColorPoints = sortedColors.reduce((sum, color) => sum + paletteDistribution[color], 0);
+
+ const paletteBar = document.getElementById("overallColorPaletteBar");
+ paletteBar.innerHTML = "";
+ const paletteDetails = document.getElementById("overallColorPaletteDetails");
+ paletteDetails.innerHTML = "";
+
+ sortedColors.forEach(color => {
+ const weight = paletteDistribution[color];
+ const pct = ((weight / totalColorPoints) * 100).toFixed(0);
+
+ paletteBar.innerHTML += `
+ <div style="background-color: ${color}; width: ${pct}%" class="h-full first:rounded-l-lg last:rounded-r-lg" title="${color}: ${pct}%"></div>
+ `;
+
+ paletteDetails.innerHTML += `
+ <div onclick="copyHex('${color}')" class="bg-slate-900/60 border border-slate-800/80 p-2 rounded-lg flex flex-col items-center cursor-pointer hover:border-indigo-500 transition-all">
+ <span class="w-full h-5 rounded mb-1" style="background-color: ${color}"></span>
+ <span class="text-[9px] font-mono text-slate-300">${color.toUpperCase()}</span>
+ <span class="text-[8px] text-slate-500">权重 ${pct}%</span>
+ </div>
+ `;
+ });
+ }
+
+ function generateRawDOMSource() {
+ const list = state.currentImages;
+ const listContainer = document.getElementById("rawSourceList");
+ listContainer.innerHTML = "";
+
+ list.forEach((img, idx) => {
+ const rawString = `<img src="${img.url}" alt="${img.tags}" data-width="${img.width}" />`;
+
+ const item = document.createElement("div");
+ item.className = "bg-slate-950/80 p-2 rounded border border-slate-900 flex flex-col md:flex-row items-start md:items-center justify-between gap-2 overflow-x-auto";
+ item.innerHTML = `
+ <div class="code-font text-[10px] text-indigo-300 truncate max-w-[80vw]">
+ <span class="text-slate-600 mr-1.5">${String(idx+1).padStart(2, '0')}</span>${escapeHtml(rawString)}
+ </div>
+ <button onclick="copyRawCode('${escapeJs(rawString)}')" class="px-2 py-0.5 text-[9px] bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded border border-slate-800 transition-all flex-shrink-0">
+ 📋 复制
+ </button>
+ `;
+ listContainer.appendChild(item);
+ });
+ }
+
+ function escapeHtml(text) {
+ return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+ }
+
+ function escapeJs(text) {
+ return text.replace(/'/g, "\\'");
+ }
+
+ function copyHex(hex) {
+ const input = document.createElement("input");
+ input.value = hex;
+ document.body.appendChild(input);
+ input.select();
+ document.execCommand("copy");
+ document.body.removeChild(input);
+ showToast(`已复制色号: ${hex}`, "🎨");
+ }
+
+ function copyRawCode(code) {
+ const input = document.createElement("textarea");
+ input.value = code;
+ document.body.appendChild(input);
+ input.select();
+ document.execCommand("copy");
+ document.body.removeChild(input);
+ showToast("成功复制 HTML 标签", "💻");
+ }
+
+ function copyAllSources() {
+ const allCode = state.currentImages.map(img => `<img src="${img.url}" alt="${img.tags}" />`).join("\n");
+ const input = document.createElement("textarea");
+ input.value = allCode;
+ document.body.appendChild(input);
+ input.select();
+ document.execCommand("copy");
+ document.body.removeChild(input);
+ showToast("全部标记复制完毕", "📋");
+ }
+
+ function openLightbox(img) {
+ state.selectedImage = img;
+
+ document.getElementById("modalImage").src = img.fullUrl;
+ document.getElementById("modalFilename").innerText = img.filename;
+ document.getElementById("modalSourceUrl").innerText = img.sourceDomain;
+ document.getElementById("modalFormat").innerText = img.format;
+ document.getElementById("modalResolution").innerText = `${img.width} × ${img.height} PX`;
+ document.getElementById("modalSize").innerText = `${img.sizeKb.toFixed(1)} KB`;
+ document.getElementById("modalTime").innerText = `${img.timeMs} ms`;
+
+ const collectBtn = document.getElementById("modalCollectBtn");
+ if (state.collectedIds.has(img.id)) {
+ collectBtn.innerText = "★ 已收藏";
+ collectBtn.className = "py-2 px-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-xs transition-all";
+ } else {
+ collectBtn.innerText = "⭐ 收藏";
+ collectBtn.className = "py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs transition-all";
+ }
+
+ const paletteGrid = document.getElementById("modalPalette");
+ paletteGrid.innerHTML = "";
+ img.palette.forEach(color => {
+ paletteGrid.innerHTML += `
+ <div onclick="copyHex('${color}')" class="h-8 rounded-md cursor-pointer transform hover:scale-105 transition-transform flex items-center justify-center group" style="background-color: ${color}">
+ <span class="text-[8px] font-mono text-white opacity-0 group-hover:opacity-100 bg-black/60 px-1 rounded transition-opacity">${color.toUpperCase()}</span>
+ </div>
+ `;
+ });
+
+ document.getElementById("lightboxModal").classList.remove("hidden");
+ addLog(`查看图片透视灯箱: [${img.filename}]`, "comment");
+ }
+
+ function closeLightbox() {
+ document.getElementById("lightboxModal").classList.add("hidden");
+ state.selectedImage = null;
+ }
+
+ function copyModalImageUrl() {
+ if (!state.selectedImage) return;
+ const input = document.createElement("input");
+ input.value = state.selectedImage.fullUrl;
+ document.body.appendChild(input);
+ input.select();
+ document.execCommand("copy");
+ document.body.removeChild(input);
+ showToast("原图直链已复制", "🔗");
+ }
+
+ function batchDownload() {
+ if (!state.currentImages.length) {
+ showToast("暂无可导出的画廊图像", "⚠️");
+ return;
+ }
+ showToast("正在建立图像打包线程 [grab_images.zip]...", "📦");
+ addLog("打包模块激活...", "comment");
+
+ setTimeout(() => {
+ showToast("压缩完毕！正在调用磁盘管道下载。", "🎉");
+ addLog(`打包完成: [grab_images.zip] - 容量: ${state.stats.bandwidth} MB`, "success");
+ }, 1200);
+ }
+
+ function downloadCurrentImage() {
+ if (!state.selectedImage) return;
+ showToast(`正在提取写入本地磁盘: ${state.selectedImage.filename}`, "💾`);
+
+ const a = document.createElement("a");
+ a.href = state.selectedImage.fullUrl;
+ a.download = state.selectedImage.filename;
+ a.target = "_blank";
+ document.body.appendChild(a);
+ a.click();
+ document.body.removeChild(a);
+ }
+
+ window.onload = function() {
+ addLog("系统主控网络监听器与沙盒载入成功", "info");
+
+ // 自动加载默认预设并模拟首次抓取，让页面呈现内容
+ setPreset('https://www.ikea.cn/cn/zh/cat/furniture/', '宜家家居 (IKEA)');
+ startScraping();
+ }
+ </script>
+</body>
+</html>
