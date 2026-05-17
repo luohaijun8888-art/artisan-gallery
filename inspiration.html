@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHANYAO | 灵感</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; margin: 0; }
+        .glass { background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full z-[60] glass border-b border-black/5">
+        <div class="max-w-[1400px] mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
+            <div class="flex items-center gap-4 md:gap-8">
+                <a href="index.html" class="text-xl md:text-2xl font-bold tracking-[0.2em] serif">SHANYAO</a>
+                <div class="hidden md:flex gap-6 text-sm uppercase tracking-widest font-medium opacity-60">
+                    <a href="index.html" class="hover:opacity-100 transition-opacity">首页</a>
+                    <a href="#" class="opacity-100 font-bold">灵感</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main: Image Grid -->
+    <main class="pt-24 md:pt-32 max-w-[1400px] mx-auto px-4 md:px-6 py-12">
+        <p id="loading" class="text-gray-400 mb-8">加载灵感图片中...</p>
+        <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Images loaded here by JS -->
+        </div>
+    </main>
+    
+    <!-- Lightbox -->
+    <div id="lightbox" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50 cursor-pointer" onclick="closeLb()">
+        <img id="lbImg" class="max-w-[90vw] max-h-[90vh] object-contain">
+        <span class="fixed top-6 right-6 text-white/80 hover:text-white text-3xl z-[60] pointer-events-none">✕</span>
+    </div>
+    
+    <script>
+        const TOKEN = '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';
+        const API   = 'https://api.github.com/repos/luohaijun8888-art/image-bed/contents/img';
+        const CDN   = 'https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/img/';
+
+        fetch(API, { headers: { 'Authorization': `Bearer ${TOKEN}` } })
+        .then(r => r.json())
+        .then(files => {
+            const grid = document.getElementById('grid');
+            document.getElementById('loading').remove();
+            files.forEach(f => {
+                if (f.type !== 'file') return;
+                if (!f.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) return;
+                const url = CDN + encodeURIComponent(f.name);
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl shadow hover:shadow-xl transition cursor-pointer overflow-hidden';
+                card.innerHTML = `<img src="${url}" alt="${f.name}" loading="lazy" class="w-full h-64 object-cover hover:scale-105 transition duration-500">`;
+                card.onclick = () => { document.getElementById('lbImg').src = url; document.getElementById('lightbox').classList.remove('hidden'); };
+                grid.appendChild(card);
+            });
+        });
+
+        function closeLb() { document.getElementById('lightbox').classList.add('hidden'); }
+    </script>
+</body>
+</html>
