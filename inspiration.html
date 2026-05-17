@@ -2,17 +2,22 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SHANYAO | 灵感</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; margin: 0; }
-        .glass { background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        :root { --accent: #C5A059; --bg: #F9F9F7; --text: #1A1A1A; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); }
+        .serif { font-family: 'Playfair Display', serif; }
+        .glass { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .inspiration-card { transition: all 0.6s cubic-bezier(0.16,1,0.3,1); }
+        @media (hover:hover) { .inspiration-card:hover { transform: translateY(-8px); } .inspiration-card:hover .insp-img { transform: scale(1.05); } }
+        @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+        .fade-up { animation: fadeIn 0.6s ease-out forwards; }
     </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Navbar -->
+<body>
     <nav class="fixed top-0 w-full z-[60] glass border-b border-black/5">
         <div class="max-w-[1400px] mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
             <div class="flex items-center gap-4 md:gap-8">
@@ -24,44 +29,64 @@
             </div>
         </div>
     </nav>
-    
-    <!-- Main: Image Grid -->
-    <main class="pt-24 md:pt-32 max-w-[1400px] mx-auto px-4 md:px-6 py-12">
-        <p id="loading" class="text-gray-400 mb-8">加载灵感图片中...</p>
-        <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- Images loaded here by JS -->
-        </div>
+
+    <main class="pt-24 md:pt-32 pb-20 max-w-[1400px] mx-auto px-4 md:px-6">
+        <header class="mb-10 md:mb-16 fade-up">
+            <h2 class="text-[10px] uppercase tracking-[0.4em] text-[var(--accent)] font-bold mb-2 md:mb-4">Inspiration</h2>
+            <h1 class="text-3xl md:text-7xl serif leading-tight">灵感集</h1>
+        </header>
+        <p id="loading" class="text-gray-400 mb-8 fade-up">加载灵感中...</p>
+        <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 md:gap-x-10 gap-y-10 md:gap-y-16"></div>
     </main>
-    
-    <!-- Lightbox -->
+
     <div id="lightbox" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50 cursor-pointer" onclick="closeLb()">
-        <img id="lbImg" class="max-w-[90vw] max-h-[90vh] object-contain">
-        <span class="fixed top-6 right-6 text-white/80 hover:text-white text-3xl z-[60] pointer-events-none">✕</span>
+        <img id="lbImg" class="max-w-[90vw] max-h-[90vh] object-contain shadow-2xl rounded-sm">
+        <div id="lbInfo" class="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/80 text-center"></div>
+        <span class="fixed top-6 right-6 text-white/80 hover:text-white text-3xl z-[60]">✕</span>
     </div>
-    
+
     <script>
-        const TOKEN = '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';
-        const API   = 'https://api.github.com/repos/luohaijun8888-art/image-bed/contents/img';
-        const CDN   = 'https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/img/';
+        const GITHUB_API = 'https://api.github.com/repos/luohaijun8888-art/artisan-gallery/contents/products.json';
 
-        fetch(API, { headers: { 'Authorization': `Bearer ${TOKEN}` } })
-        .then(r => r.json())
-        .then(files => {
-            const grid = document.getElementById('grid');
-            document.getElementById('loading').remove();
-            files.forEach(f => {
-                if (f.type !== 'file') return;
-                if (!f.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) return;
-                const url = CDN + encodeURIComponent(f.name);
-                const card = document.createElement('div');
-                card.className = 'bg-white rounded-2xl shadow hover:shadow-xl transition cursor-pointer overflow-hidden';
-                card.innerHTML = `<img src="${url}" alt="${f.name}" loading="lazy" class="w-full h-64 object-cover hover:scale-105 transition duration-500">`;
-                card.onclick = () => { document.getElementById('lbImg').src = url; document.getElementById('lightbox').classList.remove('hidden'); };
-                grid.appendChild(card);
+        fetch(GITHUB_API, { headers: { 'Accept': 'application/vnd.github+json' } })
+            .then(r => r.json())
+            .then(data => {
+                const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+                const products = (content.products || []).filter(p => p.page === '灵感');
+                const loading = document.getElementById('loading');
+                if (loading) loading.remove();
+                const grid = document.getElementById('grid');
+                if (!products.length) {
+                    grid.innerHTML = '<div class="col-span-full py-20 text-center opacity-30 italic">暂无灵感作品，请在首页管理中添加并选择"灵感"</div>';
+                    return;
+                }
+                products.forEach((p, idx) => {
+                    if (!p.images || !p.images.length) return;
+                    const card = document.createElement('div');
+                    card.className = 'inspiration-card cursor-pointer group fade-up';
+                    card.style.animationDelay = idx * 0.05 + 's';
+                    card.innerHTML = '<div class="overflow-hidden bg-[#f0f0ed] aspect-[3/4] md:aspect-[4/5] relative mb-4 md:mb-6 rounded-sm"><img src="' + p.images[0] + '" alt="' + p.name + '" loading="lazy" class="insp-img w-full h-full object-cover transition-transform duration-[1.2s]"></div><div class="flex justify-between items-baseline px-1"><div><p class="text-[8px] md:text-[9px] uppercase tracking-[0.2em] opacity-40 font-bold mb-1">' + p.category + '</p><h3 class="text-base md:text-lg serif font-medium tracking-wide">' + p.name + '</h3></div><p class="text-xs md:text-sm opacity-50 tracking-wide">&yen;' + Number(p.price || 0).toLocaleString() + '</p></div>';
+                    card.onclick = () => showLightbox(p);
+                    grid.appendChild(card);
+                });
+            })
+            .catch(err => {
+                const loading = document.getElementById('loading');
+                if (loading) loading.innerText = '加载失败，请刷新重试';
             });
-        });
 
-        function closeLb() { document.getElementById('lightbox').classList.add('hidden'); }
+        function showLightbox(p) {
+            document.getElementById('lbImg').src = p.images[0];
+            document.getElementById('lbInfo').innerHTML = '<p class="serif text-lg">' + p.name + '</p><p class="text-xs opacity-60">' + p.category + '</p>';
+            const lb = document.getElementById('lightbox');
+            lb.classList.remove('hidden');
+            lb.style.display = 'flex';
+        }
+        function closeLb() {
+            const lb = document.getElementById('lightbox');
+            lb.classList.add('hidden');
+            lb.style.display = '';
+        }
     </script>
 </body>
 </html>
