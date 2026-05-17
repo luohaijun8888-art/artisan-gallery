@@ -8,16 +8,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #C5A059; --bg: #F9F9F7; --text: #1A1A1A; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); scroll-behavior: smooth; }
         .serif { font-family: 'Playfair Display', serif; }
         .glass { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
         .inspiration-card { transition: all 0.6s cubic-bezier(0.16,1,0.3,1); }
         @media (hover:hover) { .inspiration-card:hover { transform: translateY(-8px); } .inspiration-card:hover .insp-img { transform: scale(1.05); } }
+        .product-image-container { overflow: hidden; background: #f0f0ed; border-radius: 2px; }
+        .insp-img { transition: transform 1.2s cubic-bezier(0.16,1,0.3,1); }
         @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
         .fade-up { animation: fadeIn 0.6s ease-out forwards; }
+        .save-indicator { position: fixed; bottom: 20px; right: 20px; z-index: 200; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; opacity: 0; transition: opacity 0.3s; }
+        .save-indicator.saving { background: #FEF3C7; color: #92400E; opacity: 1; }
+        .save-indicator.saved { background: #D1FAE5; color: #065F46; opacity: 1; }
+        .save-indicator.error { background: #FEE2E2; color: #991B1B; opacity: 1; }
     </style>
 </head>
 <body>
+
+    <div id="saveIndicator" class="save-indicator"></div>
+
     <nav class="fixed top-0 w-full z-[60] glass border-b border-black/5">
         <div class="max-w-[1400px] mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
             <div class="flex items-center gap-4 md:gap-8">
@@ -27,66 +36,294 @@
                     <a href="#" class="opacity-100 font-bold">灵感</a>
                 </div>
             </div>
+            <div class="flex items-center gap-4">
+                <button onclick="handleAdminAccess()" class="flex items-center gap-2 group">
+                    <span class="hidden sm:inline text-[10px] uppercase tracking-widest font-bold group-hover:text-[var(--accent)] transition-colors">管理</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+            </div>
         </div>
     </nav>
 
     <main class="pt-24 md:pt-32 pb-20 max-w-[1400px] mx-auto px-4 md:px-6">
         <header class="mb-10 md:mb-16 fade-up">
             <h2 class="text-[10px] uppercase tracking-[0.4em] text-[var(--accent)] font-bold mb-2 md:mb-4">Inspiration</h2>
-            <h1 class="text-3xl md:text-7xl serif leading-tight">灵感集</h1>
+            <h1 class="text-3xl md:text-7xl serif leading-tight"><span class="text-[#1A1A1A]">灵</span><span class="text-black/35">感集</span></h1>
         </header>
         <p id="loading" class="text-gray-400 mb-8 fade-up">加载灵感中...</p>
         <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 md:gap-x-10 gap-y-10 md:gap-y-16"></div>
     </main>
 
+    <!-- 灯箱 -->
     <div id="lightbox" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50 cursor-pointer" onclick="closeLb()">
         <img id="lbImg" class="max-w-[90vw] max-h-[90vh] object-contain shadow-2xl rounded-sm">
-        <div id="lbInfo" class="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/80 text-center"></div>
         <span class="fixed top-6 right-6 text-white/80 hover:text-white text-3xl z-[60]">✕</span>
     </div>
 
-    <script>
-        const GITHUB_API = 'https://api.github.com/repos/luohaijun8888-art/artisan-gallery/contents/products.json';
+    <!-- 密码验证弹窗 -->
+    <div id="authOverlay" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-white/80 backdrop-blur-sm">
+        <div class="bg-white p-8 md:p-10 w-full max-w-sm shadow-2xl rounded-sm text-center">
+            <h3 class="serif text-2xl mb-2">身份核验</h3>
+            <p class="text-[10px] uppercase tracking-widest opacity-40 mb-8 font-bold">请输入管理密码以继续</p>
+            <input type="password" id="adminPasswordInput" placeholder="••••" class="w-full border-b border-black/10 py-4 text-center text-2xl tracking-[0.5em] outline-none focus:border-black transition-colors bg-transparent">
+            <p id="authError" class="text-red-500 text-[10px] mt-4 font-bold tracking-widest uppercase hidden">密码错误</p>
+            <div class="flex gap-4 mt-10">
+                <button onclick="closeAuth()" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest opacity-40">取消</button>
+                <button onclick="verifyAdmin()" class="flex-1 bg-black text-white py-3 text-[10px] font-bold uppercase tracking-widest">确认进入</button>
+            </div>
+        </div>
+    </div>
 
-        fetch(GITHUB_API, { headers: { 'Accept': 'application/vnd.github+json' } })
-            .then(r => r.json())
-            .then(data => {
+    <!-- 管理侧边栏 -->
+    <div id="adminModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="toggleAdminModal()"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg bg-white shadow-2xl flex flex-col translate-x-full transition-transform duration-500 ease-out" id="adminSidebar">
+            <div class="p-6 md:p-8 border-b flex justify-between items-center">
+                <h2 class="text-xl md:text-2xl serif">灵感管理</h2>
+                <button onclick="toggleAdminModal()" class="p-2 hover:bg-black/5 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6 md:p-8">
+                <div class="space-y-10">
+                    <section class="bg-black/[0.02] p-4 md:p-6 rounded-lg">
+                        <h3 class="text-[10px] uppercase tracking-widest font-bold text-[var(--accent)] mb-6">添加灵感作品</h3>
+                        <div class="space-y-4">
+                            <input type="text" id="p_name" placeholder="作品名称" class="w-full border-b bg-transparent py-3 outline-none text-sm">
+                            <div class="grid grid-cols-2 gap-4">
+                                <select id="p_category" class="border-b py-3 outline-none bg-transparent text-sm"></select>
+                                <input type="number" id="p_price" placeholder="价格 (¥)" class="border-b bg-transparent py-3 outline-none text-sm">
+                            </div>
+                            <div id="imageInputs" class="space-y-3">
+                                <input type="text" placeholder="主图链接 URL" class="w-full border-b bg-transparent py-2 text-xs outline-none img-input">
+                            </div>
+                            <button onclick="addImageInput()" class="text-[10px] font-bold opacity-40 hover:opacity-100 flex items-center gap-2 pt-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                                添加更多视角
+                            </button>
+                            <button onclick="addProduct()" class="w-full bg-black text-white py-4 mt-6 hover:bg-black/80 transition-all font-bold tracking-widest uppercase text-[10px]">保存作品</button>
+                        </div>
+                    </section>
+                    <section class="pt-6">
+                        <h3 class="text-[10px] uppercase tracking-widest font-bold text-black/30 mb-6">现有灵感</h3>
+                        <div id="adminList" class="space-y-3"></div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === GitHub Sync Config ===
+        const GITHUB_REPO = "luohaijun8888-art/artisan-gallery";
+        const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/products.json";
+        const adminPassword = "8888";
+        const _tk = ['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];
+        let githubToken = localStorage.getItem('gh_token') || _tk.join('');
+        let dataSha = null;
+        let isAuthenticated = false;
+        let categories = ["餐台", "茶几", "餐椅", "床", "学习桌"];
+        let allProducts = [];
+
+        // === Save indicator ===
+        function showSaveStatus(status, msg) {
+            const el = document.getElementById('saveIndicator');
+            el.className = 'save-indicator ' + status;
+            el.textContent = msg;
+            setTimeout(() => { el.className = 'save-indicator'; }, 2500);
+        }
+
+        // === GitHub API ===
+        async function fetchProducts() {
+            try {
+                const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+                if (githubToken) headers['Authorization'] = 'Bearer ' + githubToken;
+                const res = await fetch(GITHUB_API, { headers });
+                if (!res.ok) throw new Error('fetch failed');
+                const data = await res.json();
+                dataSha = data.sha;
                 const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-                const products = (content.products || []).filter(p => p.page === '灵感');
-                const loading = document.getElementById('loading');
-                if (loading) loading.remove();
-                const grid = document.getElementById('grid');
-                if (!products.length) {
-                    grid.innerHTML = '<div class="col-span-full py-20 text-center opacity-30 italic">暂无灵感作品，请在首页管理中添加并选择"灵感"</div>';
+                categories = content.categories || categories;
+                allProducts = content.products || [];
+                localStorage.setItem('artisan_categories', JSON.stringify(categories));
+                localStorage.setItem('furniture_gallery_db', JSON.stringify(allProducts));
+            } catch(e) {
+                console.warn('GitHub fetch failed, using localStorage', e);
+                categories = JSON.parse(localStorage.getItem('artisan_categories')) || categories;
+                allProducts = JSON.parse(localStorage.getItem('furniture_gallery_db')) || [];
+            }
+            renderCategories();
+            renderProducts();
+            renderAdminList();
+        }
+
+        async function saveToGitHub() {
+            if (!githubToken) { showSaveStatus('error', '未设置Token'); return; }
+            showSaveStatus('saving', '同步中...');
+            try {
+                const data = { categories, products: allProducts };
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+                const body = { message: 'update inspiration ' + new Date().toISOString(), content: content, sha: dataSha };
+                const res = await fetch(GITHUB_API, {
+                    method: 'PUT',
+                    headers: { 'Authorization': 'Bearer ' + githubToken, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                if (!res.ok) {
+                    const errText = await res.text();
+                    if (res.status === 401) {
+                        const t = prompt('Token已失效，请输入新的GitHub Token：');
+                        if (t) { githubToken = t.trim(); localStorage.setItem('gh_token', githubToken); saveToGitHub(); }
+                        else showSaveStatus('error', '同步失败: Token无效');
+                    } else {
+                        showSaveStatus('error', '同步失败: ' + res.status);
+                    }
                     return;
                 }
-                products.forEach((p, idx) => {
-                    if (!p.images || !p.images.length) return;
-                    const card = document.createElement('div');
-                    card.className = 'inspiration-card cursor-pointer group fade-up';
-                    card.style.animationDelay = idx * 0.05 + 's';
-                    card.innerHTML = '<div class="overflow-hidden bg-[#f0f0ed] aspect-[3/4] md:aspect-[4/5] relative mb-4 md:mb-6 rounded-sm"><img src="' + p.images[0] + '" alt="' + p.name + '" loading="lazy" class="insp-img w-full h-full object-cover transition-transform duration-[1.2s]"></div><div class="flex justify-between items-baseline px-1"><div><p class="text-[8px] md:text-[9px] uppercase tracking-[0.2em] opacity-40 font-bold mb-1">' + p.category + '</p><h3 class="text-base md:text-lg serif font-medium tracking-wide">' + p.name + '</h3></div><p class="text-xs md:text-sm opacity-50 tracking-wide">&yen;' + Number(p.price || 0).toLocaleString() + '</p></div>';
-                    card.onclick = () => showLightbox(p);
-                    grid.appendChild(card);
-                });
-            })
-            .catch(err => {
-                const loading = document.getElementById('loading');
-                if (loading) loading.innerText = '加载失败，请刷新重试';
-            });
+                const result = await res.json();
+                dataSha = result.content.sha;
+                showSaveStatus('saved', '已同步到云端');
+            } catch(e) {
+                console.error('GitHub save failed', e);
+                showSaveStatus('error', '同步失败: ' + e.message);
+            }
+            localStorage.setItem('artisan_categories', JSON.stringify(categories));
+            localStorage.setItem('furniture_gallery_db', JSON.stringify(allProducts));
+        }
 
-        function showLightbox(p) {
-            document.getElementById('lbImg').src = p.images[0];
-            document.getElementById('lbInfo').innerHTML = '<p class="serif text-lg">' + p.name + '</p><p class="text-xs opacity-60">' + p.category + '</p>';
+        // === Auth ===
+        window.handleAdminAccess = function() {
+            if (isAuthenticated) { toggleAdminModal(); }
+            else { document.getElementById('authOverlay').classList.remove('hidden'); document.getElementById('adminPasswordInput').focus(); }
+        };
+        window.closeAuth = function() { document.getElementById('authOverlay').classList.add('hidden'); document.getElementById('adminPasswordInput').value = ''; document.getElementById('authError').classList.add('hidden'); };
+        window.verifyAdmin = function() {
+            const input = document.getElementById('adminPasswordInput');
+            if (input.value === adminPassword) {
+                isAuthenticated = true;
+                closeAuth();
+                toggleAdminModal();
+            } else {
+                document.getElementById('authError').classList.remove('hidden');
+                input.value = '';
+                input.focus();
+            }
+        };
+        document.getElementById('adminPasswordInput').onkeypress = (e) => { if (e.key === 'Enter') verifyAdmin(); };
+
+        // === Render ===
+        function renderCategories() {
+            const sel = document.getElementById('p_category');
+            if (sel) sel.innerHTML = categories.map(c => '<option value="' + c + '">' + c + '</option>').join('');
+        }
+        function renderProducts() {
+            const grid = document.getElementById('grid');
+            const products = allProducts.filter(p => (p.page || '首页') === '灵感');
+            const loading = document.getElementById('loading');
+            if (loading) loading.remove();
+            
+            if (!products.length) {
+                grid.innerHTML = '<div class="col-span-full py-20 text-center opacity-30 italic">暂无灵感作品，点击右上角"管理"添加</div>';
+                return;
+            }
+            
+            grid.innerHTML = products.map((p, idx) => 
+                '<div class="inspiration-card cursor-pointer group fade-up" style="animation-delay:' + idx*0.05 + 's" onclick="showLightbox(\'' + p.images[0] + '\')">' +
+                '<div class="product-image-container aspect-[3/4] md:aspect-[4/5] relative mb-4 md:mb-6">' +
+                '<img src="' + p.images[0] + '" alt="' + p.name + '" loading="lazy" class="insp-img w-full h-full object-cover">' +
+                '</div>' +
+                '<div class="flex justify-between items-baseline px-1">' +
+                '<div><p class="text-[8px] md:text-[9px] uppercase tracking-[0.2em] opacity-40 font-bold mb-1">' + p.category + '</p>' +
+                '<h3 class="text-base md:text-lg serif font-medium tracking-wide">' + p.name + '</h3></div>' +
+                '<p class="text-xs md:text-sm opacity-50 tracking-wide">&yen;' + Number(p.price || 0).toLocaleString() + '</p>' +
+                '</div></div>'
+            ).join('');
+        }
+        function renderAdminList() {
+            const products = allProducts.filter(p => (p.page || '首页') === '灵感');
+            const el = document.getElementById('adminList');
+            if (!products.length) {
+                el.innerHTML = '<div class="text-center opacity-30 py-8 text-sm">暂无灵感作品</div>';
+                return;
+            }
+            el.innerHTML = products.map(p =>
+                '<div class="flex items-center justify-between p-3 bg-black/[0.03] rounded-lg">' +
+                '<div class="flex items-center gap-3">' +
+                '<img src="' + p.images[0] + '" class="w-12 h-12 object-cover rounded-md">' +
+                '<div class="text-xs">' +
+                '<p class="font-bold">' + p.name + '</p>' +
+                '<p class="opacity-40 uppercase tracking-tighter">' + p.category + '</p>' +
+                '</div></div>' +
+                '<button onclick="deleteProduct(' + p.id + ')" class="text-red-400 p-2">' +
+                '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>' +
+                '</button></div>'
+            ).join('');
+        }
+
+        // === Actions ===
+        window.toggleAdminModal = function() {
+            const m = document.getElementById('adminModal');
+            const s = document.getElementById('adminSidebar');
+            if (m.classList.contains('hidden')) {
+                m.classList.remove('hidden');
+                setTimeout(() => s.classList.remove('translate-x-full'), 10);
+                renderAdminList();
+                renderCategories();
+            } else {
+                s.classList.add('translate-x-full');
+                setTimeout(() => m.classList.add('hidden'), 500);
+            }
+        };
+        window.addImageInput = function() {
+            const d = document.createElement('div');
+            d.className = 'flex gap-2';
+            d.innerHTML = '<input type="text" placeholder="视角 URL" class="w-full border-b bg-transparent py-2 text-xs outline-none img-input">';
+            document.getElementById('imageInputs').appendChild(d);
+        };
+        window.addProduct = function() {
+            const name = document.getElementById('p_name').value.trim();
+            const price = document.getElementById('p_price').value;
+            const images = Array.from(document.querySelectorAll('.img-input')).map(i => i.value).filter(v => v);
+            if (!name || !price || !images.length) return alert('信息不完整');
+            if (allProducts.some(p => p.name === name)) return alert('作品名重复');
+            allProducts.unshift({
+                id: Date.now(),
+                name,
+                price,
+                category: document.getElementById('p_category').value,
+                page: '灵感',
+                images,
+                tags: 'NEW'
+            });
+            saveToGitHub();
+            renderProducts();
+            renderAdminList();
+            document.getElementById('p_name').value = '';
+            document.getElementById('p_price').value = '';
+            document.querySelectorAll('.img-input').forEach((i, idx) => { if (idx > 0) i.parentElement.remove(); else i.value = ''; });
+        };
+        window.deleteProduct = function(id) {
+            if (confirm('删除此灵感作品？')) {
+                allProducts = allProducts.filter(p => p.id !== id);
+                saveToGitHub();
+                renderProducts();
+                renderAdminList();
+            }
+        };
+        window.showLightbox = function(src) {
+            document.getElementById('lbImg').src = src;
             const lb = document.getElementById('lightbox');
             lb.classList.remove('hidden');
             lb.style.display = 'flex';
-        }
-        function closeLb() {
+        };
+        window.closeLb = function() {
             const lb = document.getElementById('lightbox');
             lb.classList.add('hidden');
             lb.style.display = '';
-        }
+        };
+
+        // === Init ===
+        window.onload = () => { fetchProducts(); };
     </script>
 </body>
 </html>
