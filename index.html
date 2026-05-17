@@ -124,7 +124,7 @@
         <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="toggleAdminModal()"></div>
         <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg bg-white shadow-2xl flex flex-col translate-x-full transition-transform duration-500 ease-out" id="adminSidebar">
             <div class="p-6 md:p-8 border-b flex justify-between items-center">
-                <h2 class="text-xl md:text-2xl serif">图册管理</h2>
+                <h2 class="text-xl md:text-2xl serif">图册管理</h2><button onclick="resetToken()" title="重置Token" class="text-[10px] opacity-30 hover:opacity-100 hover:text-red-500 transition-all ml-2">🔑</button>
                 <div class="flex items-center gap-1 md:gap-2">
                     <button title="导出 CSV" onclick="exportToExcel()" class="p-2 hover:bg-black/5 rounded-full"><i data-lucide="download" class="w-5 h-5"></i></button>
                     <label title="导入 CSV" for="importInput" class="p-2 hover:bg-black/5 rounded-full cursor-pointer"><i data-lucide="upload" class="w-5 h-5"></i></label>
@@ -239,7 +239,7 @@
                 showSaveStatus('saved', '已同步到云端');
             } catch(e) {
                 console.error('GitHub save failed', e);
-                showSaveStatus('error', '同步失败: ' + e.message);
+                showSaveStatus('error', '同步失败: ' + e.message); if(e.message&&e.message.includes('401')){var t=prompt('Token已失效，请输入新的GitHub Token：');if(t){githubToken=t.trim();localStorage.setItem('gh_token',githubToken);saveToGitHub();}}
             }
             localStorage.setItem('artisan_categories', JSON.stringify(categories));
             localStorage.setItem('furniture_gallery_db', JSON.stringify(products));
@@ -252,7 +252,7 @@
             if (isAuthenticated) { toggleAdminModal(); }
             else { document.getElementById('authOverlay').classList.remove('hidden'); document.getElementById('adminPasswordInput').focus(); }
         };
-        window.closeAuth = function() { document.getElementById('authOverlay').classList.add('hidden'); document.getElementById('adminPasswordInput').value = ''; document.getElementById('authError').classList.add('hidden'); };
+        window.resetToken=function(){if(confirm("Token将被清除，下次管理时需重新输入。确认？")){githubToken="";localStorage.removeItem("gh_token");showSaveStatus("error","Token已重置");}}; window.closeAuth = function() { document.getElementById('authOverlay').classList.add('hidden'); document.getElementById('adminPasswordInput').value = ''; document.getElementById('authError').classList.add('hidden'); };
         window.verifyAdmin = function() {
             const input = document.getElementById('adminPasswordInput');
             if (input.value === adminPassword) {
