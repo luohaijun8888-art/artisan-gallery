@@ -161,6 +161,11 @@
             if (!githubToken) { showSaveStatus('error', '未设置Token'); return; }
             showSaveStatus('saving', '同步中...');
             try {
+                const headRes = await fetch(GITHUB_API, {
+                    headers: { 'Authorization': 'Bearer ' + githubToken, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }
+                });
+                if (headRes.ok) { const headData = await headRes.json(); dataSha = headData.sha; }
+
                 const data = { categories, products: allProducts };
                 const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
                 const body = { message: 'update inspiration ' + new Date().toISOString(), content: content, sha: dataSha };
@@ -169,17 +174,19 @@
                     headers: { 'Authorization': 'Bearer ' + githubToken, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
                 });
-                if (!res.ok) {
-                    const errText = await res.text();
-                    if (res.status === 401) {
-                        const t = prompt('Token已失效，请输入新的GitHub Token：');
-                        if (t) { githubToken = t.trim(); localStorage.setItem('gh_token', githubToken); saveToGitHub(); }
-                        else showSaveStatus('error', '同步失败: Token无效');
-                    } else {
-                        showSaveStatus('error', '同步失败: ' + res.status);
-                    }
+                if (res.status === 401) {
+                    showSaveStatus('error', 'Token已失效');
+                    const t = prompt('Token已失效，请输入新的GitHub Token：');
+                    if (t) { githubToken = t.trim(); localStorage.setItem('gh_token', githubToken); await saveToGitHub(); }
                     return;
                 }
+                if (res.status === 409) {
+                    showSaveStatus('error', 'SHA冲突，重试中...');
+                    dataSha = null;
+                    await saveToGitHub();
+                    return;
+                }
+                if (!res.ok) { const errText = await res.text(); throw new Error('HTTP ' + res.status + ': ' + errText.substring(0, 100)); }
                 const result = await res.json();
                 dataSha = result.content.sha;
                 showSaveStatus('saved', '已同步到云端');
