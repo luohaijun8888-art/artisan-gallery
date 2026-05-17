@@ -8,13 +8,13 @@
   ],
   "products": [
     {
-      "id": 1779027866738,
-      "name": "1",
-      "price": "1",
+      "id": 1,
+      "name": "测试产品",
+      "price": "100",
       "category": "餐台",
-      "page": "首页",
+      "page": "灵感",
       "images": [
-        "https://raw.githubusercontent.com/luohaijun8888-art/image-bed/main/img/18_847.jpg"
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/img/test.jpg"
       ],
       "tags": "NEW"
     }
