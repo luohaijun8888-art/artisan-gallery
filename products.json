@@ -6,16 +6,5 @@
     "床",
     "学习桌"
   ],
-  "products": [
-    {
-      "id": 1778989343827,
-      "name": "1",
-      "price": "1",
-      "category": "餐台",
-      "images": [
-        "[https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main](https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main)/img/%E6%9C%AA%E6%A0%87%E9%A2%98-9.jpg"
-      ],
-      "tags": "NEW"
-    }
-  ]
+  "products": []
 }
