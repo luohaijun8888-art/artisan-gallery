@@ -4,16 +4,6 @@
   ],
   "products": [
     {
-      "id": 1,
-      "name": "æç®åæ¨é¤å°",
-      "tags": "NEW",
-      "images": [
-        "https://images.unsplash.com/photo-1577145900557-2151145939fc?auto=format&fit=crop&q=80&w=800"
-      ],
-      "price": "8999",
-      "category": "é¤å°"
-    },
-    {
       "id": 2,
       "name": "æµ®å²èºæ¯è¶å ",
       "tags": "HOT",
