@@ -203,7 +203,7 @@
                 if (!res.ok) throw new Error('fetch failed');
                 const data = await res.json();
                 dataSha = data.sha;
-                const content = JSON.parse(atob(data.content));
+                const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
                 categories = content.categories || categories;
                 products = content.products || [];
                 localStorage.setItem('artisan_categories', JSON.stringify(categories));
