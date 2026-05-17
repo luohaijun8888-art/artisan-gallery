@@ -6,17 +6,5 @@
     "床",
     "学习桌"
   ],
-  "products": [
-    {
-      "id": 1,
-      "name": "测试产品",
-      "price": "100",
-      "category": "餐台",
-      "page": "灵感",
-      "images": [
-        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/img/test.jpg"
-      ],
-      "tags": "NEW"
-    }
-  ]
+  "products": []
 }
