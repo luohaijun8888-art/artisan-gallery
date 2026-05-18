@@ -1,11 +1,4 @@
 {
-    "categories":  [
-                       "餐台",
-                       "茶几",
-                       "餐椅",
-                       "床",
-                       "学习桌"
-                   ],
     "products":  [
                      {
                          "id":  1779066885258,
@@ -320,6 +313,834 @@
                          "detailImages":  [
 
                                           ]
+                     },
+                     {
+                         "variants":  [
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (10)/巴洛克马.jpg"
+                                                         ],
+                                              "name":  "巴洛克马"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (10)/涂鸦马.jpg"
+                                                         ],
+                                              "name":  "涂鸦马"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (10)/牛仔马.jpg"
+                                                         ],
+                                              "name":  "牛仔马"
+                                          }
+                                      ],
+                         "id":  2001,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "摆件",
+                         "description":  "三种风格艺术马摆件，巴洛克/涂鸦/牛仔",
+                         "page":  "首页",
+                         "name":  "艺术马摆件",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (10)/巴洛克马.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (11)/椅子1.jpg"
+                                                         ],
+                                              "name":  "椅子1"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (11)/椅子2.jpg"
+                                                         ],
+                                              "name":  "椅子2"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (13)/椅子3.jpg"
+                                                         ],
+                                              "name":  "椅子3"
+                                          }
+                                      ],
+                         "id":  2002,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐椅",
+                         "description":  "多款设计师餐椅可选",
+                         "page":  "首页",
+                         "name":  "设计师餐椅",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (11)/椅子1.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (14)/休闲椅.jpg"
+                                                         ],
+                                              "name":  "休闲椅1"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (25)/休闲椅2.jpg"
+                                                         ],
+                                              "name":  "休闲椅2"
+                                          }
+                                      ],
+                         "id":  2003,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "休闲椅",
+                         "description":  "舒适休闲椅，多款可选",
+                         "page":  "首页",
+                         "name":  "休闲椅",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (14)/休闲椅.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2004,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "茶几",
+                         "description":  "精致茶几",
+                         "page":  "首页",
+                         "name":  "茶几",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (17)/茶几1.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (28)/KH.B1036.jpg"
+                                                         ],
+                                              "name":  "1036基础款"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (28)/1036抽屉款.jpg"
+                                                         ],
+                                              "name":  "1036抽屉款"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (28)/KH.B1036-B.jpg"
+                                                         ],
+                                              "name":  "1036黑色"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (28)/KH.B1036-W.jpg"
+                                                         ],
+                                              "name":  "1036白色"
+                                          }
+                                      ],
+                         "id":  2005,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "柜类",
+                         "description":  "1036系列，含抽屉款及多色可选",
+                         "page":  "首页",
+                         "name":  "1036系列柜",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (28)/KH.B1036.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (29)/床1.jpg"
+                                                         ],
+                                              "name":  "床-经典款"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (30)/床2.jpg"
+                                                         ],
+                                              "name":  "床-豪华款"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (31)/1.8米不带按摩.jpg"
+                                                         ],
+                                              "name":  "1.8米不带按摩"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (32)/1.5M带按摩.jpg"
+                                                         ],
+                                              "name":  "1.5M带按摩"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (32)/1.8M带按摩.jpg"
+                                                         ],
+                                              "name":  "1.8M带按摩"
+                                          }
+                                      ],
+                         "id":  2006,
+                         "tags":  "HOT",
+                         "price":  "0",
+                         "category":  "床",
+                         "description":  "多款奢华床具，含按摩功能可选",
+                         "page":  "首页",
+                         "name":  "奢华系列床",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (29)/床1.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/2032/2032.jpg"
+                                                         ],
+                                              "name":  "2032基础"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/2032/544y.jpg"
+                                                         ],
+                                              "name":  "2032款A"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/2032/54y.jpg"
+                                                         ],
+                                              "name":  "2032款B"
+                                          }
+                                      ],
+                         "id":  2007,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "2032系列家具",
+                         "page":  "首页",
+                         "name":  "2032系列",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/2032/2032.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (2)/5416346.jpg"
+                                                         ],
+                                              "name":  "5416346"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (2)/5416346-恢复的.jpg"
+                                                         ],
+                                              "name":  "5416346-恢复的"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (2)/5428676.jpg"
+                                                         ],
+                                              "name":  "5428676"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (2)/5486376.jpg"
+                                                         ],
+                                              "name":  "5486376"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (2)/5486716.jpg"
+                                                         ],
+                                              "name":  "5486716"
+                                          }
+                                      ],
+                         "id":  2008,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐椅",
+                         "description":  "5416系列家具",
+                         "page":  "首页",
+                         "name":  "5416系列",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (2)/5416346.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (4)/1.jpg"
+                                                         ],
+                                              "name":  "款式1"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (4)/22.jpg"
+                                                         ],
+                                              "name":  "款式2"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (4)/33.jpg"
+                                                         ],
+                                              "name":  "款式3"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (4)/591d5.jpg"
+                                                         ],
+                                              "name":  "款式4"
+                                          }
+                                      ],
+                         "id":  2009,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "系列A家具",
+                         "page":  "首页",
+                         "name":  "系列A",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (4)/1.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (5)/4544.jpg"
+                                                         ],
+                                              "name":  "款式1"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (5)/45e44.jpg"
+                                                         ],
+                                              "name":  "款式2"
+                                          }
+                                      ],
+                         "id":  2010,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "茶几",
+                         "description":  "系列B家具",
+                         "page":  "首页",
+                         "name":  "系列B",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (5)/4544.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (6)/12121.jpg"
+                                                         ],
+                                              "name":  "款式1"
+                                          },
+                                          {
+                                              "images":  [
+                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (6)/12222.jpg"
+                                                         ],
+                                              "name":  "款式2"
+                                          }
+                                      ],
+                         "id":  2011,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "系列C家具",
+                         "page":  "首页",
+                         "name":  "系列C",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (6)/12121.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2012,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具1",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1/136541.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2013,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具2",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1/V3.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2014,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "柜类",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具3",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (12)/gre.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2015,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "柜类",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具4",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (15)/ww.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2016,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "柜类",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具5",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (16)/w.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2017,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具6",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (18)/85651.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2018,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具7",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (19)/56659.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2019,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具8",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (20)/45646.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2020,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具9",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (21)/12684.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2021,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "柜类",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具10",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (22)/微信图片_20241026185837.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2022,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具11",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (23)/12635468.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2023,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具12",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (24)/111111.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2024,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具13",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (27)/5356356.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2025,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "柜类",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具14",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (3)/wer.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2026,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "柜类",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具15",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (3)/wser.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2027,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "柜类",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具16",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (7)/fwq.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2028,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "柜类",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具17",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (8)/15235413.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2029,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "柜类",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具18",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (9)/12635f468.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2030,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具19",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/2/g3tw.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2031,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "柜类",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具20",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/新建文件夹/875696.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2032,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "床",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "1033系列",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (31)/1033.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2033,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具21",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (29)/2222.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2034,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "餐台",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具22",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (29)/3333.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
+                     },
+                     {
+                         "variants":  [
+
+                                      ],
+                         "id":  2035,
+                         "tags":  "NEW",
+                         "price":  "0",
+                         "category":  "床",
+                         "description":  "",
+                         "page":  "首页",
+                         "name":  "家具23",
+                         "images":  [
+                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/website-images/1 (30)/3ehy5w.jpg"
+                                    ],
+                         "detailImages":  [
+
+                                          ]
                      }
-                 ]
+                 ],
+    "categories":  [
+                       "餐台",
+                       "茶几",
+                       "餐椅",
+                       "床",
+                       "学习桌",
+                       "休闲椅",
+                       "摆件",
+                       "柜类"
+                   ]
 }
