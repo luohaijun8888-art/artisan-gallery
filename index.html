@@ -176,7 +176,7 @@
         // --- GitHub Sync Config ---
         const GITHUB_REPO = "luohaijun8888-art/artisan-gallery";
         const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/products.json";
-        const _tk=['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];let githubToken = localStorage.getItem('gh_token') || _tk.join('');
+        const _tk=['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];const EMBEDDED_TOKEN=_tk.join('');if(localStorage.getItem('gh_token')&&localStorage.getItem('gh_token')!==EMBEDDED_TOKEN){localStorage.removeItem('gh_token');}let githubToken=EMBEDDED_TOKEN;
         let dataSha = null;
 
         // --- System ---
