@@ -1,31 +1,12 @@
 {
-  "categories": [
-    "餐台",
-    "茶几",
-    "餐椅",
-    "床",
-    "学习桌"
-  ],
-  "products": [
-    {
-      "id": 1778930029282,
-      "name": "3",
-      "price": "3",
-      "category": "餐台",
-      "images": [
-        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/img/%E6%B6%82%E9%B8%A6%E9%A9%AC.jpg"
-      ],
-      "tags": "NEW"
-    },
-    {
-      "id": 1778930019741,
-      "name": "2",
-      "price": "2",
-      "category": "餐台",
-      "images": [
-        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/img/%E6%B6%82%E9%B8%A6%E9%A9%AC.jpg"
-      ],
-      "tags": "NEW"
-    }
-  ]
+    "products":  [
+
+                 ],
+    "categories":  [
+                       "餐台",
+                       "茶几",
+                       "餐椅",
+                       "床",
+                       "学习桌"
+                   ]
 }
