@@ -119,7 +119,9 @@ const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/pr
 const TOKEN_PARTS = ['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];
 const adminPassword = "8888";
 
-let githubToken = localStorage.getItem('gh_token') || TOKEN_PARTS.join('');
+const EMBEDDED_TOKEN = TOKEN_PARTS.join('');
+if (localStorage.getItem('gh_token') && localStorage.getItem('gh_token') !== EMBEDDED_TOKEN) { localStorage.removeItem('gh_token'); }
+let githubToken = EMBEDDED_TOKEN;
 let dataSha = null;
 let isAuthenticated = false;
 let categories = ["餐台","茶几","餐椅","床","学习桌"];
