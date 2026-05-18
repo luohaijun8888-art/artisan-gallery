@@ -104,7 +104,7 @@
             <button onclick="toggleDetailModal()" class="p-3 hover:scale-110 transition-transform pointer-events-auto bg-white/80 md:bg-white/50 rounded-full shadow-sm md:shadow-none"><i data-lucide="x" class="w-6 h-6 opacity-60 hover:opacity-100"></i></button>
         </div>
         <div id="viewport" class="flex-1 touch-none">
-            <img id="mainDetailImg" src="" class="max-w-[90%] max-h-[70vh] object-contain shadow-2xl rounded-sm">
+            <img id="mainDetailImg" src="" class="w-full h-full object-contain shadow-2xl rounded-sm">
         </div>
         <div class="w-full glass border-t border-black/5 p-4 md:py-6 md:px-8 relative z-10">
             <div class="max-w-[1400px] mx-auto flex flex-col gap-4">
@@ -327,7 +327,7 @@
         }
         function handleZoom(factor,cx,cy) { const vp=document.getElementById('viewport'),r=vp.getBoundingClientRect(),mx=cx-r.left,my=cy-r.top,ns=Math.min(Math.max(scale*factor,0.5),8);pos.x=mx-(mx-pos.x)*(ns/scale);pos.y=my-(my-pos.y)*(ns/scale);scale=ns;updateTransform(); }
         function updateTransform() { document.getElementById('mainDetailImg').style.transform='translate('+pos.x+'px,'+pos.y+'px) scale('+scale+')'; }
-        window.resetZoom = function() { const vp=document.getElementById('viewport'),img=document.getElementById('mainDetailImg'),r=vp.getBoundingClientRect();const ratio=Math.min(r.width*0.8/img.naturalWidth,r.height*0.7/img.naturalHeight,1);scale=ratio||0.8;pos.x=(r.width-img.offsetWidth*scale)/2;pos.y=(r.height-img.offsetHeight*scale)/2;updateTransform(); };
+        window.resetZoom = function() { const vp=document.getElementById('viewport'),img=document.getElementById('mainDetailImg'),r=vp.getBoundingClientRect();const ratio=Math.min(r.width/img.naturalWidth,r.height/img.naturalHeight,1);scale=ratio||0.5;pos.x=(r.width-img.naturalWidth*scale)/2;pos.y=(r.height-img.naturalHeight*scale)/2;updateTransform(); };
 
         // --- Import/Export ---
         window.exportToExcel = function() { let c="\uFEFF作品名称,分类,价格,图片链接(分号分隔),标签,页面\n";products.forEach(p=>{c+='"'+p.name+'","'+p.category+'","'+p.price+'","'+p.images.join(';')+'","'+(p.tags||'')+',"'+(p.page||'首页')+'"\n';});const b=new Blob([c],{type:'text/csv;charset=utf-8;'});const l=document.createElement("a");l.href=URL.createObjectURL(b);l.download='Artisan_Export_'+new Date().toISOString().slice(0,10)+'.csv';l.click(); };
