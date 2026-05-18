@@ -16,7 +16,7 @@
         @media (hover:hover) { .product-card:hover { transform: translateY(-8px); } .product-card:hover .product-image { transform: scale(1.05); } }
         .product-image-container { overflow: hidden; background: #f0f0ed; border-radius: 2px; }
         .product-image { transition: transform 1.2s cubic-bezier(0.16,1,0.3,1); }
-        @media (max-width:768px) { .product-image-container { aspect-ratio: auto !important; min-height: 200px; } .product-image { object-fit: contain !important; } }
+        @media (max-width:768px) { .product-image-container { aspect-ratio: auto !important; min-height: 200px; } }
         .category-pill { transition: all 0.3s ease; white-space: nowrap; }
         .category-pill.active { background: var(--text) !important; color: white !important; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -309,7 +309,7 @@
             const grid = document.getElementById('productGrid');
             const filtered = products.filter(p => (currentCategory==='all'||p.category===currentCategory) && p.name.toLowerCase().includes(currentSearch.toLowerCase())&&p.page!=='灵感');
             if(!filtered.length) { grid.innerHTML = '<div class="col-span-full py-20 text-center opacity-30 text-sm italic">未找到相关作品</div>'; return; }
-            grid.innerHTML = filtered.map((p,idx) => '<div class="product-card cursor-pointer group fade-up" style="animation-delay:'+idx*0.05+'s" onclick="showDetail('+p.id+')"><div class="product-image-container aspect-[3/4] md:aspect-[4/5] relative mb-4 md:mb-6">'+(p.tags?'<span class="absolute top-3 left-3 md:top-4 md:left-4 z-10 bg-white px-2 md:px-3 py-1 text-[8px] md:text-[9px] font-bold tracking-widest uppercase shadow-sm">'+p.tags+'</span>':'')+'<img src="'+p.images[0]+'" class="product-image w-full h-full object-cover" loading="lazy"></div><div class="flex justify-between items-baseline px-1"><div><p class="text-[8px] md:text-[9px] uppercase tracking-[0.2em] opacity-40 font-bold mb-1">'+p.category+'</p><h3 class="text-base md:text-lg serif font-medium tracking-wide">'+p.name+'</h3></div><p class="text-xs md:text-sm opacity-50 tracking-wide">&yen;'+Number(p.price).toLocaleString()+'</p></div></div>').join('');
+            grid.innerHTML = filtered.map((p,idx) => '<div class="product-card cursor-pointer group fade-up" style="animation-delay:'+idx*0.05+'s" onclick="showDetail('+p.id+')"><div class="product-image-container aspect-[3/4] md:aspect-[4/5] relative mb-4 md:mb-6">'+(p.tags?'<span class="absolute top-3 left-3 md:top-4 md:left-4 z-10 bg-white px-2 md:px-3 py-1 text-[8px] md:text-[9px] font-bold tracking-widest uppercase shadow-sm">'+p.tags+'</span>':'')+'<img src="'+p.images[0]+'" class="product-image w-full h-full object-contain" loading="lazy"></div><div class="flex justify-between items-baseline px-1"><div><p class="text-[8px] md:text-[9px] uppercase tracking-[0.2em] opacity-40 font-bold mb-1">'+p.category+'</p><h3 class="text-base md:text-lg serif font-medium tracking-wide">'+p.name+'</h3></div><p class="text-xs md:text-sm opacity-50 tracking-wide">&yen;'+Number(p.price).toLocaleString()+'</p></div></div>').join('');
             lucide.createIcons();
         }
 
