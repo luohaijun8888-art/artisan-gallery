@@ -55,9 +55,9 @@
 /* Widgets */
 .widget-card{background:#fff;border:1px solid rgba(0,0,0,.05);border-radius:8px;overflow:hidden;margin-bottom:16px;transition:all .3s}
 .widget-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.06)}
-.admin-tab{padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.35;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
-.admin-tab.active{opacity:1;border-bottom-color:var(--text)}
-.admin-tab:hover:not(.active){opacity:.6}
+.admin-tab{padding:10px 20px;font-size:12px;font-weight:700;opacity:.45;cursor:pointer;border-radius:8px;background:#f0f0ee;transition:all .2s;letter-spacing:.03em}
+.admin-tab.active{opacity:1;background:var(--text);color:#fff}
+.admin-tab:hover:not(.active){opacity:.8}
 .code-editor{font-family:'Courier New',monospace;font-size:12px;background:#fafafa;border:1px solid rgba(0,0,0,.08);border-radius:6px;padding:12px;width:100%;min-height:200px;resize:vertical;outline:none;tab-size:2;line-height:1.6}
 .code-editor:focus{border-color:var(--accent);background:#fff}
 
@@ -124,7 +124,7 @@
     </div>
 
     <!-- 详情模态框 -->
-    <div <!-- Detail Page (Taobao style) -->
+        <!-- Detail Page (Taobao style) --> -->
 <div id="detailPage" class="hidden min-h-screen pb-20">
 <div class="sticky top-0 z-50 glass border-b border-black/5 flex items-center h-14 px-4">
 <button onclick="closeDetail()" class="flex items-center gap-2 text-sm font-medium opacity-60 hover:opacity-100"><i data-lucide="arrow-left" class="w-5 h-5"></i><span class="hidden sm:inline">返回</span></button>
@@ -551,6 +551,26 @@ window.addCategory = function() { const v=document.getElementById('new_cat_name'
             ).join('');
             lucide.createIcons();
         }
+
+// --- Admin Modal Toggle ---
+        window.toggleAdminModal = function() {
+            const sidebar = document.getElementById('adminSidebar');
+            const modal = document.getElementById('adminModal');
+            const isOpen = !modal.classList.contains('hidden');
+            if (isOpen) {
+                sidebar.classList.remove('translate-x-0');
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            } else {
+                sidebar.classList.add('translate-x-0');
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                // Reset to products tab
+                switchAdminTab('products');
+                renderAdminList();
+                renderAdminWidgetList();
+            }
+        };
 
         // --- Init ---
         window.onload = () => { fetchProducts(); lucide.createIcons(); };
