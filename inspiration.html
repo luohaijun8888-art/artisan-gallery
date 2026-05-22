@@ -10,10 +10,10 @@
     <style>
         :root { 
             --accent: #CC9933;       /* 古董哑光金 */
-            --bg: #1B1A20;           /* 质感深炭灰（契合参考图高级暗色调） */
-            --card-base: #2A2830;     /* 温暖灰紫卡片座 */
-            --text-main: #F4F4F2;    /* 亮灰 */
-            --text-muted: #8A8A95;   /* 诗意岩石灰 */
+            --bg: #4B4C5A;           /* 参考图同款高冷深灰蓝 */
+            --card-base: #2E2F3A;     /* 柔黑蓝紫色卡片座 */
+            --text-main: #F4F4F2;    /* 亮白 */
+            --text-muted: #A0A1B0;   /* 烟云灰 */
         }
         body { 
             font-family: 'Inter', 'Noto Serif SC', serif; 
@@ -22,99 +22,110 @@
             scroll-behavior: smooth; 
             -webkit-tap-highlight-color: transparent;
             overflow-x: hidden;
-            padding-bottom: 80px;
         }
-        @media (min-width: 769px) { body { padding-bottom: 0; } }
         
         .serif-title { font-family: 'Cinzel', 'Noto Serif SC', serif; tracking: 0.05em; }
-        .glass { background: rgba(42, 40, 48, 0.7); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); }
-        .glass-card { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.05); }
+        .glass { background: rgba(75, 76, 90, 0.75); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); }
+        .glass-card { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
+        
+        /* 极致纯净磨砂玻璃条 */
+        .glass-banner { 
+            background: rgba(46, 47, 58, 0.45); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px); 
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
 
-        /* --- 时空轴线设计 --- */
+        /* --- 极致还原：时空穿梭垂直轴线 (Timeline Segment) --- */
         .timeline-container {
             position: relative;
-            width: 100px;
+            width: 140px;
             height: 100%;
         }
         .timeline-line {
             position: absolute;
-            left: 50%;
+            left: 24px;
             top: 0;
             bottom: 0;
             width: 1px;
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.12);
         }
+        
+        /* 浮动选中滑块指针 */
         .timeline-dot {
             position: absolute;
-            left: 50%;
-            width: 10px;
-            height: 10px;
-            background-color: var(--accent);
+            left: 24px;
+            width: 12px;
+            height: 12px;
+            background-color: #ffffff;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 15px var(--accent);
-            transition: top 0.6s cubic-bezier(0.15, 0.85, 0.35, 1);
-            z-index: 10;
+            box-shadow: 0 0 15px rgba(255,255,255,0.8);
+            transition: top 0.7s cubic-bezier(0.15, 0.85, 0.35, 1);
+            z-index: 20;
+            display: flex;
+            align-items: center;
         }
-        .timeline-dot::after {
-            content: '';
+        .timeline-dot-label {
             position: absolute;
-            inset: -4px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            animation: pulse-ring 2s infinite;
-        }
-        @keyframes pulse-ring {
-            0% { transform: scale(0.8); opacity: 1; }
-            100% { transform: scale(1.8); opacity: 0; }
+            left: 20px;
+            white-space: nowrap;
+            font-size: 11px;
+            font-weight: 500;
+            color: #ffffff;
+            letter-spacing: 0.05em;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .timeline-tick {
             position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 9px;
-            font-weight: 500;
+            left: 24px;
+            padding-left: 20px;
+            font-size: 10px;
+            font-weight: 600;
             letter-spacing: 0.15em;
             color: rgba(255, 255, 255, 0.25);
             text-transform: uppercase;
-            transition: all 0.4s ease;
+            transition: all 0.5s ease;
             cursor: pointer;
+            transform: translateY(-50%);
         }
         .timeline-tick.active {
             color: var(--accent);
-            font-size: 11px;
-            font-weight: 600;
-            text-shadow: 0 0 8px rgba(204,153,51,0.3);
+            text-shadow: 0 0 10px rgba(204,153,51,0.3);
         }
 
-        /* --- 层叠卡片滑动引擎 (3D Stack Card Engine) --- */
+        /* --- 重构：3D立体错落扇形转盘 (3D Stack Fan Engine) --- */
         .stack-area {
             position: relative;
             width: 100%;
-            max-width: 480px;
-            height: 520px;
+            max-width: 440px;
+            height: 540px;
             margin: 0 auto;
-            perspective: 1200px;
+            perspective: 1500px;
         }
         @media (max-width: 640px) {
             .stack-area {
-                height: 440px;
+                height: 460px;
+                max-width: 360px;
             }
         }
         .stack-card {
             position: absolute;
             width: 100%;
             height: 100%;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
             background-color: var(--card-base);
-            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.5), 
-                        0 0 1px rgba(255,255,255,0.1) inset;
-            transform-origin: 50% 100%;
-            transition: transform 0.6s cubic-bezier(0.15, 0.85, 0.35, 1), 
-                        opacity 0.6s cubic-bezier(0.15, 0.85, 0.35, 1),
+            box-shadow: 0 35px 70px -15px rgba(0,0,0,0.65), 
+                        0 0 1px rgba(255,255,255,0.15) inset;
+            transform-origin: 10% 90%; /* 旋转轴心偏向左下，形成自然的折扇转动 */
+            transition: transform 0.8s cubic-bezier(0.15, 0.85, 0.35, 1), 
+                        opacity 0.8s cubic-bezier(0.15, 0.85, 0.35, 1),
                         box-shadow 0.6s ease;
             cursor: grab;
             user-select: none;
@@ -124,13 +135,13 @@
             cursor: grabbing;
         }
 
-        /* 极致错落滑动退场动效 */
+        /* 极致错落滑动弧形退场动效 */
         .stack-card.swipe-out-left {
-            transform: translate3d(-150%, 10%, 0) rotate3d(0, 0, 1, -25deg) scale(0.9) !important;
+            transform: translate3d(-140%, 15%, 0) rotate3d(0, 0, 1, -30deg) scale(0.85) !important;
             opacity: 0 !important;
         }
         .stack-card.swipe-out-right {
-            transform: translate3d(150%, 10%, 0) rotate3d(0, 0, 1, 25deg) scale(0.9) !important;
+            transform: translate3d(140%, 15%, 0) rotate3d(0, 0, 1, 30deg) scale(0.85) !important;
             opacity: 0 !important;
         }
 
@@ -141,85 +152,74 @@
         .save-indicator.saving { background: #fff; color: #161615; border-left: 2px solid var(--accent); opacity: 1; transform: translateY(0); }
         .save-indicator.saved { background: #EFFFFA; color: #00A36C; border-left: 2px solid #00A36C; opacity: 1; transform: translateY(0); }
         .save-indicator.error { background: #FFEEEE; color: #D9383A; border-left: 2px solid #D9383A; opacity: 1; transform: translateY(0); }
-
-        /* 移动端高定圆角底座导航 */
-        .mobile-nav { 
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
-            width: calc(100% - 32px); max-width: 380px; height: 56px;
-            background: rgba(22, 22, 21, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-radius: 28px; display: flex; align-items: center; justify-content: space-around;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15); z-index: 90; padding: 0 10px;
-        }
-        @media (min-width: 769px) { .mobile-nav { display: none; } }
-        .mobile-nav a { display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 500; letter-spacing: 0.1em; transition: all 0.3s; gap: 2px;}
-        .mobile-nav a i { width: 18px; height: 18px; margin-bottom: 1px; stroke-width: 1.5; }
-        .mobile-nav a.active { color: var(--accent); }
     </style>
 </head>
 <body class="selection:bg-neutral-800 text-neutral-300">
 
     <div id="saveIndicator" class="save-indicator"></div>
 
-    <!-- 顶奢极简导航 -->
+    <!-- 极简大厅自适应导航栏 -->
     <nav class="fixed top-0 w-full z-[60] glass border-b border-white/[0.03]">
-        <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 md:h-24 flex items-center justify-between">
-            <div class="flex items-center gap-12">
-                <a href="index.html" class="text-xl md:text-2xl font-medium tracking-[0.25em] serif-title text-white">SHANYAO</a>
-                <div class="hidden md:flex gap-8 text-[11px] uppercase tracking-[0.2em] font-medium opacity-50">
+        <div class="max-w-[1400px] mx-auto px-4 md:px-12 h-16 md:h-24 flex items-center justify-between">
+            <div class="flex items-center gap-4 md:gap-12">
+                <a href="index.html" class="text-base md:text-2xl font-medium tracking-[0.2em] md:tracking-[0.25em] serif-title text-white">SHANYAO</a>
+                <div class="flex gap-4 md:gap-8 text-[9px] md:text-[11px] uppercase tracking-[0.15em] md:tracking-[0.2em] font-medium opacity-50">
                     <a href="index.html" class="hover:text-[var(--accent)] hover:opacity-100 transition-all text-neutral-400">首页 / HOME</a>
                     <a href="#" class="text-[var(--accent)] hover:opacity-100 transition-all">灵感 / INSPIRATION</a>
                 </div>
             </div>
-            <div class="flex items-center gap-6">
-                <button onclick="handleAdminAccess()" class="flex items-center gap-2 group text-neutral-400 hover:text-white transition-colors">
-                    <span class="text-[10px] uppercase tracking-[0.2em] font-medium hidden sm:inline opacity-60 group-hover:opacity-100">灵感工作台</span>
-                    <i data-lucide="settings" class="w-5 h-5 stroke-[1.2]"></i>
+            <div class="flex items-center gap-3 md:gap-6">
+                <button onclick="handleAdminAccess()" class="flex items-center gap-1.5 md:gap-2 group text-neutral-400 hover:text-white transition-colors">
+                    <span class="text-[9px] md:text-[10px] uppercase tracking-[0.15em] md:tracking-[0.2em] font-medium hidden sm:inline opacity-60 group-hover:opacity-100">灵感工作台</span>
+                    <i data-lucide="settings" class="w-4 h-4 md:w-5 md:h-5 stroke-[1.2]"></i>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- 主视窗：流线型时空布局 -->
-    <main class="pt-28 md:pt-36 pb-20 max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-8 items-center min-h-[calc(100vh-140px)]">
+    <!-- 主视窗：时空流线轨道 -->
+    <main class="pt-24 md:pt-36 pb-12 max-w-[1250px] mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-8 items-center min-h-[calc(100vh-140px)]">
         
-        <!-- 左侧：高冷流线标题与说明 -->
-        <div class="md:col-span-4 space-y-6 md:pr-8">
+        <!-- 左：诗意叙事 -->
+        <div class="md:col-span-4 space-y-4 md:space-y-6 md:pr-8">
             <header class="space-y-4">
-                <h2 class="text-[10px] uppercase tracking-[0.4em] text-[var(--accent)] font-semibold">Curation Scene</h2>
-                <h1 class="text-4xl md:text-5xl serif-title leading-tight text-white font-light">
+                <h2 class="text-[10px] uppercase tracking-[0.4em] text-[var(--accent)] font-semibold">Timeline Palette</h2>
+                <h1 class="text-3xl md:text-5xl serif-title leading-tight text-white font-light">
                     闪光留韵 <br><span class="italic text-neutral-500 font-extralight">/ 耀影成诗</span>
                 </h1>
                 <p class="text-xs text-neutral-400 tracking-[0.1em] font-light leading-relaxed">
-                    在灵感穿梭线中，每一件手作家具皆承载着某一季的光影交错。上下轻扫或划动卡片，寻找属于你的空间灵感。
+                    在层叠时空轴中旋转家具画册。后方卡片呈扇形弧度层叠展开，点击边缘即可一键流转卡片。
                 </p>
             </header>
 
-            <div class="hidden md:flex items-center gap-3 pt-6 text-neutral-500 text-xs font-light">
-                <span class="flex gap-1.5"><i data-lucide="arrow-up-down" class="w-4 h-4"></i> 滑动或拖曳可切牌</span>
+            <div class="hidden md:flex items-center gap-3 pt-4 text-neutral-500 text-xs font-light">
+                <span class="flex gap-1.5"><i data-lucide="arrow-up-down" class="w-4 h-4"></i> 滑动或点击边缘切牌</span>
                 <span>·</span>
-                <span class="flex gap-1.5"><i data-lucide="heart" class="w-4 h-4"></i> 双击可点赞保存</span>
+                <span class="flex gap-1.5"><i data-lucide="heart" class="w-4 h-4"></i> 双击可点赞</span>
             </div>
         </div>
 
-        <!-- 中间：动态时空穿梭轴线 -->
+        <!-- 中：极精密垂直时间线 (Timeline Column) -->
         <div class="hidden md:col-span-2 md:flex justify-center h-[520px]">
             <div class="timeline-container" id="timelineContainer">
                 <div class="timeline-line"></div>
-                <div class="timeline-dot" id="timelineDot" style="top: 0px;"></div>
+                <div class="timeline-dot" id="timelineDot" style="top: 0px;">
+                    <div class="timeline-dot-label" id="timelineDotLabel">June, 2026</div>
+                </div>
                 <div id="timelineTicks" class="w-full h-full relative"></div>
             </div>
         </div>
 
-        <!-- 右侧：多维层叠卡片展示区域 -->
+        <!-- 右：3D 扇形堆叠转盘 (Stacked Carousel Zone) -->
         <div class="md:col-span-6 flex flex-col justify-center relative">
             <p id="loading" class="text-center text-xs text-neutral-500 tracking-widest font-light py-20">正在唤醒时空灵感...</p>
             
             <div class="stack-area" id="stackArea"></div>
 
-            <!-- 移动端额外滑动向导 -->
+            <!-- 滑动导轨气泡 -->
             <div class="flex md:hidden justify-center items-center gap-2 text-[10px] text-neutral-500 font-light mt-8 tracking-widest">
                 <i data-lucide="chevron-left" class="w-3.5 h-3.5 animate-pulse"></i>
-                <span>向左或向右划动切牌</span>
+                <span>轻扫卡片或点击后方切牌</span>
                 <i data-lucide="chevron-right" class="w-3.5 h-3.5 animate-pulse"></i>
             </div>
         </div>
@@ -232,12 +232,12 @@
         <div id="zoomViewport" class="w-full h-full flex items-center justify-center cursor-grab"><img id="zoomImg" src="" alt="Zoom Image" class="max-w-[95%] max-h-[90%] object-contain transition-transform duration-150 ease-out"></div>
     </div>
 
-    <!-- 鉴权特权验证遮罩 -->
+    <!-- 鉴权遮罩 -->
     <div id="authOverlay" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
         <div class="bg-[#1C1B22] p-8 md:p-12 w-full max-w-sm shadow-2xl rounded-sm text-center border border-white/[0.03]">
             <h3 class="serif-title text-2xl tracking-widest mb-2 font-light text-white">核验特权</h3>
             <p class="text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-8 font-medium">SECRET ACCESS PASSWORD</p>
-            <input type="password" id="adminPasswordInput" placeholder="••••" class="w-full border-b border-white/[0.08] py-3 text-center text-2xl tracking-[0.4em] outline-none focus:border-white transition-colors bg-transparent font-light text-white">
+            <input type="password" id="adminPasswordInput" placeholder="••••" class="w-full border-b border-white/[0.08] py-3 text-center text-2xl tracking-[0.4em] outline-none focus:border-white transition-colors bg-transparent font-light text-white font-mono">
             <p id="authError" class="text-red-500 text-[10px] mt-4 tracking-widest uppercase hidden font-medium">密码校验未通过</p>
             <div class="flex gap-4 mt-8">
                 <button onclick="closeAuth()" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-[0.15em] opacity-40">返回</button>
@@ -246,7 +246,7 @@
         </div>
     </div>
 
-    <!-- 图册控制后台抽屉 -->
+    <!-- 管理后台抽屉 -->
     <div id="adminModal" class="fixed inset-0 z-[100] hidden">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="toggleAdminModal()"></div>
         <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg bg-[#1C1B22] shadow-2xl flex flex-col translate-x-full transition-transform duration-500 ease-out border-l border-white/[0.03]" id="adminSidebar">
@@ -280,15 +280,8 @@
         </div>
     </div>
 
-    <!-- 移动端底部高定导航 -->
-    <div class="mobile-nav">
-        <a href="index.html" id="mNavHome"><i data-lucide="home"></i>画廊</a>
-        <a href="#" class="active" id="mNavInspire"><i data-lucide="compass"></i>灵感</a>
-        <a href="#" onclick="handleAdminAccess()"><i data-lucide="box"></i>控制台</a>
-    </div>
-
     <script>
-        // --- GitHub 自动化发布引擎配置 ---
+        // --- GitHub 自动发布引擎 ---
         const GITHUB_REPO = "luohaijun8888-art/artisan-gallery";
         const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/products.json";
         const _tk=['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];
@@ -303,10 +296,9 @@
         let allProducts = [];
         let inspirationProducts = [];
         
-        // 层叠卡片滑动指针
+        // 层叠旋转卡片活跃指针
         let activeCardIndex = 0;
 
-        // --- 触觉防抖指示灯状态 ---
         function showSaveStatus(status, msg) {
             const el = document.getElementById('saveIndicator');
             el.className = 'save-indicator ' + status;
@@ -314,7 +306,6 @@
             setTimeout(() => { el.className = 'save-indicator'; }, 2500);
         }
 
-        // --- 核心拉取：无缝兼顾首页/灵感两页的 products 结构 ---
         async function fetchProducts() {
             try {
                 const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
@@ -331,7 +322,6 @@
                 localStorage.setItem('artisan_categories', JSON.stringify(categories));
                 localStorage.setItem('furniture_gallery_db', JSON.stringify(allProducts));
             } catch(e) {
-                console.warn('时空轴连接受限，唤醒本地安全库。');
                 categories = JSON.parse(localStorage.getItem('artisan_categories')) || categories;
                 allProducts = JSON.parse(localStorage.getItem('furniture_gallery_db')) || [];
             }
@@ -339,11 +329,11 @@
             // 筛选灵感单品，按时间由新到旧排列
             inspirationProducts = allProducts.filter(p => (p.page || '首页') === '灵感');
             
-            // 如果灵感数据完全为空，植入三款超奢默认高定单品，避免骨骼塌陷
+            // 兜底数据
             if(inspirationProducts.length === 0) {
                 inspirationProducts = [
                     {
-                        id: 1779830400000, // 2026-05
+                        id: 1779830400000, 
                         name: "华尔兹极奢岩石柜",
                         price: 18900,
                         category: "书架",
@@ -351,7 +341,7 @@
                         description: "极致利落骨骼与冷岩肌理交融，在晨昏间捕捉流光艺术投影。"
                     },
                     {
-                        id: 1777084800000, // 2026-04
+                        id: 1777084800000, 
                         name: "奥德赛东方罗汉榻",
                         price: 24500,
                         category: "床",
@@ -359,7 +349,7 @@
                         description: "古典骨架融合现代极简泡棉工艺，勾勒悠远清雅的起居禅意境象。"
                     },
                     {
-                        id: 1774348800000, // 2026-03
+                        id: 1774348800000, 
                         name: "圆舞曲黑檀木茶几",
                         price: 14800,
                         category: "茶几",
@@ -367,7 +357,6 @@
                         description: "精选百年高密度黑檀木纯手工旋切，轮纹深邃，留驻大地诗篇。"
                     }
                 ];
-                // 写入全集以便同步
                 allProducts.push(...inspirationProducts);
             }
             
@@ -386,10 +375,9 @@
                 });
                 if (headRes.ok) { const d = await headRes.json(); dataSha = d.sha; }
 
-                // 核心封装：保证 categories 与 products 整合不丢失
                 const data = { categories, products: allProducts };
                 const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-                const body = { message: '✨ 灵感空间多维卡片自动化发布: ' + new Date().toISOString(), content: content, sha: dataSha };
+                const body = { message: '✨ 灵感堆砌3D扇页转盘重构: ' + new Date().toISOString(), content: content, sha: dataSha };
                 
                 const res = await fetch(GITHUB_API, {
                     method: 'PUT',
@@ -397,10 +385,7 @@
                     body: JSON.stringify(body)
                 });
                 if (res.status === 401) {
-                    showSaveStatus('error', '凭证失效');
-                    const t = prompt('发布凭证失效，请输入 GitHub 权限 Token：');
-                    if (t) { githubToken = t.trim(); localStorage.setItem('gh_token', githubToken); return await saveToGitHub(); }
-                    return false;
+                    showSaveStatus('error', '凭证失效'); return false;
                 }
                 if (res.status === 409) {
                     dataSha = null; return await saveToGitHub();
@@ -411,7 +396,7 @@
                 
                 localStorage.setItem('artisan_categories', JSON.stringify(categories));
                 localStorage.setItem('furniture_gallery_db', JSON.stringify(allProducts));
-                showSaveStatus('saved', '云端自动化打包部署成功');
+                showSaveStatus('saved', '云端自动化同步成功');
                 return true;
             } catch(e) {
                 showSaveStatus('error', '云同步失败: ' + e.message);
@@ -419,7 +404,7 @@
             }
         }
 
-        // --- 核心交互引擎：时间轴 + 3D堆叠卡片完美联动 ---
+        // --- 核心：多维扇叶弧形转盘与时间线联动引擎 ---
         function initTimelineAndCards() {
             const loading = document.getElementById('loading'); if (loading) loading.remove();
             const stackArea = document.getElementById('stackArea');
@@ -429,39 +414,38 @@
             ticksContainer.innerHTML = '';
             activeCardIndex = 0;
 
-            // 1. 生成卡片集
+            // 1. 渲染卡片 (极致对齐参考图样式)
             inspirationProducts.forEach((p, idx) => {
                 const card = document.createElement('div');
                 card.className = 'stack-card';
                 card.id = `card-${idx}`;
                 card.style.zIndex = inspirationProducts.length - idx;
                 
-                // 假造极高质感点赞数
-                const pseudoLikes = Math.floor((p.id % 4000) + 1200);
+                // 还原参考图赞数与爱心
+                const pseudoLikes = Math.floor((p.id % 4500) + 1800);
 
+                // 核心布局：图片顶格、左上角爱心赞数、底部极致毛玻璃框
                 card.innerHTML = `
                     <div class="relative w-full h-full">
-                        <!-- 家具质感大图 -->
                         <img src="${p.images[0]}" class="w-full h-full object-cover select-none pointer-events-none" loading="lazy">
                         
-                        <!-- 顶层高定玻璃触觉标签 -->
-                        <div class="absolute top-4 left-4 glass-card px-3 py-1 rounded-full text-[9px] uppercase tracking-[0.2em] font-medium text-[var(--accent)] flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 bg-[var(--accent)] rounded-full animate-ping"></span>
+                        <!-- 顶层心动点赞：OUTLINE 心形 + 精准白字 -->
+                        <div class="absolute top-6 left-6 bg-black/25 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-medium text-white/90 flex items-center gap-1.5 cursor-pointer hover:bg-black/50 transition-colors" onclick="likeCard(event, ${idx})">
+                            <i data-lucide="heart" class="w-4 h-4 text-white stroke-[2] fill-none"></i>
+                            <span id="like-count-${idx}" class="font-semibold tracking-wide">${pseudoLikes}</span>
+                        </div>
+
+                        <!-- 顶层高定分类胶囊 -->
+                        <div class="absolute top-6 right-6 glass-card px-3 py-1 rounded-full text-[9px] uppercase tracking-[0.2em] font-medium text-[var(--accent)]">
                             <span>${p.category}</span>
                         </div>
 
-                        <!-- 顶层心形赞数标签 -->
-                        <div class="absolute top-4 right-4 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-[10px] tracking-widest font-light text-white/90 flex items-center gap-1.5 cursor-pointer hover:bg-black/60 transition-colors" onclick="likeCard(event, ${idx})">
-                            <i data-lucide="heart" class="w-3.5 h-3.5 text-red-400 stroke-[1.5] fill-red-400"></i>
-                            <span id="like-count-${idx}">${pseudoLikes}</span>
-                        </div>
-
-                        <!-- 底部高定毛玻璃卡名 -->
-                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 flex flex-col justify-end min-h-[140px] select-none">
-                            <p class="text-[9px] uppercase tracking-[0.15em] text-white/50 mb-1 font-light">${getYearMonthStr(p.id)} COLLECTION</p>
+                        <!-- 底部极高保真度毛玻璃标题栏 (致敬 200 Essentials Icons 效果) -->
+                        <div class="absolute bottom-0 inset-x-0 glass-banner p-6 flex flex-col justify-end min-h-[140px] select-none text-white">
+                            <p class="text-[9px] uppercase tracking-[0.15em] text-white/40 mb-1.5 font-light">${getYearMonthStr(p.id)} COLLECTION</p>
                             <h3 class="text-lg md:text-xl font-light tracking-wide text-white mb-2 leading-snug">${p.name}</h3>
-                            <div class="flex justify-between items-baseline">
-                                <p class="text-xs text-white/60 font-light max-w-[70%] truncate leading-relaxed">${p.description || '纯粹美学，探索手作极致细节。'}</p>
+                            <div class="flex justify-between items-baseline gap-4">
+                                <p class="text-xs text-white/50 font-light max-w-[70%] truncate leading-relaxed">${p.description || '纯粹手作细节，探索东方高定人居美学叙事。'}</p>
                                 <p class="text-sm font-semibold text-[var(--accent)] tracking-wider">&yen;${Number(p.price).toLocaleString()}</p>
                             </div>
                         </div>
@@ -472,41 +456,36 @@
                 setupCardGestures(card, idx);
             });
 
-            // 2. 动态生组左侧时空刻度线
+            // 2. 渲染左侧精密时间轴
             const totalTicks = inspirationProducts.length;
             inspirationProducts.forEach((p, idx) => {
                 const tick = document.createElement('div');
                 tick.className = `timeline-tick ${idx === 0 ? 'active' : ''}`;
                 tick.id = `tick-${idx}`;
                 
-                // 等比均匀排布刻度点
+                // 均匀排布高度比率
                 const percentage = totalTicks > 1 ? (idx / (totalTicks - 1)) * 100 : 0;
-                tick.style.top = `calc(${percentage}% - 6px)`;
+                tick.style.top = `${percentage}%`;
                 
-                // 解析时轴月份文字
                 const dateStr = getTimelineDateStr(p.id);
                 tick.innerHTML = `
-                    <div class="flex flex-col items-center">
-                        <span class="text-[9px] scale-90 font-semibold">${dateStr.month}</span>
-                        <span class="text-[7px] text-white/20 scale-75 mt-0.5 tracking-tighter">${dateStr.year}</span>
+                    <div class="flex flex-col items-start">
+                        <span class="text-[10px] tracking-widest">${dateStr.month}</span>
                     </div>
                 `;
                 
-                // 点击时间轴直接抽移卡片
+                // 点击轴线节点快速滑动轮转
                 tick.onclick = () => jumpToCard(idx);
                 ticksContainer.appendChild(tick);
             });
 
-            // 初始化卡片物理布局
             updateStackLayout();
             lucide.createIcons();
         }
 
-        // --- 优雅的时间轴文字格式化 ---
         function getTimelineDateStr(timestamp) {
             const date = new Date(Number(timestamp));
             const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-            // 兜底机制：万一发布时间异常采用2026年
             const year = isNaN(date.getFullYear()) ? "2026" : String(date.getFullYear());
             const month = isNaN(date.getMonth()) ? "MAY" : months[date.getMonth()];
             return { year, month };
@@ -516,71 +495,87 @@
             const date = new Date(Number(timestamp));
             const year = isNaN(date.getFullYear()) ? "2026" : date.getFullYear();
             const month = isNaN(date.getMonth()) ? 5 : date.getMonth() + 1;
-            return `${year}/${month < 10 ? '0' + month : month}`;
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            return { raw: `${year}/${month < 10 ? '0' + month : month}`, text: `${months[month-1]}, ${year}` };
         }
 
-        // --- 触压反馈：双击/点击爱心快速增加心动数 ---
         window.likeCard = function(e, idx) {
             if(e) e.stopPropagation();
             const el = document.getElementById(`like-count-${idx}`);
             if(el) {
                 let current = parseInt(el.textContent);
                 el.textContent = current + 1;
-                // 微弱脉冲震荡反馈
-                el.parentElement.classList.add('scale-110', 'bg-red-500/10');
-                setTimeout(() => el.parentElement.classList.remove('scale-110', 'bg-red-500/10'), 200);
+                // 闪动变红动效
+                const heart = el.previousElementSibling;
+                if(heart) {
+                    heart.classList.remove('text-white', 'fill-none');
+                    heart.classList.add('text-red-500', 'fill-red-500', 'scale-125');
+                    setTimeout(() => heart.classList.remove('scale-125'), 200);
+                }
             }
         };
 
-        // --- 3D物理卡片堆叠与错落位移动画算法 ---
+        // --- 核心：3D 扇形堆折转盘计算逻辑 (3D Fan Stack Equation) ---
         function updateStackLayout() {
             const cards = document.querySelectorAll('.stack-card');
             cards.forEach((card, idx) => {
                 const relativeIndex = idx - activeCardIndex;
                 
-                if (relativeIndex < 0) {
-                    // 已经滑出的卡片
-                    // 保持它们之前的飞出状态，动画由 Swipe-Out 样式接管
-                } else if (relativeIndex === 0) {
-                    // 主视角活跃卡片
+                if (relativeIndex === 0) {
+                    // 主活跃最上层卡片
                     card.style.transform = `translate3d(0, 0, 0) scale(1) rotate(0deg)`;
                     card.style.opacity = '1';
                     card.style.pointerEvents = 'auto';
-                    card.style.boxShadow = '0 30px 60px -15px rgba(0,0,0,0.5), 0 0 1px rgba(255,255,255,0.2) inset';
-                } else if (relativeIndex <= 3) {
-                    // 处于候补队列中的层叠卡片（实现高级的3D向右上角堆折错落感）
-                    const scale = 1 - (relativeIndex * 0.04);
-                    const translateY = -relativeIndex * 15; // 向上折射
-                    const translateX = relativeIndex * 15;  // 向右倾斜，和参考图完全一样！
-                    const rotate = relativeIndex * 1;      // 带有一丝写意微弧
+                    card.style.zIndex = cards.length + 10;
+                    card.style.boxShadow = '0 35px 70px -15px rgba(0,0,0,0.65), 0 0 1px rgba(255,255,255,0.2) inset';
+                } else if (relativeIndex > 0) {
+                    // 候补层叠：向右上方扇形舒展展开 (与参考图完全一致)
+                    const scale = 1 - (relativeIndex * 0.035);
+                    const translateY = -relativeIndex * 38; // 向上爬梯
+                    const translateX = relativeIndex * 26;  // 向右平移，拉出弧度
+                    const rotate = relativeIndex * 4.5;     // 扇叶旋转倾斜角
                     
-                    card.style.transform = `translate3d(${translateX}px, ${translateY}px, -${relativeIndex * 100}px) scale(${scale}) rotate(${rotate}deg)`;
-                    card.style.opacity = `${0.9 - (relativeIndex * 0.25)}`;
-                    card.style.pointerEvents = 'none';
-                    card.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
+                    card.style.transform = `translate3d(${translateX}px, ${translateY}px, -${relativeIndex * 60}px) scale(${scale}) rotate(${rotate}deg)`;
+                    card.style.opacity = `${Math.max(0.2, 0.95 - relativeIndex * 0.15)}`;
+                    card.style.zIndex = cards.length - relativeIndex;
+                    card.style.pointerEvents = 'auto'; // 允许点击边缘切牌
                 } else {
-                    // 更深层级的卡片直接隐藏，优化渲染负荷
-                    card.style.transform = `translate3d(60px, -60px, -400px) scale(0.8) rotate(5deg)`;
-                    card.style.opacity = '0';
-                    card.style.pointerEvents = 'none';
+                    // 已经滑出的卡片：呈递在左下角，形成连续环形转盘底气
+                    const absIndex = Math.abs(relativeIndex);
+                    const scale = 1 - (absIndex * 0.035);
+                    const translateY = absIndex * 38;   // 向下沉
+                    const translateX = -absIndex * 26;  // 向左偏
+                    const rotate = -absIndex * 4.5;     // 反向倾斜
+                    
+                    card.style.transform = `translate3d(${translateX}px, ${translateY}px, -${absIndex * 60}px) scale(${scale}) rotate(${rotate}deg)`;
+                    card.style.opacity = `${Math.max(0.1, 0.4 - absIndex * 0.12)}`;
+                    card.style.zIndex = cards.length + relativeIndex;
+                    card.style.pointerEvents = 'auto'; // 同样支持点击回弹
                 }
             });
 
-            // 动态流体时间轴指示器点位流动
+            // 轴心滑块定位与标签刷新
             updateTimelineDot();
         }
 
         function updateTimelineDot() {
             const ticks = document.querySelectorAll('.timeline-tick');
             const dot = document.getElementById('timelineDot');
+            const label = document.getElementById('timelineDotLabel');
             
             ticks.forEach(t => t.classList.remove('active'));
             
             const activeTick = document.getElementById(`tick-${activeCardIndex}`);
             if (activeTick && dot) {
                 activeTick.classList.add('active');
-                // 呼吸点位置平滑流移
                 dot.style.top = activeTick.style.top;
+                
+                // 动态刷新滑块右侧显示的时间
+                const activeProduct = inspirationProducts[activeCardIndex];
+                if(activeProduct && label) {
+                    const tStr = getYearMonthStr(activeProduct.id);
+                    label.textContent = tStr.text;
+                }
             }
         }
 
@@ -590,7 +585,6 @@
             const cards = document.querySelectorAll('.stack-card');
             
             if (targetIdx > activeCardIndex) {
-                // 向上切牌：需要依次将当前卡片滑出
                 const interval = setInterval(() => {
                     if (activeCardIndex < targetIdx) {
                         const currentCard = document.getElementById(`card-${activeCardIndex}`);
@@ -602,9 +596,8 @@
                     } else {
                         clearInterval(interval);
                     }
-                }, 150);
+                }, 120);
             } else {
-                // 向下回切：重置退场状态
                 for (let i = targetIdx; i < activeCardIndex; i++) {
                     const card = document.getElementById(`card-${i}`);
                     if (card) {
@@ -616,20 +609,26 @@
             }
         }
 
-        // --- 触控/拖拽：大拇指轻扫与阻尼退牌手势控制器 ---
+        // --- 手势：轻扫阻尼退场与边缘一键点击切牌 ---
         function setupCardGestures(card, index) {
             let startX = 0, currentX = 0;
             let startY = 0, currentY = 0;
             let isDragging = false;
+            let hasMoved = false;
             
             card.addEventListener('pointerdown', (e) => {
-                // 仅允许当前激活的主卡进行手势
-                if (index !== activeCardIndex) return;
+                // 如果用户点击的是未激活的后方卡片，直接切过去，实现极致的点击切牌
+                if (index !== activeCardIndex) {
+                    e.preventDefault();
+                    jumpToCard(index);
+                    return;
+                }
                 
                 card.style.transition = 'none';
                 startX = e.clientX;
                 startY = e.clientY;
                 isDragging = true;
+                hasMoved = false;
                 card.setPointerCapture(e.pointerId);
             });
 
@@ -638,8 +637,12 @@
                 currentX = e.clientX - startX;
                 currentY = e.clientY - startY;
                 
-                // 实施物理阻尼旋转
-                const rotate = currentX * 0.05;
+                if (Math.abs(currentX) > 10 || Math.abs(currentY) > 10) {
+                    hasMoved = true;
+                }
+                
+                // 弧形阻尼轨迹
+                const rotate = currentX * 0.04;
                 card.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(1.02) rotate(${rotate}deg)`;
             });
 
@@ -647,36 +650,32 @@
                 if (!isDragging) return;
                 isDragging = false;
                 card.releasePointerCapture(e.pointerId);
-                card.style.transition = 'transform 0.6s cubic-bezier(0.15, 0.85, 0.35, 1), opacity 0.6s ease';
+                card.style.transition = 'transform 0.7s cubic-bezier(0.15, 0.85, 0.35, 1), opacity 0.7s ease';
                 
-                // 轻扫位移阈值，超出即判定退场
-                if (Math.abs(currentX) > 130) {
+                if (hasMoved && Math.abs(currentX) > 110) {
                     if (currentX > 0) {
                         card.classList.add('swipe-out-right');
                     } else {
                         card.classList.add('swipe-out-left');
                     }
                     
-                    // 循环切回首张：当滑完所有卡片时，循环回来
                     activeCardIndex++;
                     if (activeCardIndex >= inspirationProducts.length) {
                         setTimeout(() => {
                             activeCardIndex = 0;
-                            const cards = document.querySelectorAll('.stack-card');
-                            cards.forEach(c => c.classList.remove('swipe-out-left', 'swipe-out-right'));
+                            const allCards = document.querySelectorAll('.stack-card');
+                            allCards.forEach(c => c.classList.remove('swipe-out-left', 'swipe-out-right'));
                             updateStackLayout();
                         }, 500);
                     } else {
                         updateStackLayout();
                     }
                 } else {
-                    // 回弹初始状态
                     updateStackLayout();
                 }
                 currentX = 0; currentY = 0;
             });
 
-            // 监听双击卡片快速点赞大图
             let lastTap = 0;
             card.addEventListener('click', (e) => {
                 const now = new Date().getTime();
@@ -691,16 +690,14 @@
         let lastWheelTime = 0;
         window.addEventListener('wheel', (e) => {
             const now = new Date().getTime();
-            if (now - lastWheelTime < 1000) return; // 防抖，间隔 1s 触发一次切牌
+            if (now - lastWheelTime < 1000) return; // 防抖
             
-            // 确保没有遮罩层等冲突
             if(!document.getElementById('zoomModal').classList.contains('hidden')) return;
             if(!document.getElementById('authOverlay').classList.contains('hidden')) return;
 
             if (Math.abs(e.deltaY) > 30) {
                 lastWheelTime = now;
                 if (e.deltaY > 0) {
-                    // 向下滑：下一张
                     const currentCard = document.getElementById(`card-${activeCardIndex}`);
                     if (currentCard) {
                         currentCard.classList.add(Math.random() > 0.5 ? 'swipe-out-right' : 'swipe-out-left');
@@ -717,7 +714,6 @@
                         }
                     }
                 } else {
-                    // 向上滑：上一张
                     if (activeCardIndex > 0) {
                         activeCardIndex--;
                         const prevCard = document.getElementById(`card-${activeCardIndex}`);
@@ -730,7 +726,7 @@
             }
         });
 
-        // --- 后台工作流管理逻辑（保持你的所有发布、导入导出、修改流程原样不变） ---
+        // --- 后台抽屉管理逻辑 ---
         window.toggleAdminModal = function() {
             const m = document.getElementById('adminModal');
             const s = document.getElementById('adminSidebar');
@@ -758,7 +754,6 @@
             if (!name || !price || !images.length) return alert('请完备灵感单品名称、估价和链接。');
             if (allProducts.some(p => p.name === name)) return alert('该灵感单品在册库中名称冲突');
             
-            // 插入到首部位置
             allProducts.unshift({ 
                 id: Date.now(), 
                 name, 
@@ -772,12 +767,10 @@
             
             const ok = await saveToGitHub();
             if (ok) {
-                // 清空表单
                 document.getElementById('p_name').value = '';
                 document.getElementById('p_price').value = '';
                 document.getElementById('imageInputs').innerHTML = '<input type="text" placeholder="主图超链 URL" class="w-full border-b border-white/[0.08] py-2 text-[11px] outline-none bg-transparent text-white img-input">';
                 
-                // 重新渲染本地层叠
                 inspirationProducts = allProducts.filter(p => (p.page || '首页') === '灵感');
                 initTimelineAndCards();
                 toggleAdminModal();
@@ -794,7 +787,6 @@
             }
         };
 
-        // --- 灵感管理页签渲染 ---
         let editingId = null;
         function renderAdminList() {
             const el = document.getElementById('adminList'); if (!el) return;
@@ -871,10 +863,8 @@
             if (sel) sel.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
         }
 
-        // --- 触控图片高级缩放 ---
         window.closeZoom = function() { document.getElementById('zoomModal').classList.add('hidden'); document.body.style.overflow = ''; };
 
-        // --- 首次自运行系统 ---
         window.addEventListener('DOMContentLoaded', () => {
             fetchProducts();
             lucide.createIcons();
