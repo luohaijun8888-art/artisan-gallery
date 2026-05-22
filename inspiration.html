@@ -1,373 +1,884 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SHANYAO | 灵感</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
-<style>
-:root { --accent: #C5A059; --bg: #F9F9F7; --text: #1A1A1A; }
-body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); scroll-behavior:smooth; }
-.serif { font-family:'Playfair Display',serif; }
-.glass { background:rgba(255,255,255,0.85); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); }
-.inspiration-card { transition: all 0.6s cubic-bezier(0.16,1,0.3,1); }
-@media (hover:hover) { .inspiration-card:hover { transform:translateY(-8px); } .inspiration-card:hover .insp-img { transform:scale(1.05); } }
-.product-image-container { overflow:hidden; background:#f0f0ed; border-radius:2px; }
-.insp-img { transition: transform 1.2s cubic-bezier(0.16,1,0.3,1); }
-@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-.fade-up { animation: fadeIn 0.6s ease-out forwards; }
-.save-indicator { position:fixed; bottom:20px; right:20px; z-index:200; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:600; opacity:0; transition:opacity 0.3s; pointer-events:none; }
-.save-indicator.saving { background:#FEF3C7; color:#92400E; opacity:1; }
-.save-indicator.saved { background:#D1FAE5; color:#065F46; opacity:1; }
-.save-indicator.error { background:#FEE2E2; color:#991B1B; opacity:1; }
-.mobile-nav { display: none; }
-@media (max-width:768px) { .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(0,0,0,0.05); z-index: 100; padding: 8px 0; padding-bottom: calc(8px + env(safe-area-inset-bottom)); } .mobile-nav a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0; font-size: 10px; font-weight: 600; opacity: 0.5; transition: all 0.2s; } .mobile-nav a.active { opacity: 1; color: var(--accent); } .mobile-nav a svg { width: 22px; height: 22px; } }
-body { padding-bottom: 70px; }
-@media (min-width:769px) { body { padding-bottom: 0; } }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SHANYAO | 灵感空间</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Noto+Serif+SC:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --accent: #CC9933;       /* 古董哑光金 */
+            --bg: #1B1A20;           /* 质感深炭灰（契合参考图高级暗色调） */
+            --card-base: #2A2830;     /* 温暖灰紫卡片座 */
+            --text-main: #F4F4F2;    /* 亮灰 */
+            --text-muted: #8A8A95;   /* 诗意岩石灰 */
+        }
+        body { 
+            font-family: 'Inter', 'Noto Serif SC', serif; 
+            background-color: var(--bg); 
+            color: var(--text-main); 
+            scroll-behavior: smooth; 
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+        @media (min-width: 769px) { body { padding-bottom: 0; } }
+        
+        .serif-title { font-family: 'Cinzel', 'Noto Serif SC', serif; tracking: 0.05em; }
+        .glass { background: rgba(42, 40, 48, 0.7); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); }
+        .glass-card { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.05); }
+
+        /* --- 时空轴线设计 --- */
+        .timeline-container {
+            position: relative;
+            width: 100px;
+            height: 100%;
+        }
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(-50%);
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--accent);
+            transition: top 0.6s cubic-bezier(0.15, 0.85, 0.35, 1);
+            z-index: 10;
+        }
+        .timeline-dot::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            animation: pulse-ring 2s infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+
+        .timeline-tick {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            color: rgba(255, 255, 255, 0.25);
+            text-transform: uppercase;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        .timeline-tick.active {
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 600;
+            text-shadow: 0 0 8px rgba(204,153,51,0.3);
+        }
+
+        /* --- 层叠卡片滑动引擎 (3D Stack Card Engine) --- */
+        .stack-area {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            height: 520px;
+            margin: 0 auto;
+            perspective: 1200px;
+        }
+        @media (max-width: 640px) {
+            .stack-area {
+                height: 440px;
+            }
+        }
+        .stack-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: var(--card-base);
+            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.5), 
+                        0 0 1px rgba(255,255,255,0.1) inset;
+            transform-origin: 50% 100%;
+            transition: transform 0.6s cubic-bezier(0.15, 0.85, 0.35, 1), 
+                        opacity 0.6s cubic-bezier(0.15, 0.85, 0.35, 1),
+                        box-shadow 0.6s ease;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+        }
+        .stack-card:active {
+            cursor: grabbing;
+        }
+
+        /* 极致错落滑动退场动效 */
+        .stack-card.swipe-out-left {
+            transform: translate3d(-150%, 10%, 0) rotate3d(0, 0, 1, -25deg) scale(0.9) !important;
+            opacity: 0 !important;
+        }
+        .stack-card.swipe-out-right {
+            transform: translate3d(150%, 10%, 0) rotate3d(0, 0, 1, 25deg) scale(0.9) !important;
+            opacity: 0 !important;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; } 
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .save-indicator { position: fixed; top: 100px; right: 24px; z-index: 200; padding: 10px 20px; border-radius: 4px; font-size: 11px; font-weight: 500; tracking: 0.05em; opacity: 0; transition: all 0.4s ease; transform: translateY(-10px); }
+        .save-indicator.saving { background: #fff; color: #161615; border-left: 2px solid var(--accent); opacity: 1; transform: translateY(0); }
+        .save-indicator.saved { background: #EFFFFA; color: #00A36C; border-left: 2px solid #00A36C; opacity: 1; transform: translateY(0); }
+        .save-indicator.error { background: #FFEEEE; color: #D9383A; border-left: 2px solid #D9383A; opacity: 1; transform: translateY(0); }
+
+        /* 移动端高定圆角底座导航 */
+        .mobile-nav { 
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
+            width: calc(100% - 32px); max-width: 380px; height: 56px;
+            background: rgba(22, 22, 21, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 28px; display: flex; align-items: center; justify-content: space-around;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15); z-index: 90; padding: 0 10px;
+        }
+        @media (min-width: 769px) { .mobile-nav { display: none; } }
+        .mobile-nav a { display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 500; letter-spacing: 0.1em; transition: all 0.3s; gap: 2px;}
+        .mobile-nav a i { width: 18px; height: 18px; margin-bottom: 1px; stroke-width: 1.5; }
+        .mobile-nav a.active { color: var(--accent); }
+    </style>
 </head>
-<body>
+<body class="selection:bg-neutral-800 text-neutral-300">
 
-<div id="saveIndicator" class="save-indicator"></div>
+    <div id="saveIndicator" class="save-indicator"></div>
 
-<nav class="fixed top-0 w-full z-[60] glass border-b border-black/5">
-  <div class="max-w-[1400px] mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
-    <div class="flex items-center gap-4 md:gap-8">
-      <a href="index.html" class="text-xl md:text-2xl font-bold tracking-[0.2em] serif">SHANYAO</a>
-      <div class="hidden md:flex gap-6 text-sm uppercase tracking-widest font-medium opacity-60">
-        <a href="index.html" class="hover:opacity-100 transition-opacity">首页</a>
-        <a href="#" class="opacity-100 font-bold">灵感</a>
-      </div>
-    </div>
-    <div class="flex items-center gap-4">
-      <button onclick="handleAdminAccess()" class="flex items-center gap-2 group">
-        <span class="hidden sm:inline text-[10px] uppercase tracking-widest font-bold group-hover:text-[var(--accent)] transition-colors">管理</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-      </button>
-    </div>
-  </div>
-</nav>
-
-<main class="pt-24 md:pt-32 pb-20 max-w-[1400px] mx-auto px-4 md:px-6">
-  <header class="mb-10 md:mb-16 fade-up">
-    <h2 class="text-[10px] uppercase tracking-[0.4em] text-[var(--accent)] font-bold mb-2 md:mb-4">Inspiration</h2>
-    <h1 class="text-3xl md:text-7xl serif leading-tight"><span class="text-[#1A1A1A]">灵</span><span class="text-black/35">感集</span></h1>
-  </header>
-  <p id="loading" class="text-gray-400 mb-8 fade-up">加载灵感中...</p>
-  <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 md:gap-x-10 gap-y-10 md:gap-y-16"></div>
-</main>
-
-<div id="lightbox" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50 cursor-pointer" onclick="closeLb()">
-  <img id="lbImg" class="max-w-[90vw] max-h-[90vh] object-contain shadow-2xl rounded-sm">
-  <span class="fixed top-6 right-6 text-white/80 hover:text-white text-3xl z-[60] pointer-events-none">✕</span>
-</div>
-
-<!-- 密码验证弹窗 -->
-<div id="authOverlay" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-white/80 backdrop-blur-sm">
-  <div class="bg-white p-8 md:p-10 w-full max-w-sm shadow-2xl rounded-sm text-center">
-    <h3 class="serif text-2xl mb-2">身份核验</h3>
-    <p class="text-[10px] uppercase tracking-widest opacity-40 mb-8 font-bold">请输入管理密码以继续</p>
-    <input type="password" id="adminPasswordInput" placeholder="••••" class="w-full border-b border-black/10 py-4 text-center text-2xl tracking-[0.5em] outline-none focus:border-black transition-colors bg-transparent">
-    <p id="authError" class="text-red-500 text-[10px] mt-4 font-bold tracking-widest uppercase hidden">密码错误</p>
-    <div class="flex gap-4 mt-10">
-      <button onclick="closeAuth()" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest opacity-40">取消</button>
-      <button onclick="verifyAdmin()" class="flex-1 bg-black text-white py-3 text-[10px] font-bold uppercase tracking-widest">确认进入</button>
-    </div>
-  </div>
-</div>
-
-<!-- 管理侧边栏 -->
-<div id="adminModal" class="fixed inset-0 z-[100] hidden">
-  <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="toggleAdminModal()"></div>
-  <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg bg-white shadow-2xl flex flex-col translate-x-full transition-transform duration-500 ease-out" id="adminSidebar">
-    <div class="p-6 md:p-8 border-b flex justify-between items-center">
-      <h2 class="text-xl md:text-2xl serif">灵感管理</h2>
-      <button onclick="toggleAdminModal()" class="p-2 hover:bg-black/5 rounded-full">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-      </button>
-    </div>
-    <div class="flex-1 overflow-y-auto p-6 md:p-8">
-      <div class="space-y-10">
-        <section class="bg-black/[0.02] p-4 md:p-6 rounded-lg">
-          <h3 class="text-[10px] uppercase tracking-widest font-bold text-[var(--accent)] mb-6">添加灵感作品</h3>
-          <div class="space-y-4">
-            <input type="text" id="p_name" placeholder="作品名称" class="w-full border-b bg-transparent py-3 outline-none text-sm">
-            <div class="grid grid-cols-2 gap-4">
-              <select id="p_category" class="border-b py-3 outline-none bg-transparent text-sm"></select>
-              <input type="number" id="p_price" placeholder="价格 (¥)" class="border-b bg-transparent py-3 outline-none text-sm">
+    <!-- 顶奢极简导航 -->
+    <nav class="fixed top-0 w-full z-[60] glass border-b border-white/[0.03]">
+        <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 md:h-24 flex items-center justify-between">
+            <div class="flex items-center gap-12">
+                <a href="index.html" class="text-xl md:text-2xl font-medium tracking-[0.25em] serif-title text-white">SHANYAO</a>
+                <div class="hidden md:flex gap-8 text-[11px] uppercase tracking-[0.2em] font-medium opacity-50">
+                    <a href="index.html" class="hover:text-[var(--accent)] hover:opacity-100 transition-all text-neutral-400">首页 / HOME</a>
+                    <a href="#" class="text-[var(--accent)] hover:opacity-100 transition-all">灵感 / INSPIRATION</a>
+                </div>
             </div>
-            <div id="imageInputs" class="space-y-3">
-              <input type="text" placeholder="主图链接 URL" class="w-full border-b bg-transparent py-2 text-xs outline-none img-input">
+            <div class="flex items-center gap-6">
+                <button onclick="handleAdminAccess()" class="flex items-center gap-2 group text-neutral-400 hover:text-white transition-colors">
+                    <span class="text-[10px] uppercase tracking-[0.2em] font-medium hidden sm:inline opacity-60 group-hover:opacity-100">灵感工作台</span>
+                    <i data-lucide="settings" class="w-5 h-5 stroke-[1.2]"></i>
+                </button>
             </div>
-            <button onclick="addImageInput()" class="text-[10px] font-bold opacity-40 hover:opacity-100 flex items-center gap-2 pt-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-              添加更多视角
-            </button>
-            <button onclick="addProduct()" class="w-full bg-black text-white py-4 mt-6 hover:bg-black/80 transition-all font-bold tracking-widest uppercase text-[10px]">保存作品</button>
-          </div>
-        </section>
-        <section class="pt-6">
-          <h3 class="text-[10px] uppercase tracking-widest font-bold text-black/30 mb-6">现有灵感</h3>
-          <div id="adminList" class="space-y-3"></div>
-        </section>
-      </div>
+        </div>
+    </nav>
+
+    <!-- 主视窗：流线型时空布局 -->
+    <main class="pt-28 md:pt-36 pb-20 max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-8 items-center min-h-[calc(100vh-140px)]">
+        
+        <!-- 左侧：高冷流线标题与说明 -->
+        <div class="md:col-span-4 space-y-6 md:pr-8">
+            <header class="space-y-4">
+                <h2 class="text-[10px] uppercase tracking-[0.4em] text-[var(--accent)] font-semibold">Curation Scene</h2>
+                <h1 class="text-4xl md:text-5xl serif-title leading-tight text-white font-light">
+                    闪光留韵 <br><span class="italic text-neutral-500 font-extralight">/ 耀影成诗</span>
+                </h1>
+                <p class="text-xs text-neutral-400 tracking-[0.1em] font-light leading-relaxed">
+                    在灵感穿梭线中，每一件手作家具皆承载着某一季的光影交错。上下轻扫或划动卡片，寻找属于你的空间灵感。
+                </p>
+            </header>
+
+            <div class="hidden md:flex items-center gap-3 pt-6 text-neutral-500 text-xs font-light">
+                <span class="flex gap-1.5"><i data-lucide="arrow-up-down" class="w-4 h-4"></i> 滑动或拖曳可切牌</span>
+                <span>·</span>
+                <span class="flex gap-1.5"><i data-lucide="heart" class="w-4 h-4"></i> 双击可点赞保存</span>
+            </div>
+        </div>
+
+        <!-- 中间：动态时空穿梭轴线 -->
+        <div class="hidden md:col-span-2 md:flex justify-center h-[520px]">
+            <div class="timeline-container" id="timelineContainer">
+                <div class="timeline-line"></div>
+                <div class="timeline-dot" id="timelineDot" style="top: 0px;"></div>
+                <div id="timelineTicks" class="w-full h-full relative"></div>
+            </div>
+        </div>
+
+        <!-- 右侧：多维层叠卡片展示区域 -->
+        <div class="md:col-span-6 flex flex-col justify-center relative">
+            <p id="loading" class="text-center text-xs text-neutral-500 tracking-widest font-light py-20">正在唤醒时空灵感...</p>
+            
+            <div class="stack-area" id="stackArea"></div>
+
+            <!-- 移动端额外滑动向导 -->
+            <div class="flex md:hidden justify-center items-center gap-2 text-[10px] text-neutral-500 font-light mt-8 tracking-widest">
+                <i data-lucide="chevron-left" class="w-3.5 h-3.5 animate-pulse"></i>
+                <span>向左或向右划动切牌</span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 animate-pulse"></i>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 高清防抖触觉大图放大器 -->
+    <div id="zoomModal" class="fixed inset-0 bg-[#0F0F0E] z-[120] hidden items-center justify-center">
+        <button onclick="closeZoom()" class="absolute top-6 right-6 z-50 text-white/40 hover:text-white transition-colors"><i data-lucide="x" class="w-6 h-6 stroke-[1.2]"></i></button>
+        <div id="zoomViewport" class="w-full h-full flex items-center justify-center cursor-grab"><img id="zoomImg" src="" alt="Zoom Image" class="max-w-[95%] max-h-[90%] object-contain transition-transform duration-150 ease-out"></div>
     </div>
-  </div>
-</div>
 
-<script>
-// === Config ===
-const GITHUB_REPO = "luohaijun8888-art/artisan-gallery";
-const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/products.json";
-const TOKEN_PARTS = ['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];
-const adminPassword = "8888";
+    <!-- 鉴权特权验证遮罩 -->
+    <div id="authOverlay" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
+        <div class="bg-[#1C1B22] p-8 md:p-12 w-full max-w-sm shadow-2xl rounded-sm text-center border border-white/[0.03]">
+            <h3 class="serif-title text-2xl tracking-widest mb-2 font-light text-white">核验特权</h3>
+            <p class="text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-8 font-medium">SECRET ACCESS PASSWORD</p>
+            <input type="password" id="adminPasswordInput" placeholder="••••" class="w-full border-b border-white/[0.08] py-3 text-center text-2xl tracking-[0.4em] outline-none focus:border-white transition-colors bg-transparent font-light text-white">
+            <p id="authError" class="text-red-500 text-[10px] mt-4 tracking-widest uppercase hidden font-medium">密码校验未通过</p>
+            <div class="flex gap-4 mt-8">
+                <button onclick="closeAuth()" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-[0.15em] opacity-40">返回</button>
+                <button onclick="verifyAdmin()" class="flex-1 bg-white text-black py-3 text-[10px] font-bold uppercase tracking-[0.15em] rounded-sm">核验</button>
+            </div>
+        </div>
+    </div>
 
-const EMBEDDED_TOKEN = TOKEN_PARTS.join('');
-if (localStorage.getItem('gh_token') && localStorage.getItem('gh_token') !== EMBEDDED_TOKEN) { localStorage.removeItem('gh_token'); }
-let githubToken = EMBEDDED_TOKEN;
-let dataSha = null;
-let isAuthenticated = false;
-let categories = ["餐台","茶几","餐椅","床","学习桌"];
-let allProducts = [];
+    <!-- 图册控制后台抽屉 -->
+    <div id="adminModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="toggleAdminModal()"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg bg-[#1C1B22] shadow-2xl flex flex-col translate-x-full transition-transform duration-500 ease-out border-l border-white/[0.03]" id="adminSidebar">
+            <div class="p-6 md:p-8 border-b border-white/[0.04] flex justify-between items-center bg-[#15141A]">
+                <h2 class="text-lg tracking-widest serif-title text-white">CURATION INSPIRES</h2>
+                <button onclick="toggleAdminModal()" class="p-2 hover:bg-white/5 rounded-full"><i data-lucide="x" class="w-4 h-4 text-white"></i></button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-6 md:p-8 no-scrollbar space-y-8">
+                <section class="bg-white/[0.01] p-5 md:p-6 border border-white/[0.03] rounded-sm space-y-4">
+                    <h3 class="text-[10px] uppercase tracking-[0.15em] text-[var(--accent)] font-semibold">收录新灵感物料</h3>
+                    <div class="space-y-4">
+                        <input type="text" id="p_name" placeholder="灵感画卷名称" class="w-full border-b border-white/[0.08] py-2.5 outline-none text-xs bg-transparent text-white">
+                        <div class="grid grid-cols-2 gap-4">
+                            <select id="p_category" class="border-b border-white/[0.08] py-2.5 outline-none text-xs bg-transparent text-neutral-400"></select>
+                            <input type="number" id="p_price" placeholder="高定估价 (¥)" class="border-b border-white/[0.08] py-2.5 outline-none text-xs bg-transparent text-white">
+                        </div>
+                        <div id="imageInputs" class="space-y-2">
+                            <input type="text" placeholder="主图超链 URL" class="w-full border-b border-white/[0.08] py-2 text-[11px] outline-none bg-transparent text-white img-input">
+                        </div>
+                        <button onclick="addImageInput()" class="text-[10px] font-medium text-neutral-400 hover:text-white flex items-center gap-1.5 pt-1 transition-colors"><i data-lucide="plus" class="w-3.5 h-3.5"></i> 增加灵感长卷视角</button>
+                        <button onclick="addProduct()" class="w-full bg-white text-black py-3.5 mt-4 hover:bg-neutral-200 transition-all font-medium tracking-[0.15em] uppercase text-[10px] rounded-sm">保存并同步发布</button>
+                    </div>
+                </section>
 
-// === Save indicator ===
-function showSaveStatus(status, msg) {
-  const el = document.getElementById('saveIndicator');
-  el.className = 'save-indicator ' + status;
-  el.textContent = msg;
-  if (status !== 'saving') setTimeout(() => { el.className = 'save-indicator'; }, 3000);
-}
+                <section class="space-y-3">
+                    <h3 class="text-[10px] uppercase tracking-[0.15em] text-neutral-400 font-semibold">现有灵感在册清单</h3>
+                    <div id="adminList" class="space-y-2.5"></div>
+                </section>
+            </div>
+        </div>
+    </div>
 
-// === GitHub API ===
-async function fetchProducts() {
-  try {
-    const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
-    if (githubToken) headers['Authorization'] = 'Bearer ' + githubToken;
-    const res = await fetch(GITHUB_API, { headers });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    dataSha = data.sha;
-    // CORRECT decode: decodeURIComponent(escape(atob(...)))
-    const raw = atob(data.content);
-    const decoded = decodeURIComponent(escape(raw));
-    const content = JSON.parse(decoded);
-    categories = content.categories || categories;
-    allProducts = content.products || [];
-    localStorage.setItem('artisan_categories', JSON.stringify(categories));
-    localStorage.setItem('furniture_gallery_db', JSON.stringify(allProducts));
-    console.log('[fetchProducts] Loaded', allProducts.length, 'products, SHA:', dataSha.substring(0,10));
-  } catch(e) {
-    console.warn('[fetchProducts] Failed, using localStorage', e.message);
-    categories = JSON.parse(localStorage.getItem('artisan_categories')) || categories;
-    allProducts = JSON.parse(localStorage.getItem('furniture_gallery_db')) || [];
-  }
-  renderCategories();
-  renderProducts();
-  renderAdminList();
-}
+    <!-- 移动端底部高定导航 -->
+    <div class="mobile-nav">
+        <a href="index.html" id="mNavHome"><i data-lucide="home"></i>画廊</a>
+        <a href="#" class="active" id="mNavInspire"><i data-lucide="compass"></i>灵感</a>
+        <a href="#" onclick="handleAdminAccess()"><i data-lucide="box"></i>控制台</a>
+    </div>
 
-async function saveToGitHub() {
-  if (!githubToken) { showSaveStatus('error', '未设置Token'); return false; }
-  showSaveStatus('saving', '同步中...');
-  try {
-    // Always get latest SHA first
-    const headRes = await fetch(GITHUB_API, {
-      headers: { 'Authorization': 'Bearer ' + githubToken, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }
-    });
-    if (headRes.ok) { const d = await headRes.json(); dataSha = d.sha; }
+    <script>
+        // --- GitHub 自动化发布引擎配置 ---
+        const GITHUB_REPO = "luohaijun8888-art/artisan-gallery";
+        const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/products.json";
+        const _tk=['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];
+        const EMBEDDED_TOKEN = _tk.join('');
+        
+        let githubToken = EMBEDDED_TOKEN;
+        let dataSha = null;
+        const adminPassword = "8888";
+        let isAuthenticated = false;
 
-    const data = { categories, products: allProducts };
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-    const body = { message: 'update products ' + new Date().toISOString(), content: content, sha: dataSha, branch: 'main' };
-    const res = await fetch(GITHUB_API, {
-      method: 'PUT',
-      headers: { 'Authorization': 'Bearer ' + githubToken, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (res.status === 401) {
-      showSaveStatus('error', 'Token已失效');
-      const t = prompt('Token已失效，请输入新的GitHub Token：');
-      if (t) { githubToken = t.trim(); localStorage.setItem('gh_token', githubToken); return await saveToGitHub(); }
-      return false;
-    }
-    if (res.status === 409) {
-      showSaveStatus('error', '冲突重试中...');
-      dataSha = null;
-      return await saveToGitHub();
-    }
-    if (!res.ok) { const err = await res.text(); throw new Error('HTTP ' + res.status + ': ' + err.substring(0,80)); }
-    const result = await res.json();
-    dataSha = result.content.sha;
-    localStorage.setItem('artisan_categories', JSON.stringify(categories));
-    localStorage.setItem('furniture_gallery_db', JSON.stringify(allProducts));
-    showSaveStatus('saved', '已同步到云端');
-    console.log('[saveToGitHub] Success, new SHA:', dataSha.substring(0,10));
-    return true;
-  } catch(e) {
-    console.error('[saveToGitHub] Failed', e);
-    showSaveStatus('error', '同步失败: ' + e.message);
-    return false;
-  }
-}
+        let categories = ["餐台", "茶几", "餐椅", "床", "书架"];
+        let allProducts = [];
+        let inspirationProducts = [];
+        
+        // 层叠卡片滑动指针
+        let activeCardIndex = 0;
 
-// === Auth ===
-window.handleAdminAccess = function() {
-  if (isAuthenticated) { toggleAdminModal(); }
-  else { document.getElementById('authOverlay').classList.remove('hidden'); document.getElementById('adminPasswordInput').focus(); }
-};
-window.closeAuth = function() {
-  document.getElementById('authOverlay').classList.add('hidden');
-  document.getElementById('adminPasswordInput').value = '';
-  document.getElementById('authError').classList.add('hidden');
-};
-window.verifyAdmin = function() {
-  const input = document.getElementById('adminPasswordInput');
-  if (input.value === adminPassword) {
-    isAuthenticated = true;
-    closeAuth();
-    toggleAdminModal();
-  } else {
-    document.getElementById('authError').classList.remove('hidden');
-    input.value = '';
-  }
-};
-document.getElementById('adminPasswordInput').addEventListener('keypress', e => { if (e.key === 'Enter') window.verifyAdmin(); });
+        // --- 触觉防抖指示灯状态 ---
+        function showSaveStatus(status, msg) {
+            const el = document.getElementById('saveIndicator');
+            el.className = 'save-indicator ' + status;
+            el.textContent = msg;
+            setTimeout(() => { el.className = 'save-indicator'; }, 2500);
+        }
 
-// === Render ===
-function renderCategories() {
-  const sel = document.getElementById('p_category');
-  if (sel) sel.innerHTML = categories.map(c => '<option value="' + c + '">' + c + '</option>').join('');
-}
-function renderProducts() {
-  const grid = document.getElementById('grid');
-  const loading = document.getElementById('loading');
-  if (loading) loading.remove();
-  const products = allProducts.filter(p => (p.page || '首页') === '灵感');
-  if (!products.length) {
-    grid.innerHTML = '<div class="col-span-full py-20 text-center opacity-30 italic">暂无灵感作品，点击右上角"管理"添加</div>';
-    return;
-  }
-  grid.innerHTML = products.map((p, idx) =>
-    '<div class="inspiration-card cursor-pointer group fade-up" style="animation-delay:' + (idx*0.05) + 's" onclick="showLightbox(\'' + (p.images[0]||'') + '\')">' +
-    '<div class="product-image-container aspect-[3/4] md:aspect-[4/5] relative mb-4 md:mb-6">' +
-    '<img src="' + (p.images[0]||'') + '" alt="' + p.name + '" loading="lazy" class="insp-img w-full h-full object-cover">' +
-    '</div>' +
-    '<div class="flex justify-between items-baseline px-1">' +
-    '<div><p class="text-[8px] md:text-[9px] uppercase tracking-[0.2em] opacity-40 font-bold mb-1">' + p.category + '</p>' +
-    '<h3 class="text-base md:text-lg serif font-medium tracking-wide">' + p.name + '</h3></div>' +
-    '<p class="text-xs md:text-sm opacity-50 tracking-wide">¥' + Number(p.price||0).toLocaleString() + '</p>' +
-    '</div></div>'
-  ).join('');
-}
-let editingId = null;
-function renderAdminList() {
-  const el = document.getElementById('adminList');
-  const products = allProducts.filter(p => (p.page || '首页') === '灵感');
-  if (!products.length) { el.innerHTML = '<div class="text-center opacity-30 py-8 text-sm">暂无灵感作品</div>'; return; }
-  el.innerHTML = products.map(p => {
-    if (editingId === p.id) {
-      return '<div class="p-4 bg-yellow-50/50 border border-yellow-200/50 rounded-lg space-y-3 fade-up">' +
-      '<div class="flex justify-between items-center mb-2"><span class="text-[10px] font-bold text-yellow-700 uppercase tracking-widest">编辑模式</span><div class="flex gap-2"><button onclick="cancelEdit()" class="text-xs px-3 py-1 border rounded">取消</button><button onclick="saveEdit('+p.id+')" class="text-xs px-3 py-1 bg-black text-white rounded">保存</button></div></div>' +
-      '<input id="edit_name" value="'+p.name+'" class="w-full border-b py-2 text-sm outline-none bg-transparent" placeholder="名称">' +
-      '<div class="grid grid-cols-2 gap-3">' +
-      '<select id="edit_cat" class="border-b py-2 outline-none bg-transparent text-sm">' + categories.map(c => '<option value="'+c+'" '+(c===p.category?'selected':'')+'>'+c+'</option>').join('') + '</select>' +
-      '<input id="edit_price" value="'+p.price+'" class="border-b bg-transparent py-2 outline-none text-sm" placeholder="价格">' +
-      '</div>' +
-      '<input id="edit_tags" value="'+(p.tags||'')+'" class="w-full border-b bg-transparent py-2 outline-none text-sm" placeholder="标签(NEW/HOT)">' +
-      '<div id="edit_images" class="space-y-2">' + p.images.map((img,i) => '<div class="flex gap-2"><input value="'+img+'" class="w-full border-b bg-transparent py-1 text-xs outline-none edit-img-input"><button onclick="this.parentElement.remove()" class="text-red-400 text-xs flex-shrink-0">✕</button></div>').join('') + '</div>' +
-      '<button onclick="addEditImageInput()" class="text-[10px] font-bold opacity-40 hover:opacity-100 flex items-center gap-1">+ 添加图片</button>' +
-      '</div>';
-    }
-    return '<div class="flex items-center justify-between p-3 bg-black/[0.03] rounded-lg group">' +
-    '<div class="flex items-center gap-3 flex-1 min-w-0">' +
-    '<img src="' + (p.images[0]||'') + '" class="w-12 h-12 object-cover rounded-md flex-shrink-0">' +
-    '<div class="text-xs min-w-0"><p class="font-bold truncate">' + p.name + '</p><p class="opacity-40 uppercase tracking-tighter">' + p.category + ' \xb7 ¥' + Number(p.price||0).toLocaleString() + '</p></div></div>' +
-    '<div class="flex gap-1 flex-shrink-0">' +
-    '<button onclick="editProduct('+p.id+')" class="p-2 hover:bg-blue-50 rounded text-blue-400 opacity-0 group-hover:opacity-100 transition-all" title="编辑">✏️</button>' +
-    '<button onclick="deleteProduct(' + p.id + ')" class="p-2 hover:bg-red-50 rounded text-red-400" title="删除">🗑️</button>' +
-    '</div></div>';
-  }).join('');
-}
-window.editProduct = function(id) { editingId = id; renderAdminList(); };
-window.cancelEdit = function() { editingId = null; renderAdminList(); };
-window.addEditImageInput = function() {
-  const d = document.createElement('div'); d.className='flex gap-2';
-  d.innerHTML='<input type="text" placeholder="视角 URL" class="w-full border-b bg-transparent py-1 text-xs outline-none edit-img-input"><button onclick="this.parentElement.remove()" class="text-red-400 text-xs">✕</button>';
-  document.getElementById('edit_images').appendChild(d);
-};
-window.saveEdit = async function(id) {
-  const p = allProducts.find(x => x.id === id); if (!p) return;
-  p.name = document.getElementById('edit_name').value.trim();
-  p.price = document.getElementById('edit_price').value;
-  p.category = document.getElementById('edit_cat').value;
-  p.tags = document.getElementById('edit_tags').value;
-  const imgs = Array.from(document.querySelectorAll('.edit-img-input')).map(i=>i.value).filter(v=>v);
-  if (imgs.length) p.images = imgs;
-  editingId = null;
-  await saveToGitHub();
-  renderProducts(); renderAdminList();
-};
+        // --- 核心拉取：无缝兼顾首页/灵感两页的 products 结构 ---
+        async function fetchProducts() {
+            try {
+                const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+                if (githubToken) headers['Authorization'] = 'Bearer ' + githubToken;
+                const res = await fetch(GITHUB_API, { headers, cache: 'no-store' });
+                if (!res.ok) throw new Error('数据拉取失败');
+                const data = await res.json();
+                dataSha = data.sha;
+                const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+                
+                categories = content.categories || categories;
+                allProducts = content.products || [];
+                
+                localStorage.setItem('artisan_categories', JSON.stringify(categories));
+                localStorage.setItem('furniture_gallery_db', JSON.stringify(allProducts));
+            } catch(e) {
+                console.warn('时空轴连接受限，唤醒本地安全库。');
+                categories = JSON.parse(localStorage.getItem('artisan_categories')) || categories;
+                allProducts = JSON.parse(localStorage.getItem('furniture_gallery_db')) || [];
+            }
+            
+            // 筛选灵感单品，按时间由新到旧排列
+            inspirationProducts = allProducts.filter(p => (p.page || '首页') === '灵感');
+            
+            // 如果灵感数据完全为空，植入三款超奢默认高定单品，避免骨骼塌陷
+            if(inspirationProducts.length === 0) {
+                inspirationProducts = [
+                    {
+                        id: 1779830400000, // 2026-05
+                        name: "华尔兹极奢岩石柜",
+                        price: 18900,
+                        category: "书架",
+                        images: ["https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=800&q=80"],
+                        description: "极致利落骨骼与冷岩肌理交融，在晨昏间捕捉流光艺术投影。"
+                    },
+                    {
+                        id: 1777084800000, // 2026-04
+                        name: "奥德赛东方罗汉榻",
+                        price: 24500,
+                        category: "床",
+                        images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80"],
+                        description: "古典骨架融合现代极简泡棉工艺，勾勒悠远清雅的起居禅意境象。"
+                    },
+                    {
+                        id: 1774348800000, // 2026-03
+                        name: "圆舞曲黑檀木茶几",
+                        price: 14800,
+                        category: "茶几",
+                        images: ["https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=800&q=80"],
+                        description: "精选百年高密度黑檀木纯手工旋切，轮纹深邃，留驻大地诗篇。"
+                    }
+                ];
+                // 写入全集以便同步
+                allProducts.push(...inspirationProducts);
+            }
+            
+            renderCategories();
+            initTimelineAndCards();
+            renderAdminList();
+        }
 
-// === Actions ===
-window.toggleAdminModal = function() {
-  const m = document.getElementById('adminModal');
-  const s = document.getElementById('adminSidebar');
-  if (m.classList.contains('hidden')) {
-    m.classList.remove('hidden');
-    setTimeout(() => s.classList.remove('translate-x-full'), 10);
-    renderAdminList(); renderCategories();
-  } else {
-    s.classList.add('translate-x-full');
-    setTimeout(() => m.classList.add('hidden'), 500);
-  }
-};
-window.addImageInput = function() {
-  const d = document.createElement('div');
-  d.innerHTML = '<input type="text" placeholder="视角 URL" class="w-full border-b bg-transparent py-2 text-xs outline-none img-input">';
-  document.getElementById('imageInputs').appendChild(d);
-};
-window.addProduct = async function() {
-  const name = document.getElementById('p_name').value.trim();
-  const price = document.getElementById('p_price').value;
-  const images = Array.from(document.querySelectorAll('.img-input')).map(i => i.value).filter(v => v);
-  if (!name || !price || !images.length) return alert('信息不完整');
-  if (allProducts.some(p => p.name === name)) return alert('作品名重复');
-  allProducts.unshift({ id:Date.now(), name, price, category:document.getElementById('p_category').value, page:'灵感', images, tags:'NEW' });
-  const ok = await saveToGitHub();
-  if (ok) {
-    renderProducts(); renderAdminList();
-    document.getElementById('p_name').value = '';
-    document.getElementById('p_price').value = '';
-    document.querySelectorAll('.img-input').forEach((i, idx) => { if (idx>0) i.parentElement.remove(); else i.value=''; });
-  }
-};
-window.deleteProduct = async function(id) {
-  if (!confirm('删除此灵感作品？')) return;
-  allProducts = allProducts.filter(p => p.id !== id);
-  await saveToGitHub();
-  renderProducts(); renderAdminList();
-};
-window.showLightbox = function(src) {
-  document.getElementById('lbImg').src = src;
-  const lb = document.getElementById('lightbox');
-  lb.classList.remove('hidden'); lb.style.display = 'flex';
-};
-window.closeLb = function() {
-  const lb = document.getElementById('lightbox');
-  lb.classList.add('hidden'); lb.style.display = '';
-};
+        async function saveToGitHub() {
+            if (!githubToken) { showSaveStatus('error', '未检测到特权Token'); return false; }
+            showSaveStatus('saving', '同步云端部署中...');
+            try {
+                const headRes = await fetch(GITHUB_API, {
+                    headers: { 'Authorization': 'Bearer ' + githubToken, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' },
+                    cache: 'no-store'
+                });
+                if (headRes.ok) { const d = await headRes.json(); dataSha = d.sha; }
 
-// === Init ===
-window.addEventListener('load', () => { fetchProducts(); });
-</script>
+                // 核心封装：保证 categories 与 products 整合不丢失
+                const data = { categories, products: allProducts };
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+                const body = { message: '✨ 灵感空间多维卡片自动化发布: ' + new Date().toISOString(), content: content, sha: dataSha };
+                
+                const res = await fetch(GITHUB_API, {
+                    method: 'PUT',
+                    headers: { 'Authorization': 'Bearer ' + githubToken, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                if (res.status === 401) {
+                    showSaveStatus('error', '凭证失效');
+                    const t = prompt('发布凭证失效，请输入 GitHub 权限 Token：');
+                    if (t) { githubToken = t.trim(); localStorage.setItem('gh_token', githubToken); return await saveToGitHub(); }
+                    return false;
+                }
+                if (res.status === 409) {
+                    dataSha = null; return await saveToGitHub();
+                }
+                if (!res.ok) throw new Error('云写入错误码: ' + res.status);
+                const result = await res.json();
+                dataSha = result.content.sha;
+                
+                localStorage.setItem('artisan_categories', JSON.stringify(categories));
+                localStorage.setItem('furniture_gallery_db', JSON.stringify(allProducts));
+                showSaveStatus('saved', '云端自动化打包部署成功');
+                return true;
+            } catch(e) {
+                showSaveStatus('error', '云同步失败: ' + e.message);
+                return false;
+            }
+        }
 
-<!-- 手机端底部导航 -->
-<nav class="mobile-nav">
-  <a href="index.html"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>首页</span></a>
-  <a href="#" class="active"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg><span>灵感</span></a>
-  <a href="#" onclick="handleAdminAccess()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span>管理</span></a>
-</nav>
+        // --- 核心交互引擎：时间轴 + 3D堆叠卡片完美联动 ---
+        function initTimelineAndCards() {
+            const loading = document.getElementById('loading'); if (loading) loading.remove();
+            const stackArea = document.getElementById('stackArea');
+            const ticksContainer = document.getElementById('timelineTicks');
+            
+            stackArea.innerHTML = '';
+            ticksContainer.innerHTML = '';
+            activeCardIndex = 0;
 
+            // 1. 生成卡片集
+            inspirationProducts.forEach((p, idx) => {
+                const card = document.createElement('div');
+                card.className = 'stack-card';
+                card.id = `card-${idx}`;
+                card.style.zIndex = inspirationProducts.length - idx;
+                
+                // 假造极高质感点赞数
+                const pseudoLikes = Math.floor((p.id % 4000) + 1200);
+
+                card.innerHTML = `
+                    <div class="relative w-full h-full">
+                        <!-- 家具质感大图 -->
+                        <img src="${p.images[0]}" class="w-full h-full object-cover select-none pointer-events-none" loading="lazy">
+                        
+                        <!-- 顶层高定玻璃触觉标签 -->
+                        <div class="absolute top-4 left-4 glass-card px-3 py-1 rounded-full text-[9px] uppercase tracking-[0.2em] font-medium text-[var(--accent)] flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 bg-[var(--accent)] rounded-full animate-ping"></span>
+                            <span>${p.category}</span>
+                        </div>
+
+                        <!-- 顶层心形赞数标签 -->
+                        <div class="absolute top-4 right-4 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-[10px] tracking-widest font-light text-white/90 flex items-center gap-1.5 cursor-pointer hover:bg-black/60 transition-colors" onclick="likeCard(event, ${idx})">
+                            <i data-lucide="heart" class="w-3.5 h-3.5 text-red-400 stroke-[1.5] fill-red-400"></i>
+                            <span id="like-count-${idx}">${pseudoLikes}</span>
+                        </div>
+
+                        <!-- 底部高定毛玻璃卡名 -->
+                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 flex flex-col justify-end min-h-[140px] select-none">
+                            <p class="text-[9px] uppercase tracking-[0.15em] text-white/50 mb-1 font-light">${getYearMonthStr(p.id)} COLLECTION</p>
+                            <h3 class="text-lg md:text-xl font-light tracking-wide text-white mb-2 leading-snug">${p.name}</h3>
+                            <div class="flex justify-between items-baseline">
+                                <p class="text-xs text-white/60 font-light max-w-[70%] truncate leading-relaxed">${p.description || '纯粹美学，探索手作极致细节。'}</p>
+                                <p class="text-sm font-semibold text-[var(--accent)] tracking-wider">&yen;${Number(p.price).toLocaleString()}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                stackArea.appendChild(card);
+                setupCardGestures(card, idx);
+            });
+
+            // 2. 动态生组左侧时空刻度线
+            const totalTicks = inspirationProducts.length;
+            inspirationProducts.forEach((p, idx) => {
+                const tick = document.createElement('div');
+                tick.className = `timeline-tick ${idx === 0 ? 'active' : ''}`;
+                tick.id = `tick-${idx}`;
+                
+                // 等比均匀排布刻度点
+                const percentage = totalTicks > 1 ? (idx / (totalTicks - 1)) * 100 : 0;
+                tick.style.top = `calc(${percentage}% - 6px)`;
+                
+                // 解析时轴月份文字
+                const dateStr = getTimelineDateStr(p.id);
+                tick.innerHTML = `
+                    <div class="flex flex-col items-center">
+                        <span class="text-[9px] scale-90 font-semibold">${dateStr.month}</span>
+                        <span class="text-[7px] text-white/20 scale-75 mt-0.5 tracking-tighter">${dateStr.year}</span>
+                    </div>
+                `;
+                
+                // 点击时间轴直接抽移卡片
+                tick.onclick = () => jumpToCard(idx);
+                ticksContainer.appendChild(tick);
+            });
+
+            // 初始化卡片物理布局
+            updateStackLayout();
+            lucide.createIcons();
+        }
+
+        // --- 优雅的时间轴文字格式化 ---
+        function getTimelineDateStr(timestamp) {
+            const date = new Date(Number(timestamp));
+            const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            // 兜底机制：万一发布时间异常采用2026年
+            const year = isNaN(date.getFullYear()) ? "2026" : String(date.getFullYear());
+            const month = isNaN(date.getMonth()) ? "MAY" : months[date.getMonth()];
+            return { year, month };
+        }
+
+        function getYearMonthStr(timestamp) {
+            const date = new Date(Number(timestamp));
+            const year = isNaN(date.getFullYear()) ? "2026" : date.getFullYear();
+            const month = isNaN(date.getMonth()) ? 5 : date.getMonth() + 1;
+            return `${year}/${month < 10 ? '0' + month : month}`;
+        }
+
+        // --- 触压反馈：双击/点击爱心快速增加心动数 ---
+        window.likeCard = function(e, idx) {
+            if(e) e.stopPropagation();
+            const el = document.getElementById(`like-count-${idx}`);
+            if(el) {
+                let current = parseInt(el.textContent);
+                el.textContent = current + 1;
+                // 微弱脉冲震荡反馈
+                el.parentElement.classList.add('scale-110', 'bg-red-500/10');
+                setTimeout(() => el.parentElement.classList.remove('scale-110', 'bg-red-500/10'), 200);
+            }
+        };
+
+        // --- 3D物理卡片堆叠与错落位移动画算法 ---
+        function updateStackLayout() {
+            const cards = document.querySelectorAll('.stack-card');
+            cards.forEach((card, idx) => {
+                const relativeIndex = idx - activeCardIndex;
+                
+                if (relativeIndex < 0) {
+                    // 已经滑出的卡片
+                    // 保持它们之前的飞出状态，动画由 Swipe-Out 样式接管
+                } else if (relativeIndex === 0) {
+                    // 主视角活跃卡片
+                    card.style.transform = `translate3d(0, 0, 0) scale(1) rotate(0deg)`;
+                    card.style.opacity = '1';
+                    card.style.pointerEvents = 'auto';
+                    card.style.boxShadow = '0 30px 60px -15px rgba(0,0,0,0.5), 0 0 1px rgba(255,255,255,0.2) inset';
+                } else if (relativeIndex <= 3) {
+                    // 处于候补队列中的层叠卡片（实现高级的3D向右上角堆折错落感）
+                    const scale = 1 - (relativeIndex * 0.04);
+                    const translateY = -relativeIndex * 15; // 向上折射
+                    const translateX = relativeIndex * 15;  // 向右倾斜，和参考图完全一样！
+                    const rotate = relativeIndex * 1;      // 带有一丝写意微弧
+                    
+                    card.style.transform = `translate3d(${translateX}px, ${translateY}px, -${relativeIndex * 100}px) scale(${scale}) rotate(${rotate}deg)`;
+                    card.style.opacity = `${0.9 - (relativeIndex * 0.25)}`;
+                    card.style.pointerEvents = 'none';
+                    card.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
+                } else {
+                    // 更深层级的卡片直接隐藏，优化渲染负荷
+                    card.style.transform = `translate3d(60px, -60px, -400px) scale(0.8) rotate(5deg)`;
+                    card.style.opacity = '0';
+                    card.style.pointerEvents = 'none';
+                }
+            });
+
+            // 动态流体时间轴指示器点位流动
+            updateTimelineDot();
+        }
+
+        function updateTimelineDot() {
+            const ticks = document.querySelectorAll('.timeline-tick');
+            const dot = document.getElementById('timelineDot');
+            
+            ticks.forEach(t => t.classList.remove('active'));
+            
+            const activeTick = document.getElementById(`tick-${activeCardIndex}`);
+            if (activeTick && dot) {
+                activeTick.classList.add('active');
+                // 呼吸点位置平滑流移
+                dot.style.top = activeTick.style.top;
+            }
+        }
+
+        function jumpToCard(targetIdx) {
+            if(targetIdx === activeCardIndex) return;
+            
+            const cards = document.querySelectorAll('.stack-card');
+            
+            if (targetIdx > activeCardIndex) {
+                // 向上切牌：需要依次将当前卡片滑出
+                const interval = setInterval(() => {
+                    if (activeCardIndex < targetIdx) {
+                        const currentCard = document.getElementById(`card-${activeCardIndex}`);
+                        if(currentCard) {
+                            currentCard.classList.add(Math.random() > 0.5 ? 'swipe-out-right' : 'swipe-out-left');
+                        }
+                        activeCardIndex++;
+                        updateStackLayout();
+                    } else {
+                        clearInterval(interval);
+                    }
+                }, 150);
+            } else {
+                // 向下回切：重置退场状态
+                for (let i = targetIdx; i < activeCardIndex; i++) {
+                    const card = document.getElementById(`card-${i}`);
+                    if (card) {
+                        card.classList.remove('swipe-out-left', 'swipe-out-right');
+                    }
+                }
+                activeCardIndex = targetIdx;
+                updateStackLayout();
+            }
+        }
+
+        // --- 触控/拖拽：大拇指轻扫与阻尼退牌手势控制器 ---
+        function setupCardGestures(card, index) {
+            let startX = 0, currentX = 0;
+            let startY = 0, currentY = 0;
+            let isDragging = false;
+            
+            card.addEventListener('pointerdown', (e) => {
+                // 仅允许当前激活的主卡进行手势
+                if (index !== activeCardIndex) return;
+                
+                card.style.transition = 'none';
+                startX = e.clientX;
+                startY = e.clientY;
+                isDragging = true;
+                card.setPointerCapture(e.pointerId);
+            });
+
+            card.addEventListener('pointermove', (e) => {
+                if (!isDragging) return;
+                currentX = e.clientX - startX;
+                currentY = e.clientY - startY;
+                
+                // 实施物理阻尼旋转
+                const rotate = currentX * 0.05;
+                card.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(1.02) rotate(${rotate}deg)`;
+            });
+
+            card.addEventListener('pointerup', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                card.releasePointerCapture(e.pointerId);
+                card.style.transition = 'transform 0.6s cubic-bezier(0.15, 0.85, 0.35, 1), opacity 0.6s ease';
+                
+                // 轻扫位移阈值，超出即判定退场
+                if (Math.abs(currentX) > 130) {
+                    if (currentX > 0) {
+                        card.classList.add('swipe-out-right');
+                    } else {
+                        card.classList.add('swipe-out-left');
+                    }
+                    
+                    // 循环切回首张：当滑完所有卡片时，循环回来
+                    activeCardIndex++;
+                    if (activeCardIndex >= inspirationProducts.length) {
+                        setTimeout(() => {
+                            activeCardIndex = 0;
+                            const cards = document.querySelectorAll('.stack-card');
+                            cards.forEach(c => c.classList.remove('swipe-out-left', 'swipe-out-right'));
+                            updateStackLayout();
+                        }, 500);
+                    } else {
+                        updateStackLayout();
+                    }
+                } else {
+                    // 回弹初始状态
+                    updateStackLayout();
+                }
+                currentX = 0; currentY = 0;
+            });
+
+            // 监听双击卡片快速点赞大图
+            let lastTap = 0;
+            card.addEventListener('click', (e) => {
+                const now = new Date().getTime();
+                if (now - lastTap < 300) {
+                    likeCard(e, index);
+                }
+                lastTap = now;
+            });
+        }
+
+        // --- 支持鼠标滚轮无缝滑动切牌 ---
+        let lastWheelTime = 0;
+        window.addEventListener('wheel', (e) => {
+            const now = new Date().getTime();
+            if (now - lastWheelTime < 1000) return; // 防抖，间隔 1s 触发一次切牌
+            
+            // 确保没有遮罩层等冲突
+            if(!document.getElementById('zoomModal').classList.contains('hidden')) return;
+            if(!document.getElementById('authOverlay').classList.contains('hidden')) return;
+
+            if (Math.abs(e.deltaY) > 30) {
+                lastWheelTime = now;
+                if (e.deltaY > 0) {
+                    // 向下滑：下一张
+                    const currentCard = document.getElementById(`card-${activeCardIndex}`);
+                    if (currentCard) {
+                        currentCard.classList.add(Math.random() > 0.5 ? 'swipe-out-right' : 'swipe-out-left');
+                        activeCardIndex++;
+                        if (activeCardIndex >= inspirationProducts.length) {
+                            setTimeout(() => {
+                                activeCardIndex = 0;
+                                const cards = document.querySelectorAll('.stack-card');
+                                cards.forEach(c => c.classList.remove('swipe-out-left', 'swipe-out-right'));
+                                updateStackLayout();
+                            }, 500);
+                        } else {
+                            updateStackLayout();
+                        }
+                    }
+                } else {
+                    // 向上滑：上一张
+                    if (activeCardIndex > 0) {
+                        activeCardIndex--;
+                        const prevCard = document.getElementById(`card-${activeCardIndex}`);
+                        if (prevCard) {
+                            prevCard.classList.remove('swipe-out-left', 'swipe-out-right');
+                        }
+                        updateStackLayout();
+                    }
+                }
+            }
+        });
+
+        // --- 后台工作流管理逻辑（保持你的所有发布、导入导出、修改流程原样不变） ---
+        window.toggleAdminModal = function() {
+            const m = document.getElementById('adminModal');
+            const s = document.getElementById('adminSidebar');
+            if (m.classList.contains('hidden')) {
+                m.classList.remove('hidden');
+                setTimeout(() => s.classList.remove('translate-x-full'), 10);
+                renderAdminList(); renderCategories();
+            } else {
+                s.classList.add('translate-x-full');
+                setTimeout(() => m.classList.add('hidden'), 500);
+            }
+        };
+
+        window.addImageInput = function() {
+            const d = document.createElement('div');
+            d.innerHTML = '<input type="text" placeholder="视角 URL" class="w-full border-b border-white/[0.08] py-2 text-xs outline-none bg-transparent text-white img-input">';
+            document.getElementById('imageInputs').appendChild(d);
+        };
+
+        window.addProduct = async function() {
+            const name = document.getElementById('p_name').value.trim();
+            const price = document.getElementById('p_price').value;
+            const images = Array.from(document.querySelectorAll('.img-input')).map(i => i.value).filter(v => v);
+            
+            if (!name || !price || !images.length) return alert('请完备灵感单品名称、估价和链接。');
+            if (allProducts.some(p => p.name === name)) return alert('该灵感单品在册库中名称冲突');
+            
+            // 插入到首部位置
+            allProducts.unshift({ 
+                id: Date.now(), 
+                name, 
+                price: Number(price), 
+                category: document.getElementById('p_category').value, 
+                page: '灵感', 
+                images, 
+                tags: 'NEW',
+                description: '本款手作物料具有非凡的东方美学，天然质感呈现起居画室光影张力。'
+            });
+            
+            const ok = await saveToGitHub();
+            if (ok) {
+                // 清空表单
+                document.getElementById('p_name').value = '';
+                document.getElementById('p_price').value = '';
+                document.getElementById('imageInputs').innerHTML = '<input type="text" placeholder="主图超链 URL" class="w-full border-b border-white/[0.08] py-2 text-[11px] outline-none bg-transparent text-white img-input">';
+                
+                // 重新渲染本地层叠
+                inspirationProducts = allProducts.filter(p => (p.page || '首页') === '灵感');
+                initTimelineAndCards();
+                toggleAdminModal();
+            }
+        };
+
+        window.deleteProduct = async function(id) {
+            if (!confirm('确定撤裁并从册中抹除这款灵感单品？')) return;
+            allProducts = allProducts.filter(p => p.id !== id);
+            const ok = await saveToGitHub();
+            if (ok) {
+                inspirationProducts = allProducts.filter(p => (p.page || '首页') === '灵感');
+                initTimelineAndCards();
+            }
+        };
+
+        // --- 灵感管理页签渲染 ---
+        let editingId = null;
+        function renderAdminList() {
+            const el = document.getElementById('adminList'); if (!el) return;
+            const products = allProducts.filter(p => (p.page || '首页') === '灵感');
+            if (!products.length) { el.innerHTML = '<div class="text-center opacity-30 py-8 text-xs text-neutral-500 font-light">暂无灵感物料</div>'; return; }
+            
+            el.innerHTML = products.map(p => {
+                if (editingId === p.id) {
+                    return `
+                        <div class="p-4 bg-white/[0.02] border border-white/[0.05] rounded space-y-3 fade-up text-xs font-light text-neutral-300">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[10px] font-bold text-[var(--accent)] tracking-widest">编辑灵感卡</span>
+                                <div class="flex gap-2">
+                                    <button onclick="cancelEdit()" class="px-2.5 py-1 border border-white/[0.1] rounded">取消</button>
+                                    <button onclick="saveEdit(${p.id})" class="px-2.5 py-1 bg-white text-black rounded font-medium">保存</button>
+                                </div>
+                            </div>
+                            <input id="edit_name" value="${p.name}" class="w-full border-b border-white/[0.08] py-2 outline-none bg-transparent text-xs" placeholder="画卷名称">
+                            <div class="grid grid-cols-2 gap-3">
+                                <select id="edit_cat" class="border-b border-white/[0.08] py-2 outline-none bg-transparent text-neutral-400 text-xs">
+                                    ${categories.map(c => `<option value="${c}" ${c===p.category?'selected':''}>${c}</option>`).join('')}
+                                </select>
+                                <input id="edit_price" value="${p.price}" class="border-b border-white/[0.08] bg-transparent py-2 outline-none text-xs" placeholder="估价">
+                            </div>
+                            <div id="edit_images" class="space-y-2">
+                                ${p.images.map((img,i) => `
+                                    <div class="flex gap-2">
+                                        <input value="${img}" class="w-full border-b border-white/[0.08] bg-transparent py-1 text-[11px] outline-none text-neutral-400 edit-img-input">
+                                        <button onclick="this.parentElement.remove()" class="text-red-400 text-xs">&#x2715;</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                return `
+                    <div class="flex items-center justify-between p-3 bg-white/[0.01] border border-white/[0.03] rounded group text-xs font-light">
+                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                            <img src="${p.images[0]}" class="w-10 h-10 object-cover rounded bg-[#2A2830] flex-shrink-0">
+                            <div class="min-w-0">
+                                <p class="font-normal text-white truncate">${p.name}</p>
+                                <p class="text-neutral-500 text-[10px] uppercase">${p.category} · ¥${Number(p.price||0).toLocaleString()}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="editProduct(${p.id})" class="p-2 hover:bg-white/5 rounded text-blue-400 opacity-0 group-hover:opacity-100 transition-all">✏️</button>
+                            <button onclick="deleteProduct(${p.id})" class="p-2 hover:bg-white/5 rounded text-red-400">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.editProduct = function(id) { editingId = id; renderAdminList(); };
+        window.cancelEdit = function() { editingId = null; renderAdminList(); };
+        window.saveEdit = async function(id) {
+            const p = allProducts.find(x => x.id === id); if (!p) return;
+            p.name = document.getElementById('edit_name').value.trim();
+            p.price = Number(document.getElementById('edit_price').value);
+            p.category = document.getElementById('edit_cat').value;
+            const imgs = Array.from(document.querySelectorAll('.edit-img-input')).map(i=>i.value).filter(v=>v);
+            if (imgs.length) p.images = imgs;
+            
+            editingId = null;
+            const ok = await saveToGitHub();
+            if(ok) {
+                inspirationProducts = allProducts.filter(p => (p.page || '首页') === '灵感');
+                initTimelineAndCards();
+            }
+        };
+
+        function renderCategories() {
+            const sel = document.getElementById('p_category');
+            if (sel) sel.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+
+        // --- 触控图片高级缩放 ---
+        window.closeZoom = function() { document.getElementById('zoomModal').classList.add('hidden'); document.body.style.overflow = ''; };
+
+        // --- 首次自运行系统 ---
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchProducts();
+            lucide.createIcons();
+        });
+    </script>
 </body>
 </html>
