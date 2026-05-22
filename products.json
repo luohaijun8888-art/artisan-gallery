@@ -1,1146 +1,1026 @@
 {
-    "products":  [
-                     {
-                         "id":  1779066885258,
-                         "name":  "2",
-                         "description":  "",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "page":  "灵感",
-                         "tags":  "2",
-                         "images":  [
-                                        "2"
-                                    ],
-                         "detailImages":  [
-
-                                          ],
-                         "variants":  [
-                                          {
-                                              "name":  "2",
-                                              "images":  [
-                                                             "2"
-                                                         ]
-                                          }
-                                      ]
-                     },
-                     {
-                         "variants":  [
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/茶几/威尼斯棕.jpg"
-                                                         ],
-                                              "name":  "威尼斯棕"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/茶几/宝格丽白.jpg"
-                                                         ],
-                                              "name":  "宝格丽白"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/茶几/宝格丽黑.jpg"
-                                                         ],
-                                              "name":  "宝格丽黑"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/茶几/皇家白玉.jpg"
-                                                         ],
-                                              "name":  "皇家白玉"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/茶几/纳秋红.jpg"
-                                                         ],
-                                              "name":  "纳秋红"
-                                          }
-                                      ],
-                         "id":  1000,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "茶几",
-                         "description":  "极简奢华茶几，意大利进口岩板台面",
-                         "page":  "首页",
-                         "name":  "华尔兹Ultra茶几",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/茶几/威尼斯棕.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1400/威尼斯棕.jpg"
-                                                         ],
-                                              "name":  "1400 mm - 威尼斯棕"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1400/宝格丽白.jpg"
-                                                         ],
-                                              "name":  "1400 mm - 宝格丽白"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1400/宝格丽黑.jpg"
-                                                         ],
-                                              "name":  "1400 mm - 宝格丽黑"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1400/皇家白玉.jpg"
-                                                         ],
-                                              "name":  "1400 mm - 皇家白玉"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1400/纳秋红.jpg"
-                                                         ],
-                                              "name":  "1400 mm - 纳秋红"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1600/威尼斯棕.jpg"
-                                                         ],
-                                              "name":  "1600 mm - 威尼斯棕"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1600/宝格丽白.jpg"
-                                                         ],
-                                              "name":  "1600 mm - 宝格丽白"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1600/宝格丽黑.jpg"
-                                                         ],
-                                              "name":  "1600 mm - 宝格丽黑"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1600/皇家白玉.jpg"
-                                                         ],
-                                              "name":  "1600 mm - 皇家白玉"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1600/纳秋红.jpg"
-                                                         ],
-                                              "name":  "1600 mm - 纳秋红"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1800/威尼斯棕.jpg"
-                                                         ],
-                                              "name":  "1800 mm - 威尼斯棕"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1800/宝格丽白.jpg"
-                                                         ],
-                                              "name":  "1800 mm - 宝格丽白"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1800/宝格丽黑.jpg"
-                                                         ],
-                                              "name":  "1800 mm - 宝格丽黑"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1800/皇家白玉.jpg"
-                                                         ],
-                                              "name":  "1800 mm - 皇家白玉"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1800/纳秋红.jpg"
-                                                         ],
-                                              "name":  "1800 mm - 纳秋红"
-                                          }
-                                      ],
-                         "id":  1001,
-                         "tags":  "HOT",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "意式极简长桌，1400/1600/1800三种尺寸，每尺寸5色可选",
-                         "page":  "首页",
-                         "name":  "华尔兹Ultra长桌",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1400/威尼斯棕.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.35/威尼斯棕.jpg"
-                                                         ],
-                                              "name":  "1.35m无转盘 - 威尼斯棕"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.35/宝格丽白.jpg"
-                                                         ],
-                                              "name":  "1.35m无转盘 - 宝格丽白"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.35/宝格丽黑.jpg"
-                                                         ],
-                                              "name":  "1.35m无转盘 - 宝格丽黑"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.35/皇家白玉.jpg"
-                                                         ],
-                                              "name":  "1.35m无转盘 - 皇家白玉"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.35/纳秋红.jpg"
-                                                         ],
-                                              "name":  "1.35m无转盘 - 纳秋红"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.5/威尼斯棕.jpg"
-                                                         ],
-                                              "name":  "1.5m无转盘 - 威尼斯棕"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.5/宝格丽白.jpg"
-                                                         ],
-                                              "name":  "1.5m无转盘 - 宝格丽白"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.5/宝格丽黑.jpg"
-                                                         ],
-                                              "name":  "1.5m无转盘 - 宝格丽黑"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.5/皇家白玉.jpg"
-                                                         ],
-                                              "name":  "1.5m无转盘 - 皇家白玉"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.5/纳秋红.jpg"
-                                                         ],
-                                              "name":  "1.5m无转盘 - 纳秋红"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.35米/威尼斯棕.jpg"
-                                                         ],
-                                              "name":  "1.35m带转盘 - 威尼斯棕"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.35米/宝格丽白.jpg"
-                                                         ],
-                                              "name":  "1.35m带转盘 - 宝格丽白"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.35米/宝格丽黑.jpg"
-                                                         ],
-                                              "name":  "1.35m带转盘 - 宝格丽黑"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.35米/皇家白玉.jpg"
-                                                         ],
-                                              "name":  "1.35m带转盘 - 皇家白玉"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.35米/纳秋红.jpg"
-                                                         ],
-                                              "name":  "1.35m带转盘 - 纳秋红"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.5米/威尼斯棕.jpg"
-                                                         ],
-                                              "name":  "1.5m带转盘 - 威尼斯棕"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.5米/宝格丽白.jpg"
-                                                         ],
-                                              "name":  "1.5m带转盘 - 宝格丽白"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.5米/宝格丽黑.jpg"
-                                                         ],
-                                              "name":  "1.5m带转盘 - 宝格丽黑"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.5米/皇家白玉.jpg"
-                                                         ],
-                                              "name":  "1.5m带转盘 - 皇家白玉"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.5米/纳秋红.jpg"
-                                                         ],
-                                              "name":  "1.5m带转盘 - 纳秋红"
-                                          }
-                                      ],
-                         "id":  1002,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "极简圆桌，1.35m/1.5m两种尺寸，可选配转盘，每款5色",
-                         "page":  "首页",
-                         "name":  "华尔兹Ultra圆桌",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.35/威尼斯棕.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(10)/巴洛克马.jpg"
-                                                         ],
-                                              "name":  "巴洛克马"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(10)/涂鸦马.jpg"
-                                                         ],
-                                              "name":  "涂鸦马"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(10)/牛仔马.jpg"
-                                                         ],
-                                              "name":  "牛仔马"
-                                          }
-                                      ],
-                         "id":  2001,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "摆件",
-                         "description":  "三种风格艺术马摆件，巴洛克/涂鸦/牛仔",
-                         "page":  "首页",
-                         "name":  "艺术马摆件",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(10)/巴洛克马.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(11)/椅子1.jpg"
-                                                         ],
-                                              "name":  "椅子1"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(11)/椅子2.jpg"
-                                                         ],
-                                              "name":  "椅子2"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(13)/椅子3.jpg"
-                                                         ],
-                                              "name":  "椅子3"
-                                          }
-                                      ],
-                         "id":  2002,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐椅",
-                         "description":  "多款设计师餐椅可选",
-                         "page":  "首页",
-                         "name":  "设计师餐椅",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(11)/椅子1.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(14)/休闲椅.jpg"
-                                                         ],
-                                              "name":  "休闲椅1"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(25)/休闲椅2.jpg"
-                                                         ],
-                                              "name":  "休闲椅2"
-                                          }
-                                      ],
-                         "id":  2003,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "休闲椅",
-                         "description":  "舒适休闲椅，多款可选",
-                         "page":  "首页",
-                         "name":  "休闲椅",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(14)/休闲椅.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2004,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "茶几",
-                         "description":  "精致茶几",
-                         "page":  "首页",
-                         "name":  "茶几",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(17)/茶几1.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(28)/KH.B1036.jpg"
-                                                         ],
-                                              "name":  "1036基础款"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(28)/1036抽屉款.jpg"
-                                                         ],
-                                              "name":  "1036抽屉款"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(28)/KH.B1036-B.jpg"
-                                                         ],
-                                              "name":  "1036黑色"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(28)/KH.B1036-W.jpg"
-                                                         ],
-                                              "name":  "1036白色"
-                                          }
-                                      ],
-                         "id":  2005,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "柜类",
-                         "description":  "1036系列，含抽屉款及多色可选",
-                         "page":  "首页",
-                         "name":  "1036系列柜",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(28)/KH.B1036.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(29)/床1.jpg"
-                                                         ],
-                                              "name":  "床-经典款"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(30)/床2.jpg"
-                                                         ],
-                                              "name":  "床-豪华款"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(31)/1.8米不带按摩.jpg"
-                                                         ],
-                                              "name":  "1.8米不带按摩"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(32)/1.5M带按摩.jpg"
-                                                         ],
-                                              "name":  "1.5M带按摩"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(32)/1.8M带按摩.jpg"
-                                                         ],
-                                              "name":  "1.8M带按摩"
-                                          }
-                                      ],
-                         "id":  2006,
-                         "tags":  "HOT",
-                         "price":  "0",
-                         "category":  "床",
-                         "description":  "多款奢华床具，含按摩功能可选",
-                         "page":  "首页",
-                         "name":  "奢华系列床",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(29)/床1.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/2032/2032.jpg"
-                                                         ],
-                                              "name":  "2032基础"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/2032/544y.jpg"
-                                                         ],
-                                              "name":  "2032款A"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/2032/54y.jpg"
-                                                         ],
-                                              "name":  "2032款B"
-                                          }
-                                      ],
-                         "id":  2007,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "2032系列家具",
-                         "page":  "首页",
-                         "name":  "2032系列",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/2032/2032.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(2)/5416346.jpg"
-                                                         ],
-                                              "name":  "5416346"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(2)/5416346-恢复的.jpg"
-                                                         ],
-                                              "name":  "5416346-恢复的"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(2)/5428676.jpg"
-                                                         ],
-                                              "name":  "5428676"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(2)/5486376.jpg"
-                                                         ],
-                                              "name":  "5486376"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(2)/5486716.jpg"
-                                                         ],
-                                              "name":  "5486716"
-                                          }
-                                      ],
-                         "id":  2008,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐椅",
-                         "description":  "5416系列家具",
-                         "page":  "首页",
-                         "name":  "5416系列",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(2)/5416346.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(4)/1.jpg"
-                                                         ],
-                                              "name":  "款式1"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(4)/22.jpg"
-                                                         ],
-                                              "name":  "款式2"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(4)/33.jpg"
-                                                         ],
-                                              "name":  "款式3"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(4)/591d5.jpg"
-                                                         ],
-                                              "name":  "款式4"
-                                          }
-                                      ],
-                         "id":  2009,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "系列A家具",
-                         "page":  "首页",
-                         "name":  "系列A",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(4)/1.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(5)/4544.jpg"
-                                                         ],
-                                              "name":  "款式1"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(5)/45e44.jpg"
-                                                         ],
-                                              "name":  "款式2"
-                                          }
-                                      ],
-                         "id":  2010,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "茶几",
-                         "description":  "系列B家具",
-                         "page":  "首页",
-                         "name":  "系列B",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(5)/4544.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(6)/12121.jpg"
-                                                         ],
-                                              "name":  "款式1"
-                                          },
-                                          {
-                                              "images":  [
-                                                             "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(6)/12222.jpg"
-                                                         ],
-                                              "name":  "款式2"
-                                          }
-                                      ],
-                         "id":  2011,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "系列C家具",
-                         "page":  "首页",
-                         "name":  "系列C",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(6)/12121.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2012,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具1",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1/136541.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2013,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具2",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1/V3.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2014,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "柜类",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具3",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(12)/gre.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2015,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "柜类",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具4",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(15)/ww.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2016,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "柜类",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具5",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(16)/w.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2017,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具6",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(18)/85651.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2018,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具7",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(19)/56659.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2019,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具8",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(20)/45646.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2020,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具9",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(21)/12684.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2021,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "柜类",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具10",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(22)/微信图片_20241026185837.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2022,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具11",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(23)/12635468.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2023,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具12",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(24)/111111.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2024,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具13",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(27)/5356356.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2025,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "柜类",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具14",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(3)/wer.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2026,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "柜类",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具15",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(3)/wser.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2027,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "柜类",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具16",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(7)/fwq.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2028,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "柜类",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具17",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(8)/15235413.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2029,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "柜类",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具18",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(9)/12635f468.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2030,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具19",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/2/g3tw.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2031,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "柜类",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具20",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/新建文件夹/875696.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2032,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "床",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "1033系列",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(31)/1033.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2033,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具21",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(29)/2222.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2034,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "餐台",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具22",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(29)/3333.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     },
-                     {
-                         "variants":  [
-
-                                      ],
-                         "id":  2035,
-                         "tags":  "NEW",
-                         "price":  "0",
-                         "category":  "床",
-                         "description":  "",
-                         "page":  "首页",
-                         "name":  "家具23",
-                         "images":  [
-                                        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(30)/3ehy5w.jpg"
-                                    ],
-                         "detailImages":  [
-
-                                          ]
-                     }
-                 ],
-    "categories":  [
-                       "餐台",
-                       "茶几",
-                       "餐椅",
-                       "床",
-                       "学习桌",
-                       "休闲椅",
-                       "摆件",
-                       "柜类"
-                   ]
+  "categories": [
+    "餐台",
+    "茶几",
+    "餐椅",
+    "床",
+    "学习桌",
+    "休闲椅",
+    "摆件",
+    "柜类"
+  ],
+  "products": [
+    {
+      "id": 1779066885258,
+      "name": "2",
+      "description": "",
+      "price": "0",
+      "category": "餐台",
+      "page": "灵感",
+      "tags": "2",
+      "images": [
+        "2"
+      ],
+      "detailImages": [],
+      "variants": [
+        {
+          "name": "2",
+          "images": [
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "variants": [
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/茶几/威尼斯棕.jpg"
+          ],
+          "name": "威尼斯棕"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/茶几/宝格丽白.jpg"
+          ],
+          "name": "宝格丽白"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/茶几/宝格丽黑.jpg"
+          ],
+          "name": "宝格丽黑"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/茶几/皇家白玉.jpg"
+          ],
+          "name": "皇家白玉"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/茶几/纳秋红.jpg"
+          ],
+          "name": "纳秋红"
+        }
+      ],
+      "id": 1000,
+      "tags": "NEW",
+      "price": "0",
+      "category": "茶几",
+      "description": "极简奢华茶几，意大利进口岩板台面",
+      "page": "首页",
+      "name": "华尔兹Ultra茶几",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/茶几/威尼斯棕.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1400/威尼斯棕.jpg"
+          ],
+          "name": "1400 mm - 威尼斯棕"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1400/宝格丽白.jpg"
+          ],
+          "name": "1400 mm - 宝格丽白"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1400/宝格丽黑.jpg"
+          ],
+          "name": "1400 mm - 宝格丽黑"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1400/皇家白玉.jpg"
+          ],
+          "name": "1400 mm - 皇家白玉"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1400/纳秋红.jpg"
+          ],
+          "name": "1400 mm - 纳秋红"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1600/威尼斯棕.jpg"
+          ],
+          "name": "1600 mm - 威尼斯棕"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1600/宝格丽白.jpg"
+          ],
+          "name": "1600 mm - 宝格丽白"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1600/宝格丽黑.jpg"
+          ],
+          "name": "1600 mm - 宝格丽黑"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1600/皇家白玉.jpg"
+          ],
+          "name": "1600 mm - 皇家白玉"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1600/纳秋红.jpg"
+          ],
+          "name": "1600 mm - 纳秋红"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1800/威尼斯棕.jpg"
+          ],
+          "name": "1800 mm - 威尼斯棕"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1800/宝格丽白.jpg"
+          ],
+          "name": "1800 mm - 宝格丽白"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1800/宝格丽黑.jpg"
+          ],
+          "name": "1800 mm - 宝格丽黑"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1800/皇家白玉.jpg"
+          ],
+          "name": "1800 mm - 皇家白玉"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1800/纳秋红.jpg"
+          ],
+          "name": "1800 mm - 纳秋红"
+        }
+      ],
+      "id": 1001,
+      "tags": "HOT",
+      "price": "0",
+      "category": "餐台",
+      "description": "意式极简长桌，1400/1600/1800三种尺寸，每尺寸5色可选",
+      "page": "首页",
+      "name": "华尔兹Ultra长桌",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/长桌/1400/威尼斯棕.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.35/威尼斯棕.jpg"
+          ],
+          "name": "1.35m无转盘 - 威尼斯棕"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.35/宝格丽白.jpg"
+          ],
+          "name": "1.35m无转盘 - 宝格丽白"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.35/宝格丽黑.jpg"
+          ],
+          "name": "1.35m无转盘 - 宝格丽黑"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.35/皇家白玉.jpg"
+          ],
+          "name": "1.35m无转盘 - 皇家白玉"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.35/纳秋红.jpg"
+          ],
+          "name": "1.35m无转盘 - 纳秋红"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.5/威尼斯棕.jpg"
+          ],
+          "name": "1.5m无转盘 - 威尼斯棕"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.5/宝格丽白.jpg"
+          ],
+          "name": "1.5m无转盘 - 宝格丽白"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.5/宝格丽黑.jpg"
+          ],
+          "name": "1.5m无转盘 - 宝格丽黑"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.5/皇家白玉.jpg"
+          ],
+          "name": "1.5m无转盘 - 皇家白玉"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.5/纳秋红.jpg"
+          ],
+          "name": "1.5m无转盘 - 纳秋红"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.35米/威尼斯棕.jpg"
+          ],
+          "name": "1.35m带转盘 - 威尼斯棕"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.35米/宝格丽白.jpg"
+          ],
+          "name": "1.35m带转盘 - 宝格丽白"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.35米/宝格丽黑.jpg"
+          ],
+          "name": "1.35m带转盘 - 宝格丽黑"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.35米/皇家白玉.jpg"
+          ],
+          "name": "1.35m带转盘 - 皇家白玉"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.35米/纳秋红.jpg"
+          ],
+          "name": "1.35m带转盘 - 纳秋红"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.5米/威尼斯棕.jpg"
+          ],
+          "name": "1.5m带转盘 - 威尼斯棕"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.5米/宝格丽白.jpg"
+          ],
+          "name": "1.5m带转盘 - 宝格丽白"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.5米/宝格丽黑.jpg"
+          ],
+          "name": "1.5m带转盘 - 宝格丽黑"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.5米/皇家白玉.jpg"
+          ],
+          "name": "1.5m带转盘 - 皇家白玉"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/带转盘/1.5米/纳秋红.jpg"
+          ],
+          "name": "1.5m带转盘 - 纳秋红"
+        }
+      ],
+      "id": 1002,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "极简圆桌，1.35m/1.5m两种尺寸，可选配转盘，每款5色",
+      "page": "首页",
+      "name": "华尔兹Ultra圆桌",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/huarwult/round-table/不带转盘/1.35/威尼斯棕.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(10)/巴洛克马.jpg"
+          ],
+          "name": "巴洛克马"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(10)/涂鸦马.jpg"
+          ],
+          "name": "涂鸦马"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(10)/牛仔马.jpg"
+          ],
+          "name": "牛仔马"
+        }
+      ],
+      "id": 2001,
+      "tags": "NEW",
+      "price": "0",
+      "category": "摆件",
+      "description": "三种风格艺术马摆件，巴洛克/涂鸦/牛仔",
+      "page": "首页",
+      "name": "艺术马摆件",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(10)/巴洛克马.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(11)/椅子1.jpg"
+          ],
+          "name": "椅子1"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(11)/椅子2.jpg"
+          ],
+          "name": "椅子2"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(13)/椅子3.jpg"
+          ],
+          "name": "椅子3"
+        }
+      ],
+      "id": 2002,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐椅",
+      "description": "多款设计师餐椅可选",
+      "page": "首页",
+      "name": "设计师餐椅",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(11)/椅子1.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(14)/休闲椅.jpg"
+          ],
+          "name": "休闲椅1"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(25)/休闲椅2.jpg"
+          ],
+          "name": "休闲椅2"
+        }
+      ],
+      "id": 2003,
+      "tags": "NEW",
+      "price": "0",
+      "category": "休闲椅",
+      "description": "舒适休闲椅，多款可选",
+      "page": "首页",
+      "name": "休闲椅",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(14)/休闲椅.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2004,
+      "tags": "NEW",
+      "price": "0",
+      "category": "茶几",
+      "description": "精致茶几",
+      "page": "首页",
+      "name": "茶几",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(17)/茶几1.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(28)/KH.B1036.jpg"
+          ],
+          "name": "1036基础款"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(28)/1036抽屉款.jpg"
+          ],
+          "name": "1036抽屉款"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(28)/KH.B1036-B.jpg"
+          ],
+          "name": "1036黑色"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(28)/KH.B1036-W.jpg"
+          ],
+          "name": "1036白色"
+        }
+      ],
+      "id": 2005,
+      "tags": "NEW",
+      "price": "0",
+      "category": "柜类",
+      "description": "1036系列，含抽屉款及多色可选",
+      "page": "首页",
+      "name": "1036系列柜",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(28)/KH.B1036.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(29)/床1.jpg"
+          ],
+          "name": "床-经典款"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(30)/床2.jpg"
+          ],
+          "name": "床-豪华款"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(31)/1.8米不带按摩.jpg"
+          ],
+          "name": "1.8米不带按摩"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(32)/1.5M带按摩.jpg"
+          ],
+          "name": "1.5M带按摩"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(32)/1.8M带按摩.jpg"
+          ],
+          "name": "1.8M带按摩"
+        }
+      ],
+      "id": 2006,
+      "tags": "HOT",
+      "price": "0",
+      "category": "床",
+      "description": "多款奢华床具，含按摩功能可选",
+      "page": "首页",
+      "name": "奢华系列床",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(29)/床1.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/2032/2032.jpg"
+          ],
+          "name": "2032基础"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/2032/544y.jpg"
+          ],
+          "name": "2032款A"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/2032/54y.jpg"
+          ],
+          "name": "2032款B"
+        }
+      ],
+      "id": 2007,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "2032系列家具",
+      "page": "首页",
+      "name": "2032系列",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/2032/2032.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(2)/5416346.jpg"
+          ],
+          "name": "5416346"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(2)/5416346-恢复的.jpg"
+          ],
+          "name": "5416346-恢复的"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(2)/5428676.jpg"
+          ],
+          "name": "5428676"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(2)/5486376.jpg"
+          ],
+          "name": "5486376"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(2)/5486716.jpg"
+          ],
+          "name": "5486716"
+        }
+      ],
+      "id": 2008,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐椅",
+      "description": "5416系列家具",
+      "page": "首页",
+      "name": "5416系列",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(2)/5416346.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(4)/1.jpg"
+          ],
+          "name": "款式1"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(4)/22.jpg"
+          ],
+          "name": "款式2"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(4)/33.jpg"
+          ],
+          "name": "款式3"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(4)/591d5.jpg"
+          ],
+          "name": "款式4"
+        }
+      ],
+      "id": 2009,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "系列A家具",
+      "page": "首页",
+      "name": "系列A",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(4)/1.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(5)/4544.jpg"
+          ],
+          "name": "款式1"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(5)/45e44.jpg"
+          ],
+          "name": "款式2"
+        }
+      ],
+      "id": 2010,
+      "tags": "NEW",
+      "price": "0",
+      "category": "茶几",
+      "description": "系列B家具",
+      "page": "首页",
+      "name": "系列B",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(5)/4544.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(6)/12121.jpg"
+          ],
+          "name": "款式1"
+        },
+        {
+          "images": [
+            "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(6)/12222.jpg"
+          ],
+          "name": "款式2"
+        }
+      ],
+      "id": 2011,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "系列C家具",
+      "page": "首页",
+      "name": "系列C",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(6)/12121.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2012,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "",
+      "page": "首页",
+      "name": "家具1",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1/136541.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2013,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "",
+      "page": "首页",
+      "name": "家具2",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1/V3.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2014,
+      "tags": "NEW",
+      "price": "0",
+      "category": "柜类",
+      "description": "",
+      "page": "首页",
+      "name": "家具3",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(12)/gre.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2015,
+      "tags": "NEW",
+      "price": "0",
+      "category": "柜类",
+      "description": "",
+      "page": "首页",
+      "name": "家具4",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(15)/ww.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2016,
+      "tags": "NEW",
+      "price": "0",
+      "category": "柜类",
+      "description": "",
+      "page": "首页",
+      "name": "家具5",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(16)/w.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2017,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "",
+      "page": "首页",
+      "name": "家具6",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(18)/85651.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2018,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "",
+      "page": "首页",
+      "name": "家具7",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(19)/56659.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2019,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "",
+      "page": "首页",
+      "name": "家具8",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(20)/45646.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2020,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "",
+      "page": "首页",
+      "name": "家具9",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(21)/12684.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2021,
+      "tags": "NEW",
+      "price": "0",
+      "category": "柜类",
+      "description": "",
+      "page": "首页",
+      "name": "家具10",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(22)/微信图片_20241026185837.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2022,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "",
+      "page": "首页",
+      "name": "家具11",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(23)/12635468.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2023,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "",
+      "page": "首页",
+      "name": "家具12",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(24)/111111.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2024,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "",
+      "page": "首页",
+      "name": "家具13",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(27)/5356356.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2025,
+      "tags": "NEW",
+      "price": "0",
+      "category": "柜类",
+      "description": "",
+      "page": "首页",
+      "name": "家具14",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(3)/wer.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2026,
+      "tags": "NEW",
+      "price": "0",
+      "category": "柜类",
+      "description": "",
+      "page": "首页",
+      "name": "家具15",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(3)/wser.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2027,
+      "tags": "NEW",
+      "price": "0",
+      "category": "柜类",
+      "description": "",
+      "page": "首页",
+      "name": "家具16",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(7)/fwq.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2028,
+      "tags": "NEW",
+      "price": "0",
+      "category": "柜类",
+      "description": "",
+      "page": "首页",
+      "name": "家具17",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(8)/15235413.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2029,
+      "tags": "NEW",
+      "price": "0",
+      "category": "柜类",
+      "description": "",
+      "page": "首页",
+      "name": "家具18",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(9)/12635f468.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2030,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "",
+      "page": "首页",
+      "name": "家具19",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/2/g3tw.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2031,
+      "tags": "NEW",
+      "price": "0",
+      "category": "柜类",
+      "description": "",
+      "page": "首页",
+      "name": "家具20",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/新建文件夹/875696.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2032,
+      "tags": "NEW",
+      "price": "0",
+      "category": "床",
+      "description": "",
+      "page": "首页",
+      "name": "1033系列",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(31)/1033.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2033,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "",
+      "page": "首页",
+      "name": "家具21",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(29)/2222.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2034,
+      "tags": "NEW",
+      "price": "0",
+      "category": "餐台",
+      "description": "",
+      "page": "首页",
+      "name": "家具22",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(29)/3333.jpg"
+      ],
+      "detailImages": []
+    },
+    {
+      "variants": [],
+      "id": 2035,
+      "tags": "NEW",
+      "price": "0",
+      "category": "床",
+      "description": "",
+      "page": "首页",
+      "name": "家具23",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(30)/3ehy5w.jpg"
+      ],
+      "detailImages": []
+    }
+  ],
+  "widgets": [
+    {
+      "id": 1779441754006,
+      "name": "装柜系统",
+      "position": "top",
+      "code": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>智能装柜优化系统 - 高清尺寸与高速算法版</title>\n    <!-- 核心库引入 -->\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js\"></script>\n    <script src=\"https://cdn.tailwindcss.com\"></script>\n    <!-- 引入 Babel 并配置 -->\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.21.4/babel.min.js\"></script>\n    <style>\n        body { margin: 0; background-color: #050507; color: #cbd5e1; overflow: hidden; font-family: sans-serif; }\n        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }\n        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }\n        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }\n        .glass-panel { background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(30, 41, 59, 1); backdrop-filter: blur(12px); }\n        input[type=range] { -webkit-appearance: none; background: #1e293b; height: 4px; border-radius: 2px; width: 100%; }\n        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #6366f1; cursor: pointer; border: 2px solid #fff; }\n        @keyframes scan { 0% { transform: translateY(-100%); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(100%); opacity: 0; } }\n        .scan-line { animation: scan 2s infinite linear; }\n    </style>\n</head>\n<body>\n    <div id=\"root\"></div>\n\n    <script type=\"text/babel\" data-presets=\"react\">\n        const { useState, useEffect, useRef, useMemo, useCallback } = React;\n\n        // 标准集装箱内空尺寸预设 (单位: mm)\n        const CONTAINER_TYPES = [\n            { id: '20GP', name: '20尺标准柜', l: 5898, h: 2392, w: 2352, maxWeight: 28000 },\n            { id: '40GP', name: '40尺标准柜', l: 12032, h: 2392, w: 2352, maxWeight: 26500 },\n            { id: '40HC', name: '40尺高柜', l: 12032, h: 2698, w: 2352, maxWeight: 26500 }\n        ];\n\n        /**\n         * 高速启发式三维装箱算法 (同步计算，毫秒级响应)\n         */\n        const fastPack = (sortedItems, container, res = 50) => {\n            const { l: Cl, w: Cw, h: Ch, maxWeight } = container;\n            const gridL = Math.floor(Cl / res);\n            const gridW = Math.floor(Cw / res);\n            \n            // 安全防范机制\n            if (gridL <= 0 || gridW <= 0) return { packed: [], weight: 0, inv: sortedItems, volume: 0 };\n            \n            // 高度图数据结构，采用 TypedArray 提升引擎执行速度\n            const hMap = Array(gridL).fill(0).map(() => new Float32Array(gridW));\n            const packed = [];\n            let currentWeight = 0;\n            let inv = sortedItems.map(i => ({ ...i, rem: i.qty, got: 0 }));\n\n            for (let item of inv) {\n                // 确定旋转方向维度\n                const oris = item.rot ? [\n                    { l: item.l, w: item.w, h: item.h }, \n                    { l: item.w, w: item.l, h: item.h }\n                ] : [{ l: item.l, w: item.w, h: item.h }];\n\n                while (item.rem > 0 && currentWeight + item.weight <= maxWeight) {\n                    let best = null;\n\n                    // 高速剪枝遍历\n                    find: for (let x = 0; x < gridL; x += 1) { \n                        for (let z = 0; z < gridW; z += 1) {\n                            for (let ori of oris) {\n                                const bL = Math.ceil(ori.l / res);\n                                const bW = Math.ceil(ori.w / res);\n                                if (x + bL > gridL || z + bW > gridW) continue;\n                                \n                                // 快速查找当前底面的最大支撑高度\n                                let maxSurfaceHeight = 0;\n                                for (let i = x; i < x + bL; i++) {\n                                    for (let j = z; j < z + bW; j++) {\n                                        if (hMap[i][j] > maxSurfaceHeight) maxSurfaceHeight = hMap[i][j];\n                                    }\n                                }\n                                \n                                if (maxSurfaceHeight + ori.h <= Ch) {\n                                    if (!best || maxSurfaceHeight < best.y || (maxSurfaceHeight === best.y && (x + z < best.x + best.z))) {\n                                        best = { x, z, y: maxSurfaceHeight, ...ori };\n                                        // 黄金分割快速剪枝：只要触地（高度为0），直接占用并退出寻找，百倍提升效率\n                                        if (maxSurfaceHeight === 0) break find;\n                                    }\n                                }\n                            }\n                        }\n                    }\n\n                    if (best) {\n                        packed.push({\n                            pos: [best.x * res + best.l / 2, best.y + best.h / 2, best.z * res + best.w / 2],\n                            dim: [best.l, best.h, best.w],\n                            color: item.color,\n                            baseY: best.y,\n                            topY: best.y + best.h,\n                            origDim: [item.l, item.w, item.h] // 保留原始设计尺寸\n                        });\n                        \n                        const bL = Math.ceil(best.l / res);\n                        const bW = Math.ceil(best.w / res);\n                        const newHeight = best.y + best.h;\n                        for (let i = best.x; i < best.x + bL; i++) {\n                            for (let j = best.z; j < best.z + bW; j++) hMap[i][j] = newHeight;\n                        }\n                        currentWeight += item.weight;\n                        item.rem--;\n                        item.got++;\n                    } else {\n                        break; // 空间装不下该货物，跳出进行下一个SKU\n                    }\n                }\n            }\n            const volume = packed.reduce((a, b) => a + (b.dim[0] * b.dim[1] * b.dim[2]), 0);\n            return { packed, weight: currentWeight, inv, volume };\n        };\n\n        // 智能六面贴图生成系统：清晰分辨长宽与旋转方向\n        const materialCache = {};\n        const getSmartBoxMaterials = (color, origDim, placedDim) => {\n            const cacheKey = `${color}_${placedDim.join('x')}_${origDim.join('x')}`;\n            if (materialCache[cacheKey]) return materialCache[cacheKey];\n\n            const [pX, pY, pZ] = placedDim;\n            const [oL, oW, oH] = origDim;\n\n            // 判断是否发生旋转：如果放置的X轴维度不等于原始长度，则说明长宽发生了调换\n            const isRotated = pX !== oL;\n\n            const createTex = (labelHoriz, labelVert, tapeDir) => {\n                const canvas = document.createElement('canvas');\n                canvas.width = 512;\n                canvas.height = 512;\n                const ctx = canvas.getContext('2d');\n\n                // 1. 底色\n                ctx.fillStyle = color;\n                ctx.fillRect(0, 0, 512, 512);\n\n                // 2. 纸箱边缘折痕线\n                ctx.strokeStyle = 'rgba(0,0,0,0.2)';\n                ctx.lineWidth = 16;\n                ctx.strokeRect(8, 8, 496, 496);\n\n                // 3. 封箱胶带 (永远沿着原始的【长度】方向贴合，模仿真实纸箱)\n                if (tapeDir) {\n                    ctx.fillStyle = 'rgba(0,0,0,0.15)'; // 胶带阴影\n                    if (tapeDir === 'H') ctx.fillRect(0, 246, 512, 40);\n                    if (tapeDir === 'V') ctx.fillRect(246, 0, 40, 512);\n\n                    ctx.fillStyle = 'rgba(230, 200, 150, 0.85)'; // 胶带本体色\n                    if (tapeDir === 'H') ctx.fillRect(0, 236, 512, 40);\n                    if (tapeDir === 'V') ctx.fillRect(236, 0, 40, 512);\n                }\n\n                // 4. 信息黑板\n                ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';\n                ctx.beginPath();\n                ctx.roundRect(86, 156, 340, 200, 24);\n                ctx.fill();\n\n                // 5. 尺寸标注文本\n                ctx.fillStyle = '#ffffff';\n                ctx.textAlign = 'center';\n                ctx.textBaseline = 'middle';\n                ctx.font = 'bold 36px sans-serif';\n                ctx.fillText(`↔ ${labelHoriz}`, 256, 210);\n                ctx.fillText(`↕ ${labelVert}`, 256, 290);\n\n                const tex = new THREE.CanvasTexture(canvas);\n                tex.anisotropy = 4;\n                return new THREE.MeshStandardMaterial({ map: tex, roughness: 0.8, metalness: 0.1 });\n            };\n\n            let matTop, matSideX, matSideZ;\n\n            if (!isRotated) {\n                // 未旋转：X轴是长，Z轴是宽\n                matTop = createTex(`长 L: ${oL}`, `宽 W: ${oW}`, 'H'); // 胶带沿X轴(水平方向)\n                matSideZ = createTex(`长 L: ${oL}`, `高 H: ${oH}`, null); // 正反面\n                matSideX = createTex(`宽 W: ${oW}`, `高 H: ${oH}`, null); // 左右面\n            } else {\n                // 已旋转：X轴是宽，Z轴是长\n                matTop = createTex(`宽 W: ${oW}`, `长 L: ${oL}`, 'V'); // 胶带沿Z轴(垂直方向)\n                matSideZ = createTex(`宽 W: ${oW}`, `高 H: ${oH}`, null); // 正反面\n                matSideX = createTex(`长 L: ${oL}`, `高 H: ${oH}`, null); // 左右面\n            }\n\n            const matBottom = new THREE.MeshStandardMaterial({ color: color });\n\n            // Three.js 六面材质数组顺序: [Right(+X), Left(-X), Top(+Y), Bottom(-Y), Front(+Z), Back(-Z)]\n            const materials = [matSideX, matSideX, matTop, matBottom, matSideZ, matSideZ];\n            materialCache[cacheKey] = materials;\n            return materials;\n        };\n\n        const Scene = ({ container, packed, layerH }) => {\n            const ref = useRef();\n            useEffect(() => {\n                if (!ref.current) return;\n                const sc = new THREE.Scene();\n                sc.background = new THREE.Color(0x050507);\n                const cam = new THREE.PerspectiveCamera(45, ref.current.clientWidth / ref.current.clientHeight, 0.1, 1000);\n                const rd = new THREE.WebGLRenderer({ antialias: true });\n                rd.setSize(ref.current.clientWidth, ref.current.clientHeight);\n                ref.current.appendChild(rd.domElement);\n\n                const S = 0.001; // 毫米缩放到米，以便于在 Three.js 坐标系中良好呈现\n                const [L, H, W] = [container.l * S, container.h * S, container.w * S];\n                cam.position.set(L*2, H*2.5, L*2);\n\n                sc.add(new THREE.AmbientLight(0xffffff, 0.8));\n                const pLight = new THREE.PointLight(0xffffff, 0.4);\n                pLight.position.set(L/2, H*5, W/2);\n                sc.add(pLight);\n\n                // 货柜半透明表面\n                const cGeo = new THREE.BoxGeometry(L, H, W);\n                const cMat = new THREE.MeshPhongMaterial({ \n                    color: 0x4f46e5, \n                    transparent: true, \n                    opacity: 0.03, \n                    side: THREE.BackSide \n                });\n                const cM = new THREE.Mesh(cGeo, cMat);\n                cM.position.set(L/2, H/2, W/2);\n                sc.add(cM);\n\n                // 强化边缘线\n                const cEdges = new THREE.EdgesGeometry(cGeo);\n                const cLine = new THREE.LineSegments(cEdges, new THREE.LineBasicMaterial({ color: 0x6366f1, linewidth: 2, transparent: true, opacity: 0.6 }));\n                cLine.position.set(L/2, H/2, W/2);\n                sc.add(cLine);\n\n                // 底部定位网格线\n                const gridHelper = new THREE.GridHelper(Math.max(L, W) * 2, 20, 0x1e293b, 0x1e293b);\n                gridHelper.position.set(L/2, 0, W/2);\n                sc.add(gridHelper);\n\n                // 渲染带尺寸纹理的货物\n                packed.forEach(i => {\n                    const active = layerH === -1 || (i.baseY <= layerH && i.topY > layerH);\n                    const g = new THREE.BoxGeometry(i.dim[0]*S, i.dim[1]*S, i.dim[2]*S);\n                    \n                    // 获取智能六面贴图\n                    const materials = active \n                        ? getSmartBoxMaterials(i.color, i.origDim, i.dim)\n                        : new THREE.MeshStandardMaterial({ color: i.color, transparent: true, opacity: 0.05 });\n                        \n                    // 注意：这里应用的是包含六个面的材质数组\n                    const mesh = new THREE.Mesh(g, materials);\n                    mesh.position.set(i.pos[0]*S, i.pos[1]*S, i.pos[2]*S);\n                    \n                    if(active) {\n                        const ed = new THREE.LineSegments(\n                            new THREE.EdgesGeometry(g), \n                            new THREE.LineBasicMaterial({color: 0x000000, opacity: 0.3, transparent: true})\n                        );\n                        mesh.add(ed);\n                    }\n                    sc.add(mesh);\n                });\n\n                let aid;\n                const rot = () => {\n                    aid = requestAnimationFrame(rot);\n                    const time = Date.now() * 0.0002;\n                    cam.position.x = L/2 + Math.cos(time) * L * 1.6;\n                    cam.position.z = W/2 + Math.sin(time) * L * 1.6;\n                    cam.lookAt(L/2, H/2, W/2);\n                    rd.render(sc, cam);\n                };\n                rot();\n\n                return () => {\n                    cancelAnimationFrame(aid);\n                    rd.dispose();\n                    if(ref.current) ref.current.innerHTML = \"\";\n                };\n            }, [container, packed, layerH]);\n            return <div ref={ref} className=\"w-full h-full rounded-[2rem] overflow-hidden\" />;\n        };\n\n        function App() {\n            const [ct, setCt] = useState(CONTAINER_TYPES[0]);\n            const [lh, setLh] = useState(-1);\n            const [isOptimizing, setIsOptimizing] = useState(false);\n            const [items, setItems] = useState([\n                { id: 1, name: '标准卡板', l: 1200, w: 1000, h: 1000, qty: 15, weight: 60, color: '#6366f1', rot: true },\n                { id: 2, name: '中型周转箱', l: 600, w: 400, h: 400, qty: 40, weight: 15, color: '#10b981', rot: true },\n                { id: 3, name: '超长配件箱', l: 1500, w: 300, h: 300, qty: 12, weight: 10, color: '#f59e0b', rot: false }\n            ]);\n\n            const [packResult, setPackResult] = useState({ packed: [], weight: 0, inv: items, volume: 0 });\n\n            // 核心计算触发器\n            const handleOptimize = useCallback(() => {\n                setIsOptimizing(true);\n                // 采用微小延时触发同步计算，释放一帧让加载动画完美渲染\n                setTimeout(() => {\n                    const sorted = [...items].sort((a, b) => (b.l*b.w*b.h) - (a.l*a.w*a.h));\n                    const result = fastPack(sorted, ct, 50); // 50mm 精度兼顾超高精度与计算速度\n                    setPackResult(result);\n                    setIsOptimizing(false);\n                }, 50); \n            }, [items, ct]);\n\n            // 初次自动进行一次快速计算\n            useEffect(() => { \n                handleOptimize(); \n            }, []); \n\n            const addItem = () => {\n                const colors = ['#f43f5e', '#ec4899', '#d946ef', '#a855f7', '#8b5cf6', '#6366f1', '#3b82f6', '#0ea5e9', '#06b6d4', '#14b8a6', '#10b981', '#22c55e', '#84cc16', '#eab308', '#f59e0b', '#f97316', '#ef4444'];\n                const newId = items.length ? Math.max(...items.map(i => i.id)) + 1 : 1;\n                setItems([...items, {\n                    id: newId, name: `货品 ${newId}`, l: 500, w: 500, h: 500, qty: 10, weight: 10, color: colors[Math.floor(Math.random() * colors.length)], rot: true\n                }]);\n            };\n\n            const removeItem = (id) => setItems(items.filter(i => i.id !== id));\n\n            const volRate = useMemo(() => {\n                const cv = ct.l * ct.w * ct.h;\n                return ((packResult.volume / cv) * 100).toFixed(1);\n            }, [packResult.volume, ct]);\n\n            return (\n                <div className=\"flex h-screen p-6 gap-6 bg-[#050507]\">\n                    {/* 左边控制栏 */}\n                    <div className=\"w-80 flex flex-col gap-4 shrink-0\">\n                        <div className=\"bg-gradient-to-br from-indigo-600 to-blue-700 p-6 rounded-[2rem] shadow-xl relative overflow-hidden shrink-0\">\n                            <h1 className=\"text-white font-black text-xl z-10 relative\">智能装柜优化</h1>\n                            <p className=\"text-indigo-200 text-[10px] mt-1 uppercase font-bold z-10 relative tracking-widest\">PRO DIMENSION ENGINE</p>\n                        </div>\n\n                        {/* 执行按钮 */}\n                        <button \n                            onClick={handleOptimize} \n                            disabled={isOptimizing} \n                            className={`w-full py-5 rounded-[1.5rem] font-black text-sm uppercase tracking-widest transition-all shadow-lg flex flex-col items-center justify-center gap-1 shrink-0 ${isOptimizing ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-emerald-500 hover:bg-emerald-400 text-slate-900 active:scale-95 border-b-4 border-emerald-700'}`}\n                        >\n                            {isOptimizing ? (\n                                <div className=\"flex items-center gap-2\">\n                                    <div className=\"w-4 h-4 border-2 border-slate-500 border-t-transparent rounded-full animate-spin\"></div>\n                                    <span>优化排布中...</span>\n                                </div>\n                            ) : (\n                                <>\n                                    <span className=\"text-lg\">⚡ 极速智能排布计算</span>\n                                    <span className=\"text-[9px] opacity-60\">APPLY SYSTEM CHANGES</span>\n                                </>\n                            )}\n                        </button>\n\n                        {/* 集装箱规格管理 */}\n                        <div className=\"glass-panel p-5 rounded-[2rem] space-y-4 shrink-0\">\n                            <div className=\"flex items-center justify-between px-1\">\n                                <span className=\"text-[10px] font-black text-slate-400 uppercase tracking-widest\">集装箱(内空尺寸)</span>\n                                <span className=\"text-[10px] text-indigo-400 font-bold\">单位: mm</span>\n                            </div>\n                            <div className=\"flex gap-2 overflow-x-auto custom-scrollbar pb-1\">\n                                {CONTAINER_TYPES.map(t => (\n                                    <button key={t.id} onClick={() => {setCt(t); setLh(-1);}} className={`px-3 py-1.5 rounded-xl text-[10px] font-bold whitespace-nowrap transition-all ${ct.id === t.id ? 'bg-indigo-600 text-white shadow-lg' : 'bg-slate-800 text-slate-500 hover:bg-slate-700'}`}>{t.name}</button>\n                                ))}\n                            </div>\n                            <div className=\"grid grid-cols-2 gap-2\">\n                                {[\n                                    { f: 'l', label: '内长' },\n                                    { f: 'w', label: '内宽' },\n                                    { f: 'h', label: '内高' },\n                                    { f: 'maxWeight', label: '最大载重(kg)' }\n                                ].map(item => (\n                                    <div key={item.f} className=\"bg-slate-900/50 p-2 rounded-xl border border-slate-800\">\n                                        <p className=\"text-[8px] text-slate-500 uppercase font-bold\">{item.label}</p>\n                                        <input \n                                            type=\"number\" \n                                            value={ct[item.f]} \n                                            onChange={e => setCt({...ct, id: 'custom', name: '自定义规格', [item.f]: parseInt(e.target.value)||0})} \n                                            className=\"bg-transparent text-white text-xs font-mono outline-none w-full font-bold\" \n                                        />\n                                    </div>\n                                ))}\n                            </div>\n                        </div>\n\n                        {/* 货物规格配置与管理 */}\n                        <div className=\"glass-panel p-5 rounded-[2rem] flex-1 overflow-hidden flex flex-col min-h-0\">\n                            <div className=\"flex justify-between items-center mb-4 px-1\">\n                                <span className=\"text-[10px] font-black text-slate-400 uppercase tracking-widest\">货物清单列表</span>\n                                <button onClick={addItem} className=\"w-6 h-6 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-colors shadow-lg\"><span className=\"text-xl leading-none\">+</span></button>\n                            </div>\n                            <div className=\"space-y-2 overflow-y-auto custom-scrollbar flex-1 pr-1\">\n                                {items.map(item => (\n                                    <div key={item.id} className=\"bg-slate-900/40 p-4 rounded-3xl border border-slate-800/50 hover:border-indigo-500/30 transition-colors relative group\">\n                                        <button onClick={() => removeItem(item.id)} className=\"absolute top-2 right-2 w-5 h-5 bg-slate-800 hover:bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-xs\">×</button>\n                                        <div className=\"flex justify-between text-xs font-bold mb-3 items-center pr-4\">\n                                            <div className=\"flex items-center gap-2\">\n                                                <div className=\"w-2.5 h-2.5 rounded-sm\" style={{backgroundColor: item.color}}></div>\n                                                <input value={item.name} onChange={e => setItems(items.map(i => i.id === item.id ? {...i, name: e.target.value} : i))} className=\"bg-transparent text-slate-200 outline-none w-24 font-bold\" />\n                                            </div>\n                                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono ${packResult.inv.find(i=>i.id===item.id)?.got === item.qty ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>{packResult.inv.find(i=>i.id===item.id)?.got || 0}/{item.qty}</span>\n                                        </div>\n                                        <div className=\"grid grid-cols-4 gap-1.5\">\n                                            {['l','w','h','qty'].map(f => (\n                                                <div key={f} className=\"text-center\">\n                                                    <p className=\"text-[7px] text-slate-500 uppercase mb-0.5 font-bold\">{f === 'qty' ? '数(个)' : f.toUpperCase()}</p>\n                                                    <input \n                                                        type=\"number\" \n                                                        value={item[f]} \n                                                        onChange={e => setItems(prev => prev.map(i => i.id === item.id ? {...i, [f]: parseInt(e.target.value)||0} : i))} \n                                                        className=\"w-full bg-slate-950 text-[10px] text-center text-white p-1 rounded-lg border border-slate-800 outline-none font-bold font-mono\" \n                                                    />\n                                                </div>\n                                            ))}\n                                        </div>\n                                        <div className=\"flex items-center justify-between mt-3 text-[9px]\">\n                                            <span className=\"text-slate-500 font-bold\">单件重量 (kg)</span>\n                                            <input \n                                                type=\"number\" \n                                                value={item.weight} \n                                                onChange={e => setItems(prev => prev.map(i => i.id === item.id ? {...i, weight: parseInt(e.target.value)||0} : i))} \n                                                className=\"bg-transparent text-right text-indigo-400 font-bold font-mono outline-none w-16\" \n                                            />\n                                        </div>\n                                    </div>\n                                ))}\n                            </div>\n                        </div>\n                    </div>\n\n                    {/* 右侧展示区 */}\n                    <div className=\"flex-1 flex flex-col gap-6\">\n                        <div className=\"grid grid-cols-3 gap-6 shrink-0\">\n                            <div className=\"glass-panel p-6 rounded-[2.5rem] relative overflow-hidden group\">\n                                <p className=\"text-[10px] text-slate-400 font-bold uppercase tracking-widest\">体积利用率 (m³)</p>\n                                <p className=\"text-4xl font-black text-emerald-400 mt-2 font-mono\">{volRate}%</p>\n                            </div>\n                            <div className=\"glass-panel p-6 rounded-[2.5rem]\">\n                                <p className=\"text-[10px] text-slate-400 font-bold uppercase tracking-widest\">重量负载比 (kg)</p>\n                                <p className={`text-4xl font-black mt-2 font-mono ${packResult.weight > ct.maxWeight ? 'text-rose-500' : 'text-indigo-400'}`}>{((packResult.weight/ct.maxWeight)*100).toFixed(1)}%</p>\n                            </div>\n                            <div className=\"glass-panel p-6 rounded-[2.5rem]\">\n                                <p className=\"text-[10px] text-slate-400 font-bold uppercase tracking-widest\">实际装载数量</p>\n                                <p className=\"text-4xl font-black text-white mt-2 font-mono\">{packResult.packed.length} <span className=\"text-xs text-slate-500 font-sans tracking-normal\">件</span></p>\n                            </div>\n                        </div>\n\n                        {/* ThreeJS 画布承载容器 */}\n                        <div className=\"flex-1 relative glass-panel rounded-[3rem] p-2 overflow-hidden shadow-inner group\">\n                            {isOptimizing && (\n                                <div className=\"absolute inset-0 z-20 bg-indigo-950/20 flex flex-col items-center justify-center backdrop-blur-sm\">\n                                    <div className=\"w-full h-full relative overflow-hidden\"><div className=\"absolute top-0 w-full h-[2px] bg-indigo-500/50 shadow-[0_0_15px_indigo] scan-line\"></div></div>\n                                    <div className=\"absolute bg-slate-950 border border-slate-800 px-6 py-4 rounded-3xl shadow-2xl flex flex-col items-center gap-3\">\n                                        <p className=\"text-xs font-black text-indigo-400 animate-pulse tracking-widest uppercase\">物理空间最优解搜索中...</p>\n                                    </div>\n                                </div>\n                            )}\n                            \n                            {/* 添加智能图例提示 */}\n                            <div className=\"absolute top-4 left-4 z-10 bg-slate-950/80 backdrop-blur-md border border-slate-800/80 px-4 py-3 rounded-2xl shadow-xl flex flex-col gap-1.5\">\n                                <div className=\"flex items-center gap-2\">\n                                    <div className=\"w-2 h-2 rounded-full bg-amber-500 animate-pulse\"></div>\n                                    <span className=\"text-[10px] font-black text-white uppercase tracking-wider\">智能表面识别系统</span>\n                                </div>\n                                <p className=\"text-[9px] text-slate-400\">💡 顶部的<span className=\"text-amber-200/80 font-bold\">封箱胶带</span>始终沿着<span className=\"text-emerald-400 font-bold\">【长边(L)】</span>方向</p>\n                                <p className=\"text-[9px] text-slate-400\">📦 箱体侧面明确标注了该面的 <span className=\"text-indigo-400 font-bold\">长(L)</span> / <span className=\"text-indigo-400 font-bold\">宽(W)</span> / <span className=\"text-indigo-400 font-bold\">高(H)</span></p>\n                            </div>\n\n                            <Scene container={ct} packed={packResult.packed} layerH={lh} />\n                            \n                            {/* Z轴高度过滤器 */}\n                            <div className=\"absolute bottom-10 left-1/2 -translate-x-1/2 w-[70%] bg-slate-950/80 backdrop-blur-xl border border-slate-800/50 p-6 rounded-[2.5rem] shadow-2xl\">\n                                <div className=\"flex justify-between items-center mb-3\">\n                                    <span className=\"text-[10px] font-black text-slate-400 uppercase tracking-widest opacity-60\">Z轴高度透视 (消除遮挡查看内部)</span>\n                                    <button onClick={() => setLh(-1)} className={`text-[10px] font-bold px-4 py-1.5 rounded-full transition-all ${lh === -1 ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>\n                                        {lh === -1 ? '完整透视' : `高度: ${lh}mm`}\n                                    </button>\n                                </div>\n                                <input type=\"range\" min=\"-1\" max={ct.h} step=\"10\" value={lh} onChange={e => setLh(parseInt(e.target.value))} />\n                                <div className=\"flex justify-between mt-2 px-1 text-[8px] font-black text-slate-600 uppercase tracking-widest\"><span>箱底面 (0mm)</span><span>箱顶面 ({ct.h}mm)</span></div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            );\n        }\n\n        const root = ReactDOM.createRoot(document.getElementById('root'));\n        root.render(<App />);\n    </script>\n</body>\n</html>"
+    }
+  ]
 }
