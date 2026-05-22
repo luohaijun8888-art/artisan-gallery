@@ -52,6 +52,14 @@
 .thumb-row img{width:56px;height:56px;object-fit:cover;border-radius:4px;border:2px solid transparent;cursor:pointer;flex-shrink:0;transition:border-color .2s}
 .thumb-row img.active{border-color:var(--text)}
 .detail-section img{width:100%;display:block}
+/* Widgets */
+.widget-card{background:#fff;border:1px solid rgba(0,0,0,.05);border-radius:8px;overflow:hidden;margin-bottom:16px;transition:all .3s}
+.widget-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.admin-tab{padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.35;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.admin-tab.active{opacity:1;border-bottom-color:var(--text)}
+.admin-tab:hover:not(.active){opacity:.6}
+.code-editor{font-family:'Courier New',monospace;font-size:12px;background:#fafafa;border:1px solid rgba(0,0,0,.08);border-radius:6px;padding:12px;width:100%;min-height:200px;resize:vertical;outline:none;tab-size:2;line-height:1.6}
+.code-editor:focus{border-color:var(--accent);background:#fff}
 
 </style>
 </head>
@@ -97,6 +105,7 @@
             <div id="categoryContainer" class="flex overflow-x-auto gap-3 no-scrollbar pb-2 touch-pan-x"></div>
         </div>
 
+        <div id="widgetContainer" class="mb-8 md:mb-12"></div>
         <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 md:gap-x-10 gap-y-10 md:gap-y-16 scroll-mt-24"></div>
     </div>
 
@@ -132,7 +141,11 @@
         <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="toggleAdminModal()"></div>
         <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg bg-white shadow-2xl flex flex-col translate-x-full transition-transform duration-500 ease-out" id="adminSidebar">
             <div class="p-6 md:p-8 border-b flex justify-between items-center">
-                <h2 class="text-xl md:text-2xl serif">图册管理</h2><button onclick="resetToken()" title="重置Token" class="text-[10px] opacity-30 hover:opacity-100 hover:text-red-500 transition-all ml-2">🔑</button>
+                <h2 class="text-xl md:text-2xl serif">图册管理</h2>
+    <div class="flex gap-1 ml-4" id="adminTabs">
+      <div class="admin-tab active" onclick="switchAdminTab('products')">产品</div>
+      <div class="admin-tab" onclick="switchAdminTab('widgets')">小工具</div>
+    </div><button onclick="resetToken()" title="重置Token" class="text-[10px] opacity-30 hover:opacity-100 hover:text-red-500 transition-all ml-2">🔑</button>
                 <div class="flex items-center gap-1 md:gap-2">
                     <button title="导出 CSV" onclick="exportToExcel()" class="p-2 hover:bg-black/5 rounded-full"><i data-lucide="download" class="w-5 h-5"></i></button>
                     <label title="导入 CSV" for="importInput" class="p-2 hover:bg-black/5 rounded-full cursor-pointer"><i data-lucide="upload" class="w-5 h-5"></i></label>
@@ -171,7 +184,33 @@
                             <button onclick="addProduct()" class="w-full bg-black text-white py-4 mt-6 hover:bg-black/80 transition-all font-bold tracking-widest uppercase text-[10px]">保存作品</button>
                         </div>
                     </section>
-                    <section class="pt-6">
+                    <section id="adminWidgetSection" class="hidden">
+                        <h3 class="text-[10px] uppercase tracking-widest font-bold text-[var(--accent)] mb-4 md:mb-6">添加小工具</h3>
+                        <p class="text-xs opacity-40 mb-4">添加自定义 HTML/CSS/JS 代码片段，将在首页展示</p>
+                        <div class="space-y-3 mb-6">
+                            <input type="text" id="w_name" placeholder="小工具名称" class="w-full border-b bg-transparent py-3 outline-none text-sm">
+                            <select id="w_position" class="w-full border-b py-3 outline-none bg-transparent text-sm">
+                                <option value="top">📍 顶部横幅</option>
+                                <option value="between">🔀 产品之间</option>
+                                <option value="bottom">📌 底部区域</option>
+                            </select>
+                            <textarea id="w_code" class="code-editor" placeholder="在此粘贴 HTML/CSS/JS 代码...
+
+示例：
+<div style='text-align:center;padding:20px'>
+  <h2>欢迎光临</h2>
+  <p>本店新品上市</p>
+</div>"></textarea>
+                            <div class="flex gap-2">
+                                <button onclick="previewWidget()" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest border hover:bg-black/5">预览</button>
+                                <button onclick="addWidget()" class="flex-1 bg-black text-white py-3 text-[10px] font-bold uppercase tracking-widest">添加</button>
+                            </div>
+                            <div id="widgetPreview" class="hidden border rounded-lg overflow-hidden bg-white mt-2"></div>
+                        </div>
+                        <h3 class="text-[10px] uppercase tracking-widest font-bold text-black/30 mb-4">已添加的小工具</h3>
+                        <div id="adminWidgetList" class="space-y-3"></div>
+                    </section>
+                    <section id="adminProductSection" class="pt-6">
                         <h3 class="text-[10px] uppercase tracking-widest font-bold text-black/30 mb-6">现有清单</h3>
                         <div id="adminList" class="space-y-3"></div>
                     </section>
@@ -193,6 +232,7 @@
 
         // --- Data ---
         let categories = ["餐台", "茶几", "餐椅", "床", "书架"];
+        let widgets = [];
         let products = [];
         let currentCategory = 'all';
         let currentSearch = '';
@@ -218,15 +258,19 @@
                 const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
                 categories = content.categories || categories;
                 products = content.products || [];
+                widgets = content.widgets || [];
                 localStorage.setItem('artisan_categories', JSON.stringify(categories));
                 localStorage.setItem('furniture_gallery_db', JSON.stringify(products));
+                localStorage.setItem('artisan_widgets', JSON.stringify(widgets));
             } catch(e) {
                 console.warn('GitHub fetch failed, using localStorage cache', e);
                 categories = JSON.parse(localStorage.getItem('artisan_categories')) || categories;
                 products = JSON.parse(localStorage.getItem('furniture_gallery_db')) || [];
+                widgets = JSON.parse(localStorage.getItem('artisan_widgets')) || [];
             }
             renderCategories();
             renderProducts();
+            renderWidgets();
         }
 
         async function saveToGitHub() {
@@ -239,7 +283,7 @@
                 });
                 if (headRes.ok) { const headData = await headRes.json(); dataSha = headData.sha; }
 
-                const data = { categories, products };
+                const data = { categories, products, widgets };
                 const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
                 const body = { message: 'update products ' + new Date().toISOString(), content: content, sha: dataSha };
                 const res = await fetch(GITHUB_API, {
@@ -269,6 +313,7 @@
             }
             localStorage.setItem('artisan_categories', JSON.stringify(categories));
             localStorage.setItem('furniture_gallery_db', JSON.stringify(products));
+            localStorage.setItem('artisan_widgets', JSON.stringify(widgets));
         }
 
         async function saveAll() { await saveToGitHub(); }
@@ -408,6 +453,104 @@ window.addCategory = function() { const v=document.getElementById('new_cat_name'
         window.deleteProduct = function(id) { if(confirm('删除作品？')){products=products.filter(p=>p.id!==id);saveAll();renderAdminList();renderProducts();} };
         window.addImageInput = function() { const d=document.createElement('div');d.className='flex gap-2 fade-up';d.innerHTML='<input type="text" placeholder="视角 URL" class="w-full border-b bg-transparent py-2 text-xs outline-none img-input">';document.getElementById('imageInputs').appendChild(d); };
         document.getElementById('searchInput').oninput = (e) => { currentSearch=e.target.value; renderProducts(); };
+
+        // --- Widgets ---
+        window.switchAdminTab = function(tab) {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('adminWidgetSection').classList.toggle('hidden', tab !== 'widgets');
+            document.getElementById('adminProductSection').classList.toggle('hidden', tab !== 'products');
+            // Also hide the category and new product sections when on widgets tab
+            document.getElementById('adminProductSection').previousElementSibling?.classList?.toggle('hidden', tab === 'widgets');
+            if (tab === 'widgets') {
+                // Hide product-related admin sections
+                const sections = document.querySelectorAll('#adminSidebar .flex-1 section');
+                sections.forEach((s, i) => {
+                    if (i < 2) s.style.display = tab === 'widgets' ? 'none' : '';
+                });
+                renderAdminWidgetList();
+            } else {
+                const sections = document.querySelectorAll('#adminSidebar .flex-1 section');
+                sections.forEach(s => s.style.display = '');
+            }
+        };
+        window.previewWidget = function() {
+            const code = document.getElementById('w_code').value.trim();
+            const preview = document.getElementById('widgetPreview');
+            if (!code) { preview.classList.add('hidden'); return; }
+            // Use iframe for safe preview
+            preview.classList.remove('hidden');
+            preview.innerHTML = '<iframe id="widgetPreviewFrame" style="width:100%;border:none;min-height:100px"></iframe>';
+            const iframe = document.getElementById('widgetPreviewFrame');
+            iframe.srcdoc = '<!DOCTYPE html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"><style>body{font-family:Inter,sans-serif;margin:0;padding:8px;}</style></head><body>' + code + '</body></html>';
+            // Auto-resize iframe
+            iframe.onload = () => { iframe.style.height = iframe.contentDocument.body.scrollHeight + 16 + 'px'; };
+        };
+        window.addWidget = function() {
+            const name = document.getElementById('w_name').value.trim();
+            const code = document.getElementById('w_code').value.trim();
+            const position = document.getElementById('w_position').value;
+            if (!name || !code) return alert('请填写名称和代码');
+            widgets.push({ id: Date.now(), name, code, position, enabled: true, createdAt: new Date().toISOString() });
+            document.getElementById('w_name').value = '';
+            document.getElementById('w_code').value = '';
+            document.getElementById('widgetPreview').classList.add('hidden');
+            saveAll();
+            renderWidgets();
+            renderAdminWidgetList();
+        };
+        window.deleteWidget = function(id) {
+            if (!confirm('删除此小工具？')) return;
+            widgets = widgets.filter(w => w.id !== id);
+            saveAll();
+            renderWidgets();
+            renderAdminWidgetList();
+        };
+        window.toggleWidget = function(id) {
+            const w = widgets.find(x => x.id === id);
+            if (w) w.enabled = !w.enabled;
+            saveAll();
+            renderWidgets();
+            renderAdminWidgetList();
+        };
+        window.editWidget = function(id) {
+            const w = widgets.find(x => x.id === id);
+            if (!w) return;
+            document.getElementById('w_name').value = w.name;
+            document.getElementById('w_code').value = w.code;
+            document.getElementById('w_position').value = w.position;
+            // Remove old and let user re-add
+            widgets = widgets.filter(x => x.id !== id);
+            saveAll();
+            renderWidgets();
+            renderAdminWidgetList();
+        };
+        function renderWidgets() {
+            const container = document.getElementById('widgetContainer');
+            if (!container) return;
+            const enabled = widgets.filter(w => w.enabled);
+            if (!enabled.length) { container.innerHTML = ''; return; }
+            container.innerHTML = enabled.map(w =>
+                '<div class="widget-card" data-widget-id="'+w.id+'">' + w.code + '</div>'
+            ).join('');
+        }
+        function renderAdminWidgetList() {
+            const list = document.getElementById('adminWidgetList');
+            if (!list) return;
+            if (!widgets.length) { list.innerHTML = '<p class="text-xs opacity-30 italic">暂无小工具</p>'; return; }
+            list.innerHTML = widgets.map(w =>
+                '<div class="flex items-center justify-between p-3 bg-black/[0.03] rounded-lg group">' +
+                '<div class="flex items-center gap-3 flex-1 min-w-0">' +
+                '<div class="text-xs min-w-0"><p class="font-bold truncate">' + w.name + '</p>' +
+                '<p class="opacity-40 text-[10px]">' + ({top:'顶部横幅',between:'产品之间',bottom:'底部区域'}[w.position]||w.position) + ' · ' + (w.enabled ? '✅ 启用' : '⏸ 停用') + '</p></div></div>' +
+                '<div class="flex gap-1 flex-shrink-0">' +
+                '<button onclick="toggleWidget('+w.id+')" class="p-2 hover:bg-green-50 rounded text-green-500" title="'+(w.enabled?'停用':'启用')+'"><i data-lucide="'+(w.enabled?'eye':'eye-off')+'" class="w-4 h-4"></i></button>' +
+                '<button onclick="editWidget('+w.id+')" class="p-2 hover:bg-blue-50 rounded text-blue-400 opacity-0 group-hover:opacity-100 transition-all" title="编辑"><i data-lucide="pencil" class="w-4 h-4"></i></button>' +
+                '<button onclick="deleteWidget('+w.id+')" class="p-2 hover:bg-red-50 rounded text-red-400" title="删除"><i data-lucide="trash-2" class="w-4 h-4"></i></button>' +
+                '</div></div>'
+            ).join('');
+            lucide.createIcons();
+        }
 
         // --- Init ---
         window.onload = () => { fetchProducts(); lucide.createIcons(); };
