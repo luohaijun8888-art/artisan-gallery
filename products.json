@@ -11,6 +11,17 @@
   ],
   "products": [
     {
+      "id": 1779444217763,
+      "name": "1",
+      "price": "1",
+      "category": "餐台",
+      "page": "灵感",
+      "images": [
+        "1"
+      ],
+      "tags": "NEW"
+    },
+    {
       "id": 1779066885258,
       "name": "2",
       "description": "",
@@ -1014,6 +1025,5 @@
       ],
       "detailImages": []
     }
-  ],
-  "widgets": []
+  ]
 }
