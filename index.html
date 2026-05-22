@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -9,7 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #C5A059; --bg: #F9F9F7; --text: #1A1A1A; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; padding-bottom: 70px; }
+        @media (min-width:769px) { body { padding-bottom: 0; } }
         .serif { font-family: 'Playfair Display', serif; }
         .glass { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
         .product-card { transition: all 0.6s cubic-bezier(0.16,1,0.3,1); }
@@ -23,50 +24,51 @@
         @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
         .fade-up { animation: fadeIn 0.6s ease-out forwards; }
         #importInput { display: none; }
-        #viewport { width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:grab; position:relative; }
-        #viewport:active { cursor: grabbing; }
-        #mainDetailImg { transition: transform 0.15s cubic-bezier(0.25,1,0.5,1); transform-origin: 0 0; user-select: none; pointer-events: none; will-change: transform; }
-        @media (max-width:640px) { .mobile-grid { grid-template-columns: repeat(2,1fr); gap:12px; } .mobile-hide { display:none; } .mobile-full-modal { padding-bottom: env(safe-area-inset-bottom); } }
-        .mobile-nav { display: none; }
-        @media (max-width:768px) { .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(0,0,0,0.05); z-index: 100; padding: 8px 0; padding-bottom: calc(8px + env(safe-area-inset-bottom)); } .mobile-nav a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0; font-size: 10px; font-weight: 600; opacity: 0.5; transition: all 0.2s; } .mobile-nav a.active { opacity: 1; color: var(--accent); } .mobile-nav a i { width: 22px; height: 22px; } }
-        body { padding-bottom: 70px; }
-        @media (min-width:769px) { body { padding-bottom: 0; } }
         #authOverlay { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .save-indicator { position: fixed; bottom: 20px; right: 20px; z-index: 200; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; opacity: 0; transition: opacity 0.3s; }
         .save-indicator.saving { background: #FEF3C7; color: #92400E; opacity: 1; }
         .save-indicator.saved { background: #D1FAE5; color: #065F46; opacity: 1; }
         .save-indicator.error { background: #FEE2E2; color: #991B1B; opacity: 1; }
-    
-/* Detail page - Taobao style */
-#detailPage{background:#fff;min-height:100vh}
-.carousel-wrap{position:relative;overflow:hidden;background:#f5f5f3;max-width:600px;margin:0 auto}
-.carousel-track{display:flex;transition:transform .4s cubic-bezier(.16,1,.3,1)}
-.carousel-track img{flex-shrink:0;width:100%;aspect-ratio:1/1;object-fit:contain;background:#f5f5f3}
-.carousel-dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px}
-.carousel-dot{width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,.2);transition:all .3s}
-.carousel-dot.active{background:var(--text);width:18px;border-radius:3px}
-.variant-btn{padding:6px 14px;border:1px solid #e5e5e5;border-radius:4px;font-size:12px;cursor:pointer;transition:all .2s;background:#fff}
-.variant-btn.active{border-color:var(--text);background:var(--text);color:#fff}
-.variant-btn:hover:not(.active){border-color:#999}
-.thumb-row{display:flex;gap:8px;overflow-x:auto;padding:8px 0}
-.thumb-row img{width:56px;height:56px;object-fit:cover;border-radius:4px;border:2px solid transparent;cursor:pointer;flex-shrink:0;transition:border-color .2s}
-.thumb-row img.active{border-color:var(--text)}
-.detail-section img{width:100%;display:block}
-/* Widgets */
-.widget-card{background:#fff;border:1px solid rgba(0,0,0,.05);border-radius:8px;overflow:hidden;margin-bottom:16px;transition:all .3s}
-.widget-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.06)}
-.admin-tab{padding:10px 20px;font-size:12px;font-weight:700;opacity:.45;cursor:pointer;border-radius:8px;background:#f0f0ee;transition:all .2s;letter-spacing:.03em}
-.admin-tab.active{opacity:1;background:var(--text);color:#fff}
-.admin-tab:hover:not(.active){opacity:.8}
-.code-editor{font-family:'Courier New',monospace;font-size:12px;background:#fafafa;border:1px solid rgba(0,0,0,.08);border-radius:6px;padding:12px;width:100%;min-height:200px;resize:vertical;outline:none;tab-size:2;line-height:1.6}
-.code-editor:focus{border-color:var(--accent);background:#fff}
+        
+        /* 详情页与轮播重构样式 */
+        #detailPage { background: #fff; min-height: 100vh; }
+        .carousel-wrap { position: relative; overflow: hidden; background: #f5f5f3; max-width: 700px; margin: 0 auto; border-radius: 4px; }
+        .carousel-track { display: flex; transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform; }
+        .carousel-track img { flex-shrink: 0; width: 100%; aspect-ratio: 1/1; object-fit: contain; background: #f5f5f3; }
+        .carousel-dots { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 10; }
+        .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(0,0,0,0.15); transition: all 0.3s; }
+        .carousel-dot.active { background: var(--text); width: 16px; border-radius: 3px; }
+        .carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.7); backdrop-filter: blur(4px); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: all 0.3s; z-index: 10; }
+        .carousel-wrap:hover .carousel-arrow { opacity: 1; }
+        @media (max-width: 768px) { .carousel-arrow { display: none; } }
+        
+        /* 缩略图与规格 */
+        .variant-btn { padding: 8px 16px; border: 1px solid #e5e5e5; border-radius: 4px; font-size: 13px; cursor: pointer; transition: all 0.2s; background: #fff; }
+        .variant-btn.active { border-color: var(--text); background: var(--text); color: #fff; }
+        .thumb-row { display: flex; gap: 10px; overflow-x: auto; padding: 12px 0; }
+        .thumb-row img { width: 64px; height: 64px; object-fit: cover; border-radius: 4px; border: 2px solid transparent; cursor: pointer; flex-shrink: 0; transition: all 0.2s; background: #f5f5f3; }
+        .thumb-row img.active { border-color: var(--text); transform: scale(0.95); }
+        .detail-section img { width: 100%; display: block; height: auto; }
 
-</style>
+        /* 移动端沉浸式双击放大组件 */
+        #zoomModal { position: fixed; inset: 0; background: #000; z-index: 200; display: none; align-items: center; justify-content: center; overflow: hidden; }
+        #zoomViewport { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; cursor: grab; }
+        #zoomViewport:active { cursor: grabbing; }
+        #zoomImg { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.1s ease-out; transform-origin: center center; }
+
+        /* 管理面板样式 */
+        .widget-card { background: #fff; border: 1px solid rgba(0,0,0,.05); border-radius: 8px; overflow: hidden; margin-bottom: 16px; transition: all 0.3s; }
+        .admin-tab { padding: 10px 20px; font-size: 12px; font-weight: 700; opacity: .45; cursor: pointer; border-radius: 8px; background: #f0f0ee; transition: all 0.2s; letter-spacing: .03em; }
+        .admin-tab.active { opacity: 1; background: var(--text); color: #fff; }
+        .code-editor { font-family: 'Courier New', monospace; font-size: 12px; background: #fafafa; border: 1px solid rgba(0,0,0,.08); border-radius: 6px; padding: 12px; width: 100%; min-height: 160px; resize: vertical; outline: none; }
+        .code-editor:focus { border-color: var(--accent); background: #fff; }
+    </style>
 </head>
 <body class="selection:bg-yellow-100">
 
     <div id="saveIndicator" class="save-indicator"></div>
 
+    <!-- 顶部导航栏 -->
     <nav class="fixed top-0 w-full z-[60] glass border-b border-black/5">
         <div class="max-w-[1400px] mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
             <div class="flex items-center gap-4 md:gap-8">
@@ -85,6 +87,7 @@
         </div>
     </nav>
 
+    <!-- 首页容器 -->
     <div id="homePage" class="pt-20 md:pt-28 pb-20 max-w-[1400px] mx-auto px-4 md:px-6">
         <header id="top" class="mb-10 md:mb-16 fade-up">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8">
@@ -94,7 +97,7 @@
                 </div>
                 <div class="flex flex-col items-end gap-6 w-full md:w-auto">
                     <div class="relative w-full md:w-80 group">
-                        <input type="text" id="searchInput" placeholder="搜索家具..." class="w-full bg-transparent border-b border-black/10 py-2 focus:border-black outline-none transition-all placeholder:text-black/20 text-base md:text-lg">
+                        <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="搜索家具..." class="w-full bg-transparent border-b border-black/10 py-2 focus:border-black outline-none transition-all placeholder:text-black/20 text-base md:text-lg">
                         <i data-lucide="search" class="absolute right-0 top-1/2 -translate-y-1/2 w-5 h-5 opacity-20 group-focus-within:opacity-100 transition-opacity"></i>
                     </div>
                 </div>
@@ -105,8 +108,75 @@
             <div id="categoryContainer" class="flex overflow-x-auto gap-3 no-scrollbar pb-2 touch-pan-x"></div>
         </div>
 
+        <!-- 自定义小工具渲染区域 -->
         <div id="widgetContainer" class="mb-8 md:mb-12"></div>
+        <!-- 产品画廊网格 -->
         <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 md:gap-x-10 gap-y-10 md:gap-y-16 scroll-mt-24"></div>
+    </div>
+
+    <!-- 详情主页（重构高级交互） -->
+    <div id="detailPage" class="hidden min-h-screen pb-20">
+        <div class="sticky top-0 z-50 glass border-b border-black/5 flex items-center h-14 px-4">
+            <button onclick="closeDetail()" class="flex items-center gap-2 text-sm font-medium opacity-60 hover:opacity-100">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                <span class="hidden sm:inline">返回首页</span>
+            </button>
+            <div class="flex-1 text-center text-sm font-bold tracking-widest uppercase opacity-40" id="detailTopTitle"></div>
+            <div class="w-16"></div>
+        </div>
+
+        <div class="pt-4 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 px-4 md:px-8">
+            <!-- 左侧：多视图轮播与手势区 -->
+            <div>
+                <div class="carousel-wrap" id="carouselWrap">
+                    <button onclick="prevSlide()" class="carousel-arrow left-4"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+                    <button onclick="nextSlide()" class="carousel-arrow right-4"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+                    <div class="carousel-track" id="carouselTrack"></div>
+                    <div class="carousel-dots" id="carouselDots"></div>
+                </div>
+                <div id="thumbSection" class="mt-2">
+                    <div class="thumb-row no-scrollbar" id="thumbRow"></div>
+                </div>
+                <p class="text-center text-[11px] opacity-30 mt-2"><i data-lucide="zoom-in" class="w-3 h-3 inline mr-1"></i>双击或双指张开可放大查看材质材质细节</p>
+            </div>
+
+            <!-- 右侧：产品精细元信息 -->
+            <div class="flex flex-col justify-between py-2">
+                <div class="border-b border-black/5 pb-6">
+                    <p class="text-2xl md:text-4xl font-bold serif mb-3" id="detailName"></p>
+                    <div class="flex items-baseline gap-4 mb-4">
+                        <span class="text-red-500 text-2xl md:text-3xl font-semibold" id="detailPrice"></span>
+                        <span class="text-xs opacity-30 line-through" id="detailOrigPrice"></span>
+                    </div>
+                    <p class="text-sm opacity-60 leading-relaxed mb-6" id="detailDesc"></p>
+                    
+                    <div id="variantSection" class="mb-6">
+                        <p class="text-xs font-bold uppercase tracking-widest mb-3 opacity-50" id="variantLabel">规格颜色</p>
+                        <div id="variantBtns" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+
+                <!-- 品牌附加质感背书 -->
+                <div class="bg-black/[0.02] p-4 rounded mt-4 text-xs space-y-2 opacity-60">
+                    <p>✨ <b>手工匠心度量</b>：精选原产特级木料，历经上百道纯手工作业工序</p>
+                    <p>📦 <b>全方位专线尊享物流</b>：提供高防震定制原厂打木架包装，安全触达</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 下方：详尽图文巨幕延伸 -->
+        <div class="max-w-3xl mx-auto px-4 mt-12">
+            <p class="text-xs font-bold uppercase tracking-widest mb-6 opacity-40 text-center">— 详 细 视 觉 说明 —</p>
+            <div id="detailImages" class="detail-section space-y-0"></div>
+        </div>
+    </div>
+
+    <!-- 移动端多点触控与沉浸式放大层 -->
+    <div id="zoomModal">
+        <button onclick="closeZoom()" class="absolute top-4 right-4 z-50 bg-white/20 backdrop-blur text-white w-10 h-10 rounded-full flex items-center justify-center"><i data-lucide="x" class="w-6 h-6"></i></button>
+        <div id="zoomViewport">
+            <img id="zoomImg" src="" alt="放大图预览">
+        </div>
     </div>
 
     <!-- 密码验证弹窗 -->
@@ -123,29 +193,17 @@
         </div>
     </div>
 
-    <!-- 详情模态框 -->
-        <!-- Detail Page (Taobao style) --> -->
-<div id="detailPage" class="hidden min-h-screen pb-20">
-<div class="sticky top-0 z-50 glass border-b border-black/5 flex items-center h-14 px-4">
-<button onclick="closeDetail()" class="flex items-center gap-2 text-sm font-medium opacity-60 hover:opacity-100"><i data-lucide="arrow-left" class="w-5 h-5"></i><span class="hidden sm:inline">返回</span></button>
-<div class="flex-1 text-center text-sm font-bold tracking-widest uppercase opacity-40" id="detailTopTitle"></div><div class="w-16"></div></div>
-<div class="carousel-wrap" id="carouselWrap"><div class="carousel-track" id="carouselTrack"></div><div class="carousel-dots" id="carouselDots"></div></div>
-<div class="max-w-3xl mx-auto px-4 md:px-8"><div class="py-6 border-b border-black/5">
-<p class="text-2xl md:text-3xl font-bold serif mb-2" id="detailName"></p>
-<div class="flex items-baseline gap-3 mb-4"><span class="text-red-500 text-xl md:text-2xl font-bold" id="detailPrice"></span><span class="text-xs opacity-40 line-through" id="detailOrigPrice"></span></div>
-<div class="text-xs opacity-40 mb-4" id="detailDesc"></div>
-<div id="variantSection" class="mb-4"><p class="text-xs font-bold uppercase tracking-widest mb-3 opacity-60" id="variantLabel">颜色</p><div id="variantBtns" class="flex flex-wrap gap-2"></div></div>
-<div id="thumbSection" class="border-t border-black/5 pt-4"><p class="text-xs font-bold uppercase tracking-widest mb-2 opacity-40">主图预览</p><div class="thumb-row no-scrollbar" id="thumbRow"></div></div></div>
-<div class="py-6"><p class="text-xs font-bold uppercase tracking-widest mb-6 opacity-40 text-center">— 产品详情 —</p><div id="detailImages" class="detail-section space-y-0"></div></div></div></div>
-<div id="adminModal" class="fixed inset-0 z-[100] hidden">
+    <!-- 后台管理侧边面板 -->
+    <div id="adminModal" class="fixed inset-0 z-[100] hidden">
         <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="toggleAdminModal()"></div>
         <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg bg-white shadow-2xl flex flex-col translate-x-full transition-transform duration-500 ease-out" id="adminSidebar">
             <div class="p-6 md:p-8 border-b flex justify-between items-center">
                 <h2 class="text-xl md:text-2xl serif">图册管理</h2>
-    <div class="flex gap-1 ml-4" id="adminTabs">
-      <div class="admin-tab active" onclick="switchAdminTab('products')">产品</div>
-      <div class="admin-tab" onclick="switchAdminTab('widgets')">小工具</div>
-    </div><button onclick="resetToken()" title="重置Token" class="text-[10px] opacity-30 hover:opacity-100 hover:text-red-500 transition-all ml-2">🔑</button>
+                <div class="flex gap-1 ml-4" id="adminTabs">
+                    <div class="admin-tab active" id="tab-products" onclick="switchAdminTab('products')">产品</div>
+                    <div class="admin-tab" id="tab-widgets" onclick="switchAdminTab('widgets')">小工具</div>
+                </div>
+                <button onclick="resetToken()" title="重置Token" class="text-[10px] opacity-30 hover:opacity-100 hover:text-red-500 transition-all ml-2">🔑</button>
                 <div class="flex items-center gap-1 md:gap-2">
                     <button title="导出 CSV" onclick="exportToExcel()" class="p-2 hover:bg-black/5 rounded-full"><i data-lucide="download" class="w-5 h-5"></i></button>
                     <label title="导入 CSV" for="importInput" class="p-2 hover:bg-black/5 rounded-full cursor-pointer"><i data-lucide="upload" class="w-5 h-5"></i></label>
@@ -153,92 +211,118 @@
                     <button onclick="toggleAdminModal()" class="p-2 hover:bg-black/5 rounded-full ml-1"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
             </div>
+            
             <div class="flex-1 overflow-y-auto p-6 md:p-8 no-scrollbar">
                 <div class="space-y-10">
-                    <section>
-                        <h3 class="text-[10px] uppercase tracking-widest font-bold text-[var(--accent)] mb-4 md:mb-6">分类管理</h3>
-                        <div class="flex gap-2 mb-4">
-                            <input type="text" id="new_cat_name" placeholder="新分类名称" class="flex-1 border-b py-2 text-sm outline-none bg-transparent">
-                            <button onclick="addCategory()" class="bg-black text-white px-4 py-2 text-[10px] font-bold uppercase">添加</button>
-                        </div>
-                        <div id="adminCatList" class="flex flex-wrap gap-2"></div>
-                    </section>
-                    <section class="bg-black/[0.02] p-4 md:p-6 rounded-lg">
-                        <h3 class="text-[10px] uppercase tracking-widest font-bold text-[var(--accent)] mb-6">发布新作品</h3>
-                        <div class="space-y-4">
-                            <input type="text" id="p_name" placeholder="作品名称" class="w-full border-b bg-transparent py-3 outline-none text-sm">
-                            <div class="grid grid-cols-2 gap-4">
-                                <select id="p_category" class="border-b py-3 outline-none bg-transparent text-sm"></select>
-                                <input type="number" id="p_price" placeholder="价格 (¥)" class="border-b bg-transparent py-3 outline-none text-sm">
+                    <!-- 产品管理页签容器 -->
+                    <div id="adminProductSection" class="space-y-8">
+                        <section>
+                            <h3 class="text-[10px] uppercase tracking-widest font-bold text-[var(--accent)] mb-4">分类管理</h3>
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" id="new_cat_name" placeholder="新分类名称" class="flex-1 border-b py-2 text-sm outline-none bg-transparent">
+                                <button onclick="addCategory()" class="bg-black text-white px-4 py-2 text-[10px] font-bold uppercase">添加</button>
                             </div>
-                            <select id="p_page" class="w-full border-b py-3 outline-none bg-transparent text-sm">
-                                <option value="首页">📄 首页</option>
-                                <option value="灵感">💡 灵感</option>
-                            </select>
-                            <div id="imageInputs" class="space-y-3">
-                                <input type="text" placeholder="主图链接 URL" class="w-full border-b bg-transparent py-2 text-xs outline-none img-input">
+                            <div id="adminCatList" class="flex flex-wrap gap-2"></div>
+                        </section>
+                        
+                        <section class="bg-black/[0.02] p-4 md:p-6 rounded-lg">
+                            <h3 class="text-[10px] uppercase tracking-widest font-bold text-[var(--accent)] mb-6">发布新作品</h3>
+                            <div class="space-y-4">
+                                <input type="text" id="p_name" placeholder="作品名称" class="w-full border-b bg-transparent py-3 outline-none text-sm">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <select id="p_category" class="border-b py-3 outline-none bg-transparent text-sm"></select>
+                                    <input type="number" id="p_price" placeholder="价格 (¥)" class="border-b bg-transparent py-3 outline-none text-sm">
+                                </div>
+                                <select id="p_page" class="w-full border-b py-3 outline-none bg-transparent text-sm">
+                                    <option value="首页">📄 首页</option>
+                                    <option value="灵感">💡 灵感</option>
+                                </select>
+                                <div id="imageInputs" class="space-y-3">
+                                    <input type="text" placeholder="主图链接 URL" class="w-full border-b bg-transparent py-2 text-xs outline-none img-input">
+                                </div>
+                                <button onclick="addImageInput()" class="text-[10px] font-bold opacity-40 hover:opacity-100 flex items-center gap-2 pt-2">
+                                    <i data-lucide="plus" class="w-4 h-4"></i> 添加更多视角
+                                </button>
+                                <button onclick="addProduct()" class="w-full bg-black text-white py-4 mt-6 hover:bg-black/80 transition-all font-bold tracking-widest uppercase text-[10px]">保存作品</button>
                             </div>
-                            <button onclick="addImageInput()" class="text-[10px] font-bold opacity-40 hover:opacity-100 flex items-center gap-2 pt-2">
-                                <i data-lucide="plus" class="w-4 h-4"></i> 添加更多视角
-                            </button>
-                            <button onclick="addProduct()" class="w-full bg-black text-white py-4 mt-6 hover:bg-black/80 transition-all font-bold tracking-widest uppercase text-[10px]">保存作品</button>
-                        </div>
-                    </section>
-                    <section id="adminWidgetSection" class="hidden">
-                        <h3 class="text-[10px] uppercase tracking-widest font-bold text-[var(--accent)] mb-4 md:mb-6">添加小工具</h3>
-                        <p class="text-xs opacity-40 mb-4">添加自定义 HTML/CSS/JS 代码片段，将在首页展示</p>
-                        <div class="space-y-3 mb-6">
-                            <input type="text" id="w_name" placeholder="小工具名称" class="w-full border-b bg-transparent py-3 outline-none text-sm">
-                            <select id="w_position" class="w-full border-b py-3 outline-none bg-transparent text-sm">
-                                <option value="top">📍 顶部横幅</option>
-                                <option value="between">🔀 产品之间</option>
-                                <option value="bottom">📌 底部区域</option>
-                            </select>
-                            <textarea id="w_code" class="code-editor" placeholder="在此粘贴 HTML/CSS/JS 代码...
+                        </section>
 
-示例：
-<div style='text-align:center;padding:20px'>
-  <h2>欢迎光临</h2>
-  <p>本店新品上市</p>
-</div>"></textarea>
-                            <div class="flex gap-2">
-                                <button onclick="previewWidget()" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest border hover:bg-black/5">预览</button>
-                                <button onclick="addWidget()" class="flex-1 bg-black text-white py-3 text-[10px] font-bold uppercase tracking-widest">添加</button>
+                        <section class="pt-4">
+                            <h3 class="text-[10px] uppercase tracking-widest font-bold text-black/30 mb-4">现有清单</h3>
+                            <div id="adminList" class="space-y-3"></div>
+                        </section>
+                    </div>
+
+                    <!-- 小工具管理页签容器 -->
+                    <div id="adminWidgetSection" class="hidden space-y-6">
+                        <section>
+                            <h3 class="text-[10px] uppercase tracking-widest font-bold text-[var(--accent)] mb-4">添加大促或页眉小工具</h3>
+                            <p class="text-xs opacity-40 mb-4">可注入原生 HTML/CSS 营销模块，将在首页即时动态投放</p>
+                            <div class="space-y-3 mb-6">
+                                <input type="text" id="w_name" placeholder="小工具管理别名" class="w-full border-b bg-transparent py-3 outline-none text-sm">
+                                <select id="w_position" class="w-full border-b py-3 outline-none bg-transparent text-sm">
+                                    <option value="top">📍 顶置横幅广告</option>
+                                    <option value="between">🔀 产品流中插</option>
+                                    <option value="bottom">📌 网页底座区</option>
+                                </select>
+                                <textarea id="w_code" class="code-editor" placeholder="在此处粘贴自定义的 HTML 片段代码..."></textarea>
+                                <div class="flex gap-2">
+                                    <button onclick="previewWidget()" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest border hover:bg-black/5">预览模块</button>
+                                    <button onclick="addWidget()" class="flex-1 bg-black text-white py-3 text-[10px] font-bold uppercase tracking-widest">确认添加</button>
+                                </div>
+                                <div id="widgetPreview" class="hidden border rounded bg-white mt-2 p-2"></div>
                             </div>
-                            <div id="widgetPreview" class="hidden border rounded-lg overflow-hidden bg-white mt-2"></div>
-                        </div>
-                        <h3 class="text-[10px] uppercase tracking-widest font-bold text-black/30 mb-4">已添加的小工具</h3>
-                        <div id="adminWidgetList" class="space-y-3"></div>
-                    </section>
-                    <section id="adminProductSection" class="pt-6">
-                        <h3 class="text-[10px] uppercase tracking-widest font-bold text-black/30 mb-6">现有清单</h3>
-                        <div id="adminList" class="space-y-3"></div>
-                    </section>
+                        </section>
+                        <section>
+                            <h3 class="text-[10px] uppercase tracking-widest font-bold text-black/30 mb-4">线上处于激活状态的小工具</h3>
+                            <div id="adminWidgetList" class="space-y-3"></div>
+                        </section>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 底部移动端快速导航切片 -->
+    <div class="mobile-nav">
+        <a href="#" onclick="goHome(event)" class="active" id="mNavHome"><i data-lucide="home"></i>首页</a>
+        <a href="inspiration.html" id="mNavInspire"><i data-lucide="compass"></i>灵感</a>
+        <a href="#" onclick="handleAdminAccess()"><i data-lucide="user"></i>工作台</a>
+    </div>
+
     <script>
-        // --- GitHub Sync Config ---
+        // --- GitHub 自动化发布引擎配置 ---
         const GITHUB_REPO = "luohaijun8888-art/artisan-gallery";
         const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/products.json";
-        const _tk=['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];const EMBEDDED_TOKEN=_tk.join('');if(localStorage.getItem('gh_token')&&localStorage.getItem('gh_token')!==EMBEDDED_TOKEN){localStorage.removeItem('gh_token');}let githubToken=EMBEDDED_TOKEN;
+        const _tk=['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];
+        const EMBEDDED_TOKEN=_tk.join('');
+        
+        let githubToken = EMBEDDED_TOKEN;
         let dataSha = null;
 
-        // --- System ---
+        // --- 核心权限校验与控制元 ---
         const adminPassword = "8888";
         let isAuthenticated = false;
 
-        // --- Data ---
+        // --- 全局应用内存数据库 ---
         let categories = ["餐台", "茶几", "餐椅", "床", "书架"];
-        let widgets = [];
         let products = [];
+        let widgets = [];
         let currentCategory = 'all';
         let currentSearch = '';
-        let scale = 1, pos = {x:0,y:0}, isDragging = false, dragStart = {x:0,y:0};
 
-        // --- Save indicator ---
+        // --- 轮播图状态元 ---
+        let currentDetail = null;
+        let currentVariantIdx = 0;
+        let carouselIdx = 0;
+
+        // --- 移动端高级手势状态机 ---
+        let zoomScale = 1;
+        let isZoomed = false;
+        let startX = 0, startY = 0;
+        let translateX = 0, translateY = 0;
+
+        // 浮动保存云反馈调度
         function showSaveStatus(status, msg) {
             const el = document.getElementById('saveIndicator');
             el.className = 'save-indicator ' + status;
@@ -246,24 +330,26 @@
             setTimeout(() => { el.className = 'save-indicator'; }, 2500);
         }
 
-        // --- GitHub API sync ---
+        // 远程云端核心初始化拉取
         async function fetchProducts() {
             try {
                 const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
                 if (githubToken) headers['Authorization'] = 'Bearer ' + githubToken;
-                const res = await fetch(GITHUB_API, { headers });
-                if (!res.ok) throw new Error('fetch failed');
+                const res = await fetch(GITHUB_API, { headers, cache: 'no-store' });
+                if (!res.ok) throw new Error('拉取失败');
                 const data = await res.json();
                 dataSha = data.sha;
                 const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+                
                 categories = content.categories || categories;
                 products = content.products || [];
                 widgets = content.widgets || [];
+                
                 localStorage.setItem('artisan_categories', JSON.stringify(categories));
                 localStorage.setItem('furniture_gallery_db', JSON.stringify(products));
                 localStorage.setItem('artisan_widgets', JSON.stringify(widgets));
             } catch(e) {
-                console.warn('GitHub fetch failed, using localStorage cache', e);
+                console.warn('云端连接建立失败，采用离线高缓存库支撑。', e);
                 categories = JSON.parse(localStorage.getItem('artisan_categories')) || categories;
                 products = JSON.parse(localStorage.getItem('furniture_gallery_db')) || [];
                 widgets = JSON.parse(localStorage.getItem('artisan_widgets')) || [];
@@ -273,43 +359,44 @@
             renderWidgets();
         }
 
+        // 云端一键高可靠性上报同步
         async function saveToGitHub() {
-            if (!githubToken) { showSaveStatus('error', '未设置Token'); return; }
-            showSaveStatus('saving', '同步中...');
+            if (!githubToken) { showSaveStatus('error', '未检测到发布凭证Token'); return; }
+            showSaveStatus('saving', '数据打包上传至GitHub云端...');
             try {
-                // Always fetch latest SHA first to avoid conflicts
                 const headRes = await fetch(GITHUB_API, {
-                    headers: { 'Authorization': 'Bearer ' + githubToken, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }
+                    headers: { 'Authorization': 'Bearer ' + githubToken, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' },
+                    cache: 'no-store'
                 });
                 if (headRes.ok) { const headData = await headRes.json(); dataSha = headData.sha; }
 
                 const data = { categories, products, widgets };
                 const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-                const body = { message: 'update products ' + new Date().toISOString(), content: content, sha: dataSha };
+                const body = { message: '✨ 系统同步自动化构建: ' + new Date().toISOString(), content: content, sha: dataSha };
+                
                 const res = await fetch(GITHUB_API, {
                     method: 'PUT',
                     headers: { 'Authorization': 'Bearer ' + githubToken, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
                 });
                 if (res.status === 401) {
-                    showSaveStatus('error', 'Token已失效');
-                    const t = prompt('Token已失效，请输入新的GitHub Token：');
+                    showSaveStatus('error', '凭证已过期');
+                    const t = prompt('发布凭证失效，请重新键入 GitHub 权限 Token：');
                     if (t) { githubToken = t.trim(); localStorage.setItem('gh_token', githubToken); await saveToGitHub(); }
                     return;
                 }
                 if (res.status === 409) {
-                    showSaveStatus('error', 'SHA冲突，重试中...');
+                    showSaveStatus('error', '节点冲突，重新校准合并中...');
                     dataSha = null;
                     await saveToGitHub();
                     return;
                 }
-                if (!res.ok) { const errText = await res.text(); throw new Error('HTTP ' + res.status + ': ' + errText.substring(0, 100)); }
+                if (!res.ok) throw new Error('云写入错误码: ' + res.status);
                 const result = await res.json();
                 dataSha = result.content.sha;
-                showSaveStatus('saved', '已同步到云端');
+                showSaveStatus('saved', '云端自动化构建部署成功');
             } catch(e) {
-                console.error('GitHub save failed', e);
-                showSaveStatus('error', '同步失败: ' + e.message);
+                showSaveStatus('error', '云同步失败: ' + e.message);
             }
             localStorage.setItem('artisan_categories', JSON.stringify(categories));
             localStorage.setItem('furniture_gallery_db', JSON.stringify(products));
@@ -318,21 +405,25 @@
 
         async function saveAll() { await saveToGitHub(); }
 
-        // --- Auth ---
+        // --- 安全管理权限校验模块 ---
         window.handleAdminAccess = function() {
             if (isAuthenticated) { toggleAdminModal(); }
             else { document.getElementById('authOverlay').classList.remove('hidden'); document.getElementById('adminPasswordInput').focus(); }
         };
-        window.resetToken=function(){if(confirm("Token将被清除，下次管理时需重新输入。确认？")){githubToken="";localStorage.removeItem("gh_token");showSaveStatus("error","Token已重置");}}; window.closeAuth = function() { document.getElementById('authOverlay').classList.add('hidden'); document.getElementById('adminPasswordInput').value = ''; document.getElementById('authError').classList.add('hidden'); };
+        window.resetToken = function() {
+            if (confirm("是否清除浏览器本地保存的特权访问凭据？")) {
+                githubToken = ""; localStorage.removeItem("gh_token"); showSaveStatus("error", "管理凭据已安全抹除");
+            }
+        };
+        window.closeAuth = function() {
+            document.getElementById('authOverlay').classList.add('hidden');
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('authError').classList.add('hidden');
+        };
         window.verifyAdmin = function() {
             const input = document.getElementById('adminPasswordInput');
             if (input.value === adminPassword) {
                 isAuthenticated = true;
-                // Prompt for GitHub token if not set
-                if (!githubToken) {
-                    const token = prompt('首次使用管理功能，请输入 GitHub Token 以同步数据：\n（Token 将保存在浏览器本地）');
-                    if (token) { githubToken = token.trim(); localStorage.setItem('gh_token', githubToken); fetchProducts(); }
-                }
                 closeAuth(); toggleAdminModal();
             } else {
                 document.getElementById('authError').classList.remove('hidden');
@@ -341,247 +432,407 @@
         };
         document.getElementById('adminPasswordInput').onkeypress = (e) => { if (e.key === 'Enter') verifyAdmin(); };
 
-        // --- Render ---
+        // --- 视窗管理导航控制 ---
+        window.goHome = function(e) {
+            if(e) e.preventDefault();
+            closeDetail();
+            window.scrollTo({top:0, behavior:'smooth'});
+        };
+
+        // --- 极简骨架视图渲染器 ---
         window.setCategory = function(cat) { currentCategory = cat; renderCategories(); renderProducts(); };
+        window.handleSearch = function(val) { currentSearch = val.trim(); renderProducts(); };
+
         function renderCategories() {
             const c = document.getElementById('categoryContainer'); if(!c) return;
             let h = '<button onclick="setCategory(\'all\')" class="category-pill ' + (currentCategory==='all'?'active':'') + ' px-6 py-2.5 rounded-full bg-white text-[11px] md:text-sm font-medium tracking-wide">全部</button>';
             h += categories.map(cat => '<button onclick="setCategory(\''+cat+'\')" class="category-pill ' + (currentCategory===cat?'active':'') + ' px-6 py-2.5 rounded-full bg-white text-[11px] md:text-sm font-medium tracking-wide hover:bg-black/5">'+cat+'</button>').join('');
             c.innerHTML = h;
+            
             const sel = document.getElementById('p_category');
             if(sel) sel.innerHTML = categories.map(cat => '<option value="'+cat+'">'+cat+'</option>').join('');
             const acl = document.getElementById('adminCatList');
             if(acl) { acl.innerHTML = categories.map(cat => '<div class="flex items-center gap-2 bg-black/5 px-3 py-1.5 rounded-full text-xs font-medium group"><span>'+cat+'</span><button onclick="removeCategory(\''+cat+'\')" class="opacity-40 group-hover:opacity-100 hover:text-red-500 transition-all"><i data-lucide="x" class="w-3 h-3"></i></button></div>').join(''); lucide.createIcons(); }
         }
+
         function renderProducts() {
             const grid = document.getElementById('productGrid');
-            const filtered = products.filter(p => (currentCategory==='all'||p.category===currentCategory) && p.name.toLowerCase().includes(currentSearch.toLowerCase())&&p.page!=='灵感');
-            if(!filtered.length) { grid.innerHTML = '<div class="col-span-full py-20 text-center opacity-30 text-sm italic">未找到相关作品</div>'; return; }
-            grid.innerHTML = filtered.map((p,idx) => '<div class="product-card cursor-pointer group fade-up" style="animation-delay:'+idx*0.05+'s" onclick="openDetail('+p.id+')"><div class="product-image-container aspect-[3/4] md:aspect-[4/5] relative mb-4 md:mb-6">'+(p.tags?'<span class="absolute top-3 left-3 md:top-4 md:left-4 z-10 bg-white px-2 md:px-3 py-1 text-[8px] md:text-[9px] font-bold tracking-widest uppercase shadow-sm">'+p.tags+'</span>':'')+'<img src="'+p.images[0]+'" class="product-image w-full h-full object-contain" loading="lazy"></div><div class="flex justify-between items-baseline px-1"><div><p class="text-[8px] md:text-[9px] uppercase tracking-[0.2em] opacity-40 font-bold mb-1">'+p.category+'</p><h3 class="text-base md:text-lg serif font-medium tracking-wide">'+p.name+'</h3></div><p class="text-xs md:text-sm opacity-50 tracking-wide">&yen;'+Number(p.price).toLocaleString()+'</p></div></div>').join('');
+            const filtered = products.filter(p => (currentCategory==='all' || p.category===currentCategory) && p.name.toLowerCase().includes(currentSearch.toLowerCase()) && p.page!=='灵感');
+            if(!filtered.length) { grid.innerHTML = '<div class="col-span-full py-20 text-center opacity-30 text-sm italic">未找到相关高级作品</div>'; return; }
+            grid.innerHTML = filtered.map((p,idx) => `
+                <div class="product-card cursor-pointer group fade-up" style="animation-delay:${idx*0.04}s" onclick="openDetail(${p.id})">
+                    <div class="product-image-container aspect-[3/4] md:aspect-[4/5] relative mb-4 md:mb-6">
+                        ${p.tags ? `<span class="absolute top-3 left-3 md:top-4 md:left-4 z-10 bg-white px-2 py-1 text-[8px] font-bold tracking-widest uppercase shadow-sm">${p.tags}</span>` : ''}
+                        <img src="${p.images && p.images[0] ? p.images[0] : ''}" class="product-image w-full h-full object-contain" loading="lazy">
+                    </div>
+                    <div class="flex justify-between items-baseline px-1">
+                        <div>
+                            <p class="text-[8px] md:text-[9px] uppercase tracking-[0.2em] opacity-40 font-bold mb-1">${p.category}</p>
+                            <h3 class="text-base md:text-lg serif font-medium tracking-wide">${p.name}</h3>
+                        </div>
+                        <p class="text-xs md:text-sm opacity-50 tracking-wide">&yen;${Number(p.price).toLocaleString()}</p>
+                    </div>
+                </div>
+            `).join('');
             lucide.createIcons();
+            renderAdminProductList();
         }
 
-        // --- Zoom ---
-        // --- Detail page (Taobao style) ---
-let currentDetail=null,currentVariantIdx=0,carouselIdx=0;
-window.openDetail=function(id){const p=products.find(x=>x.id===id);if(!p)return;currentDetail=p;currentVariantIdx=0;carouselIdx=0;
-document.getElementById('homePage').classList.add('hidden');document.getElementById('detailPage').classList.remove('hidden');
-document.getElementById('detailTopTitle').textContent=p.category;window.scrollTo(0,0);renderDetail();};
-window.closeDetail=function(){document.getElementById('detailPage').classList.add('hidden');document.getElementById('homePage').classList.remove('hidden');currentDetail=null;};
-function getCurrentImages(){if(!currentDetail)return[];if(currentDetail.variants&&currentDetail.variants.length)return currentDetail.variants[currentVariantIdx].images||[];return currentDetail.images||[];}
-function renderDetail(){const p=currentDetail;if(!p)return;
-document.getElementById('detailName').textContent=p.name;document.getElementById('detailPrice').textContent='¥'+Number(p.price).toLocaleString();
-document.getElementById('detailOrigPrice').textContent='¥'+Math.round(Number(p.price)*1.5).toLocaleString();
-document.getElementById('detailDesc').textContent=p.description||'';
-const vs=document.getElementById('variantSection');
-if(p.variants&&p.variants.length>1){vs.classList.remove('hidden');document.getElementById('variantLabel').textContent='颜色/规格';
-document.getElementById('variantBtns').innerHTML=p.variants.map((v,i)=>'<button class="variant-btn '+(i===currentVariantIdx?'active':'')+'" onclick="selectVariant('+i+')">'+v.name+'</button>').join('');}
-else{vs.classList.add('hidden')}renderCarousel();
-const di=document.getElementById('detailImages');
-if(p.detailImages&&p.detailImages.length)di.innerHTML=p.detailImages.map(u=>'<img src="'+u+'" loading="lazy">').join('');else di.innerHTML='';lucide.createIcons();}
-function renderCarousel(){const imgs=getCurrentImages();const track=document.getElementById('carouselTrack');const dots=document.getElementById('carouselDots');
-if(!imgs.length){track.innerHTML='';dots.innerHTML='';return}if(carouselIdx>=imgs.length)carouselIdx=0;
-track.innerHTML=imgs.map(u=>'<img src="'+u+'" loading="lazy">').join('');
-track.style.transform='translateX(-'+carouselIdx*100+'%)';
-dots.innerHTML=imgs.map((_,i)=>'<div class="carousel-dot '+(i===carouselIdx?'active':'')+'"></div>').join('');
-const tr=document.getElementById('thumbRow');tr.innerHTML=imgs.map((u,i)=>'<img src="'+u+'" class="'+(i===carouselIdx?'active':'')+'" onclick="goCarousel('+i+')">').join('');initCarouselSwipe();}
-window.selectVariant=function(i){currentVariantIdx=i;carouselIdx=0;renderDetail()};
-window.goCarousel=function(i){carouselIdx=i;renderCarousel()};
-function initCarouselSwipe(){const wrap=document.getElementById('carouselWrap');let sx=0,moving=false;
-wrap.ontouchstart=e=>{sx=e.touches[0].clientX;moving=true};
-wrap.ontouchend=e=>{if(!moving)return;moving=false;const dx=e.changedTouches[0].clientX-sx;const imgs=getCurrentImages();
-if(dx<-40&&carouselIdx<imgs.length-1)carouselIdx++;else if(dx>40&&carouselIdx>0)carouselIdx--;renderCarousel();};}
+        // --- 重构升级：极致家具图册详情卡片交互 ---
+        window.openDetail = function(id) {
+            const p = products.find(x => x.id === id); if(!p) return;
+            currentDetail = p; currentVariantIdx = 0; carouselIdx = 0;
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('detailPage').classList.remove('hidden');
+            document.getElementById('detailTopTitle').textContent = p.category;
+            window.scrollTo(0,0);
+            renderDetail();
+        };
 
-window.addCategory = function() { const v=document.getElementById('new_cat_name').value.trim();if(!v||categories.includes(v))return;categories.push(v);document.getElementById('new_cat_name').value='';saveAll();renderCategories(); };
-        window.removeCategory = function(cat) { if(confirm('确定删除分类 "'+cat+'"？')){categories=categories.filter(c=>c!==cat);saveAll();renderCategories();} };
-        window.addProduct = function() { const name=document.getElementById('p_name').value.trim(),price=document.getElementById('p_price').value,images=Array.from(document.querySelectorAll('.img-input')).map(i=>i.value).filter(v=>v);if(!name||!price||!images.length)return alert('信息不完整');if(products.some(p=>p.name===name))return alert('作品名重复');products.unshift({id:Date.now(),name,price,category:document.getElementById('p_category').value,page:document.getElementById('p_page').value,images,tags:'NEW'});saveAll();renderProducts();toggleAdminModal(); };
-        let editingId = null;
-        window.editProduct = function(id) {
-            editingId = id;
-            renderAdminList();
+        window.closeDetail = function() {
+            document.getElementById('detailPage').classList.add('hidden');
+            document.getElementById('homePage').classList.remove('hidden');
+            currentDetail = null;
         };
-        window.cancelEdit = function() {
-            editingId = null;
-            renderAdminList();
-        };
-        window.saveEdit = function(id) {
-            const p = products.find(x => x.id === id); if (!p) return;
-            p.name = document.getElementById('edit_name').value.trim();
-            p.price = document.getElementById('edit_price').value;
-            p.category = document.getElementById('edit_cat').value;
-            p.page = document.getElementById('edit_page').value;
-            p.tags = document.getElementById('edit_tags').value;
-            const imgs = Array.from(document.querySelectorAll('.edit-img-input')).map(i=>i.value).filter(v=>v);
-            if (imgs.length) p.images = imgs;
-            editingId = null;
-            saveAll(); renderAdminList(); renderProducts();
-        };
-        window.addEditImageInput = function() {
-            const d = document.createElement('div'); d.className='flex gap-2';
-            d.innerHTML='<input type="text" placeholder="视角 URL" class="w-full border-b bg-transparent py-1 text-xs outline-none edit-img-input"><button onclick="this.parentElement.remove()" class="text-red-400 text-xs">✕</button>';
-            document.getElementById('edit_images').appendChild(d);
-        };
-        function renderAdminList() {
-            document.getElementById('adminList').innerHTML = products.map(p => {
-                if (editingId === p.id) {
-                    return '<div class="p-4 bg-yellow-50/50 border border-yellow-200/50 rounded-lg space-y-3 fade-up">' +
-                    '<div class="flex justify-between items-center mb-2"><span class="text-[10px] font-bold text-yellow-700 uppercase tracking-widest">编辑模式</span><div class="flex gap-2"><button onclick="cancelEdit()" class="text-xs px-3 py-1 border rounded hover:bg-black/5">取消</button><button onclick="saveEdit('+p.id+')" class="text-xs px-3 py-1 bg-black text-white rounded">保存</button></div></div>' +
-                    '<input id="edit_name" value="'+p.name+'" class="w-full border-b py-2 text-sm outline-none bg-transparent" placeholder="名称">' +
-                    '<div class="grid grid-cols-2 gap-3">' +
-                    '<select id="edit_cat" class="border-b py-2 outline-none bg-transparent text-sm">' + categories.map(c => '<option value="'+c+'" '+(c===p.category?'selected':'')+'>'+c+'</option>').join('') + '</select>' +
-                    '<input id="edit_price" value="'+p.price+'" class="border-b bg-transparent py-2 outline-none text-sm" placeholder="价格">' +
-                    '</div>' +
-                    '<div class="grid grid-cols-2 gap-3">' +
-                    '<select id="edit_page" class="border-b py-2 outline-none bg-transparent text-sm"><option value="首页" '+(p.page!=='灵感'?'selected':'')+'>首页</option><option value="灵感" '+(p.page==='灵感'?'selected':'')+'>灵感</option></select>' +
-                    '<input id="edit_tags" value="'+(p.tags||'')+'" class="border-b bg-transparent py-2 outline-none text-sm" placeholder="标签(NEW/HOT)">' +
-                    '</div>' +
-                    '<div id="edit_images" class="space-y-2">' + p.images.map((img,i) => '<div class="flex gap-2"><input value="'+img+'" class="w-full border-b bg-transparent py-1 text-xs outline-none edit-img-input"><button onclick="this.parentElement.remove()" class="text-red-400 text-xs flex-shrink-0">✕</button></div>').join('') + '</div>' +
-                    '<button onclick="addEditImageInput()" class="text-[10px] font-bold opacity-40 hover:opacity-100 flex items-center gap-1"><i data-lucide="plus" class="w-3 h-3"></i> 添加图片</button>' +
-                    '</div>';
-                }
-                return '<div class="flex items-center justify-between p-3 bg-black/[0.03] rounded-lg group">' +
-                '<div class="flex items-center gap-3 flex-1 min-w-0">' +
-                '<img src="'+p.images[0]+'" class="w-12 h-12 object-cover rounded-md flex-shrink-0">' +
-                '<div class="text-xs min-w-0"><p class="font-bold truncate">'+p.name+'</p><p class="opacity-40 uppercase tracking-tighter">'+p.category+' \xb7 '+(p.page||'首页')+' \xb7 ¥'+Number(p.price).toLocaleString()+'</p></div></div>' +
-                '<div class="flex gap-1 flex-shrink-0">' +
-                '<button onclick="editProduct('+p.id+')" class="p-2 hover:bg-blue-50 rounded text-blue-400 opacity-0 group-hover:opacity-100 transition-all" title="编辑"><i data-lucide="pencil" class="w-4 h-4"></i></button>' +
-                '<button onclick="deleteProduct('+p.id+')" class="p-2 hover:bg-red-50 rounded text-red-400" title="删除"><i data-lucide="trash-2" class="w-4 h-4"></i></button>' +
-                '</div></div>';
-            }).join('');
-            lucide.createIcons();
+
+        function getCurrentImages() {
+            if (!currentDetail) return [];
+            if (currentDetail.variants && currentDetail.variants[currentVariantIdx] && currentDetail.variants[currentVariantIdx].images) {
+                return currentDetail.variants[currentVariantIdx].images;
+            }
+            return currentDetail.images || [];
         }
-        window.deleteProduct = function(id) { if(confirm('删除作品？')){products=products.filter(p=>p.id!==id);saveAll();renderAdminList();renderProducts();} };
-        window.addImageInput = function() { const d=document.createElement('div');d.className='flex gap-2 fade-up';d.innerHTML='<input type="text" placeholder="视角 URL" class="w-full border-b bg-transparent py-2 text-xs outline-none img-input">';document.getElementById('imageInputs').appendChild(d); };
-        document.getElementById('searchInput').oninput = (e) => { currentSearch=e.target.value; renderProducts(); };
 
-        // --- Widgets ---
-        window.switchAdminTab = function(tab) {
-            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('adminWidgetSection').classList.toggle('hidden', tab !== 'widgets');
-            document.getElementById('adminProductSection').classList.toggle('hidden', tab !== 'products');
-            // Also hide the category and new product sections when on widgets tab
-            document.getElementById('adminProductSection').previousElementSibling?.classList?.toggle('hidden', tab === 'widgets');
-            if (tab === 'widgets') {
-                // Hide product-related admin sections
-                const sections = document.querySelectorAll('#adminSidebar .flex-1 section');
-                sections.forEach((s, i) => {
-                    if (i < 2) s.style.display = tab === 'widgets' ? 'none' : '';
-                });
-                renderAdminWidgetList();
+        function renderDetail() {
+            const p = currentDetail; if(!p) return;
+            document.getElementById('detailName').textContent = p.name;
+            document.getElementById('detailPrice').textContent = '¥' + Number(p.price).toLocaleString();
+            document.getElementById('detailOrigPrice').textContent = '¥' + Math.round(Number(p.price) * 1.45).toLocaleString();
+            document.getElementById('detailDesc').textContent = p.description || '暂无该家具详尽设计说明，详情咨询艺术顾问。';
+            
+            // 处理分色多规格
+            const vs = document.getElementById('variantSection');
+            if(p.variants && p.variants.length > 0){
+                vs.classList.remove('hidden');
+                document.getElementById('variantBtns').innerHTML = p.variants.map((v,i) => `<button class="variant-btn ${i===currentVariantIdx?'active':''}" onclick="selectVariant(${i})">${v.name}</button>`).join('');
             } else {
-                const sections = document.querySelectorAll('#adminSidebar .flex-1 section');
-                sections.forEach(s => s.style.display = '');
+                vs.classList.add('hidden');
+            }
+            
+            renderCarousel();
+            
+            // 长幅瀑布图解解析布局
+            const di = document.getElementById('detailImages');
+            if(p.detailImages && p.detailImages.length) {
+                di.innerHTML = p.detailImages.map(u => `<img src="${u}" class="w-full h-auto mb-1" loading="lazy">`).join('');
+            } else if (getCurrentImages().length > 1) {
+                di.innerHTML = getCurrentImages().map(u => `<img src="${u}" class="w-full h-auto mb-2" loading="lazy">`).join('');
+            } else {
+                di.innerHTML = '<p class="text-center py-8 text-xs opacity-30 italic">没有更多长图释义</p>';
+            }
+            lucide.createIcons();
+        }
+
+        function renderCarousel() {
+            const imgs = getCurrentImages();
+            const track = document.getElementById('carouselTrack');
+            const dots = document.getElementById('carouselDots');
+            const thumb = document.getElementById('thumbRow');
+            
+            if(!imgs.length) { track.innerHTML = ''; dots.innerHTML = ''; thumb.innerHTML = ''; return; }
+            if(carouselIdx >= imgs.length) carouselIdx = 0;
+            
+            // 轨道填充
+            track.innerHTML = imgs.map(u => `<img src="${u}" onclick="openZoom('${u}')" loading="lazy" class="cursor-zoom-in">`).join('');
+            track.style.transform = `translateX(-${carouselIdx * 100}%)`;
+            
+            // 分页指示器联动
+            dots.innerHTML = imgs.map((_,i) => `<div class="carousel-dot ${i===carouselIdx?'active':''}"></div>`).join('');
+            // 局部预览微型缩略图行阵联动
+            thumb.innerHTML = imgs.map((u,i) => `<img src="${u}" class="${i===carouselIdx?'active':''}" onclick="goCarousel(${i})" loading="lazy">`).join('');
+            
+            initCarouselSwipe();
+        }
+
+        window.selectVariant = function(i) { currentVariantIdx = i; carouselIdx = 0; renderDetail(); };
+        window.goCarousel = function(i) { carouselIdx = i; renderCarousel(); };
+        window.nextSlide = function() { const imgs = getCurrentImages(); if(carouselIdx < imgs.length - 1) { carouselIdx++; renderCarousel(); } };
+        window.prevSlide = function() { if(carouselIdx > 0) { carouselIdx--; renderCarousel(); } };
+
+        function initCarouselSwipe() {
+            const wrap = document.getElementById('carouselWrap'); let sx = 0, moving = false;
+            wrap.ontouchstart = e => { sx = e.touches[0].clientX; moving = true; };
+            wrap.ontouchend = e => {
+                if(!moving) return; moving = false;
+                const dx = e.changedTouches[0].clientX - sx;
+                if(dx < -50) nextSlide(); else if(dx > 50) prevSlide();
+            };
+        }
+
+        // --- 移动端双击高精图像视窗材质放大组件 ---
+        window.openZoom = function(url) {
+            const modal = document.getElementById('zoomModal');
+            const img = document.getElementById('zoomImg');
+            img.src = url;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // 归位复位重构状态
+            zoomScale = 1; translateX = 0; translateY = 0;
+            img.style.transform = `translate(0px, 0px) scale(1)`;
+            initZoomGestures();
+        };
+
+        window.closeZoom = function() {
+            document.getElementById('zoomModal').style.display = 'none';
+            document.body.style.overflow = '';
+        };
+
+        function initZoomGestures() {
+            const view = document.getElementById('zoomViewport');
+            const img = document.getElementById('zoomImg');
+            let lastTap = 0;
+            
+            // 双击瞬时定点快速高倍放大
+            view.onclick = function(e) {
+                const now = new Date().getTime();
+                if(now - lastTap < 300) {
+                    if (zoomScale > 1) {
+                        zoomScale = 1; translateX = 0; translateY = 0;
+                    } else {
+                        zoomScale = 2.5;
+                    }
+                    img.style.transition = 'transform 0.25s ease-out';
+                    img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${zoomScale})`;
+                }
+                lastTap = now;
+            };
+
+            // 手势自由滑移拖拽
+            view.ontouchstart = function(e) {
+                if(zoomScale <= 1) return;
+                img.style.transition = 'none';
+                startX = e.touches[0].clientX - translateX;
+                startY = e.touches[0].clientY - translateY;
+                isZoomed = true;
+            };
+            view.ontouchmove = function(e) {
+                if(!isZoomed) return;
+                translateX = e.touches[0].clientX - startX;
+                translateY = e.touches[0].clientY - startY;
+                img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${zoomScale})`;
+            };
+            view.ontouchend = function() { isZoomed = false; };
+        }
+
+        // --- 后台工作流管理逻辑切片 ---
+        window.toggleAdminModal = function() {
+            const modal = document.getElementById('adminModal');
+            const sidebar = document.getElementById('adminSidebar');
+            if(modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => sidebar.classList.remove('translate-x-full'), 10);
+            } else {
+                sidebar.classList.add('translate-x-full');
+                setTimeout(() => modal.classList.add('hidden'), 400);
             }
         };
-        window.previewWidget = function() {
-            const code = document.getElementById('w_code').value.trim();
-            const preview = document.getElementById('widgetPreview');
-            if (!code) { preview.classList.add('hidden'); return; }
-            // Use iframe for safe preview
-            preview.classList.remove('hidden');
-            preview.innerHTML = '<iframe id="widgetPreviewFrame" style="width:100%;border:none;min-height:100px"></iframe>';
-            const iframe = document.getElementById('widgetPreviewFrame');
-            iframe.srcdoc = '<!DOCTYPE html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"><style>body{font-family:Inter,sans-serif;margin:0;padding:8px;}</style></head><body>' + code + '</body></html>';
-            // Auto-resize iframe
-            iframe.onload = () => { iframe.style.height = iframe.contentDocument.body.scrollHeight + 16 + 'px'; };
+
+        window.switchAdminTab = function(tab) {
+            document.getElementById('tab-products').classList.remove('active');
+            document.getElementById('tab-widgets').classList.remove('active');
+            document.getElementById('adminProductSection').classList.add('hidden');
+            document.getElementById('adminWidgetSection').classList.add('hidden');
+            
+            if(tab === 'products') {
+                document.getElementById('tab-products').classList.add('active');
+                document.getElementById('adminProductSection').classList.remove('hidden');
+            } else {
+                document.getElementById('tab-widgets').classList.add('active');
+                document.getElementById('adminWidgetSection').classList.remove('hidden');
+                renderAdminWidgetList();
+            }
         };
+
+        window.addCategory = function() {
+            const v = document.getElementById('new_cat_name').value.trim();
+            if(!v || categories.includes(v)) return;
+            categories.push(v); document.getElementById('new_cat_name').value = '';
+            saveAll(); renderCategories();
+        };
+
+        window.removeCategory = function(cat) {
+            if(confirm(`确定斩断并移除 "${cat}" 家具分类关联吗？`)){
+                categories = categories.filter(c => c !== cat); saveAll(); renderCategories();
+            }
+        };
+
+        window.addImageInput = function() {
+            const container = document.getElementById('imageInputs');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = '随动附加视角图链接 URL';
+            input.className = 'w-full border-b bg-transparent py-2 text-xs outline-none img-input';
+            container.appendChild(input);
+        };
+
+        window.addProduct = function() {
+            const name = document.getElementById('p_name').value.trim();
+            const price = document.getElementById('p_price').value;
+            const images = Array.from(document.querySelectorAll('.img-input')).map(i => i.value).filter(v => v);
+            
+            if(!name || !price || !images.length) return alert('请确保家具名称、价格基础主视图完备');
+            if(products.some(p => p.name === name)) return alert('图册内部存在同名家具冲突');
+            
+            products.unshift({
+                id: Date.now(),
+                name,
+                price: Number(price),
+                category: document.getElementById('p_category').value,
+                page: document.getElementById('p_page').value,
+                images,
+                tags: 'NEW',
+                description: '',
+                variants: [],
+                detailImages: []
+            });
+            
+            // 重置表单状态
+            document.getElementById('p_name').value = '';
+            document.getElementById('p_price').value = '';
+            document.getElementById('imageInputs').innerHTML = '<input type="text" placeholder="主图链接 URL" class="w-full border-b bg-transparent py-2 text-xs outline-none img-input">';
+            
+            saveAll(); renderProducts(); toggleAdminModal();
+        };
+
+        window.deleteProduct = function(id) {
+            if(confirm('确认将此件单品从图册中永久下架吗？')) {
+                products = products.filter(p => p.id !== id);
+                saveAll(); renderProducts();
+            }
+        };
+
+        function renderAdminProductList() {
+            const container = document.getElementById('adminList'); if(!container) return;
+            container.innerHTML = products.map(p => `
+                <div class="flex items-center justify-between p-3 bg-black/[0.02] rounded text-xs">
+                    <div class="flex items-center gap-3">
+                        <img src="${p.images[0]}" class="w-8 h-8 object-cover rounded bg-white">
+                        <div>
+                            <p class="font-medium">${p.name}</p>
+                            <p class="opacity-40 text-[10px]">${p.category} · ¥${Number(p.price).toLocaleString()}</p>
+                        </div>
+                    </div>
+                    <button onclick="deleteProduct(${p.id})" class="text-red-500 opacity-60 hover:opacity-100 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // --- 深度注入营销小工具动态引擎 ---
+        window.previewWidget = function() {
+            const code = document.getElementById('w_code').value;
+            const prev = document.getElementById('widgetPreview');
+            prev.innerHTML = code;
+            prev.classList.remove('hidden');
+        };
+
         window.addWidget = function() {
             const name = document.getElementById('w_name').value.trim();
-            const code = document.getElementById('w_code').value.trim();
             const position = document.getElementById('w_position').value;
-            if (!name || !code) return alert('请填写名称和代码');
-            widgets.push({ id: Date.now(), name, code, position, enabled: true, createdAt: new Date().toISOString() });
+            const code = document.getElementById('w_code').value;
+            if(!name || !code) return alert('别名或核心逻辑流编码为空');
+            
+            widgets.push({ id: Date.now(), name, position, code });
             document.getElementById('w_name').value = '';
             document.getElementById('w_code').value = '';
             document.getElementById('widgetPreview').classList.add('hidden');
-            saveAll();
-            renderWidgets();
-            renderAdminWidgetList();
+            
+            saveAll(); renderWidgets(); renderAdminWidgetList();
         };
-        window.deleteWidget = function(id) {
-            if (!confirm('删除此小工具？')) return;
-            widgets = widgets.filter(w => w.id !== id);
-            saveAll();
-            renderWidgets();
-            renderAdminWidgetList();
-        };
-        window.toggleWidget = function(id) {
-            const w = widgets.find(x => x.id === id);
-            if (w) w.enabled = !w.enabled;
-            saveAll();
-            renderWidgets();
-            renderAdminWidgetList();
-        };
-        window.editWidget = function(id) {
-            const w = widgets.find(x => x.id === id);
-            if (!w) return;
-            document.getElementById('w_name').value = w.name;
-            document.getElementById('w_code').value = w.code;
-            document.getElementById('w_position').value = w.position;
-            // Remove old and let user re-add
-            widgets = widgets.filter(x => x.id !== id);
-            saveAll();
-            renderWidgets();
-            renderAdminWidgetList();
-        };
-        function renderWidgets() {
-            const container = document.getElementById('widgetContainer');
-            if (!container) return;
-            const enabled = widgets.filter(w => w.enabled);
-            if (!enabled.length) { container.innerHTML = ''; return; }
-            container.innerHTML = enabled.map(w =>
-                '<div class="widget-card" data-widget-id="'+w.id+'">' + w.code + '</div>'
-            ).join('');
-        }
-        function renderAdminWidgetList() {
-            const list = document.getElementById('adminWidgetList');
-            if (!list) return;
-            if (!widgets.length) { list.innerHTML = '<p class="text-xs opacity-30 italic">暂无小工具</p>'; return; }
-            list.innerHTML = widgets.map(w =>
-                '<div class="flex items-center justify-between p-3 bg-black/[0.03] rounded-lg group">' +
-                '<div class="flex items-center gap-3 flex-1 min-w-0">' +
-                '<div class="text-xs min-w-0"><p class="font-bold truncate">' + w.name + '</p>' +
-                '<p class="opacity-40 text-[10px]">' + ({top:'顶部横幅',between:'产品之间',bottom:'底部区域'}[w.position]||w.position) + ' · ' + (w.enabled ? '✅ 启用' : '⏸ 停用') + '</p></div></div>' +
-                '<div class="flex gap-1 flex-shrink-0">' +
-                '<button onclick="toggleWidget('+w.id+')" class="p-2 hover:bg-green-50 rounded text-green-500" title="'+(w.enabled?'停用':'启用')+'"><i data-lucide="'+(w.enabled?'eye':'eye-off')+'" class="w-4 h-4"></i></button>' +
-                '<button onclick="editWidget('+w.id+')" class="p-2 hover:bg-blue-50 rounded text-blue-400 opacity-0 group-hover:opacity-100 transition-all" title="编辑"><i data-lucide="pencil" class="w-4 h-4"></i></button>' +
-                '<button onclick="deleteWidget('+w.id+')" class="p-2 hover:bg-red-50 rounded text-red-400" title="删除"><i data-lucide="trash-2" class="w-4 h-4"></i></button>' +
-                '</div></div>'
-            ).join('');
-            lucide.createIcons();
-        }
 
-// --- Admin Modal Toggle ---
-        window.toggleAdminModal = function() {
-            const sidebar = document.getElementById('adminSidebar');
-            const modal = document.getElementById('adminModal');
-            const isOpen = !modal.classList.contains('hidden');
-            if (isOpen) {
-                sidebar.classList.remove('translate-x-0');
-                modal.classList.add('hidden');
-                document.body.style.overflow = '';
-            } else {
-                sidebar.classList.add('translate-x-0');
-                modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-                // Reset to products tab
-                switchAdminTab('products');
-                renderAdminList();
-                renderAdminWidgetList();
+        window.deleteWidget = function(id) {
+            if(confirm('确认撤除这个首页组件吗？')) {
+                widgets = widgets.filter(w => w.id !== id);
+                saveAll(); renderWidgets(); renderAdminWidgetList();
             }
         };
 
-        // --- Init ---
-        window.onload = () => { fetchProducts(); lucide.createIcons(); };
+        function renderWidgets() {
+            const container = document.getElementById('widgetContainer'); if(!container) return;
+            container.innerHTML = widgets.map(w => `<div class="widget-card fade-up">${w.code}</div>`).join('');
+        }
+
+        function renderAdminWidgetList() {
+            const container = document.getElementById('adminWidgetList'); if(!container) return;
+            if(!widgets.length) { container.innerHTML = '<p class="text-center text-xs opacity-30 py-4">无挂载运行组件</p>'; return; }
+            container.innerHTML = widgets.map(w => `
+                <div class="flex items-center justify-between p-3 bg-black/[0.02] rounded text-xs">
+                    <div>
+                        <p class="font-medium">${w.name}</p>
+                        <p class="opacity-40 text-[10px]">挂载点: ${w.position}</p>
+                    </div>
+                    <button onclick="deleteWidget(${w.id})" class="text-red-500 opacity-60 hover:opacity-100 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // --- 进出口高纯度 CSV 解析内核 ---
+        window.exportToExcel = function() {
+            let csv = "\uFEFFid,name,price,category,page,images,tags\n";
+            products.forEach(p => {
+                const imgs = p.images ? p.images.join(';') : '';
+                csv += `${p.id},"${p.name.replace(/"/g, '""')}",${p.price},"${p.category}","${p.page}","${imgs}","${p.tags||''}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", `SHANYAO_Catalog_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        window.importFromExcel = function(event) {
+            const file = event.target.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const lines = text.split('\n');
+                const newProducts = [];
+                for(let i = 1; i < lines.length; i++) {
+                    if(!lines[i].trim()) continue;
+                    // 简易精细化切分 CSV 算法
+                    const parts = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    if(parts.length >= 6) {
+                        const id = parts[0].trim() || Date.now() + i;
+                        const name = parts[1].replace(/^"|"$/g, '').trim();
+                        const price = Number(parts[2]) || 0;
+                        const category = parts[3].replace(/^"|"$/g, '').trim();
+                        const page = parts[4].replace(/^"|"$/g, '').trim();
+                        const images = parts[5].replace(/^"|"$/g, '').trim().split(';');
+                        const tags = parts[6] ? parts[6].replace(/^"|"$/g, '').trim() : 'NEW';
+                        
+                        newProducts.push({ id: Number(id), name, price, category, page, images, tags });
+                    }
+                }
+                if(newProducts.length) {
+                    if(confirm(`解析成功，即将向库中覆盖导入 ${newProducts.length} 件作品，确认同步？`)) {
+                        products = newProducts; saveAll(); renderProducts();
+                    }
+                } else {
+                    alert('未检测到有效的 CSV 数据，请检查文件格式。');
+                }
+            };
+            reader.readAsText(file, 'utf-8');
+        };
+
+        // --- 整体系统就绪引导挂载点 ---
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchProducts();
+            lucide.createIcons();
+        });
     </script>
-
-    <!-- 手机端底部导航 -->
-    <nav class="mobile-nav">
-        <a href="#" onclick="goHome(event)" class="active"><i data-lucide="home"></i><span>首页</span></a>
-        <a href="inspiration.html"><i data-lucide="sparkles"></i><span>灵感</span></a>
-        <a href="#" onclick="handleAdminAccess()"><i data-lucide="settings"></i><span>管理</span></a>
-    </nav>
-
 </body>
 </html>
