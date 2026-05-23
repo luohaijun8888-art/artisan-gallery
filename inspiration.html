@@ -53,16 +53,16 @@
         /* 3D 轮播载体轨道 */
         .carousel { 
             position: absolute; 
-            width: 280px; 
-            height: 380px; 
+            width: 420px; 
+            height: 560px; 
             transform-style: preserve-3d; 
             z-index: 5;
         }
 
         @media (max-width: 640px) {
             .carousel {
-                width: 220px;
-                height: 300px;
+                width: 340px;
+                height: 460px;
             }
         }
 
@@ -215,7 +215,7 @@
         const backdropDim = document.getElementById('backdropDim');
         
         // 适应移动端和桌面端的透视半径
-        const radius = window.innerWidth < 640 ? 300 : 450;
+        const radius = window.innerWidth < 640 ? 480 : 680;
         
         let targetRotation = 0;
         let currentRotation = 0;
