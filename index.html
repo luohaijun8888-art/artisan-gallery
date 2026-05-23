@@ -735,23 +735,48 @@
             saveAll(); renderProducts(); renderAdminProductList();
         };
 
+        var adminCurrentPageFilter = 'all';
+        
+        window.filterAdminList = function(page) {
+            adminCurrentPageFilter = page;
+            document.querySelectorAll('.admin-page-tab').forEach(function(btn) {
+                if (btn.dataset.page === page) {
+                    btn.style.background = '#171717';
+                    btn.style.color = '#fff';
+                    btn.style.borderColor = '#171717';
+                } else {
+                    btn.style.background = '';
+                    btn.style.color = '';
+                    btn.style.borderColor = '';
+                }
+            });
+            renderAdminProductList();
+        };
+
         function renderAdminProductList() {
-            const container = document.getElementById('adminList'); if(!container) return;
-            container.innerHTML = products.map(p => `
-                <div class="flex items-center justify-between p-3 bg-neutral-50 rounded border border-neutral-100 text-xs font-light">
-                    <div class="flex items-center gap-3">
-                        <img src="${p.images[0]}" class="w-8 h-8 object-contain rounded bg-white border">
-                        <div>
-                            <p class="font-normal text-neutral-800">${p.name}</p>
-                            <p class="text-neutral-400 text-[10px]">${p.category} · ¥${Number(p.price).toLocaleString()}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="editProduct(${p.id})" class="text-neutral-400 hover:text-[var(--accent)] transition-colors p-1"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-                        <button onclick="deleteProduct(${p.id})" class="text-neutral-400 hover:text-red-500 transition-colors p-1"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button>
-                    </div>
-                </div>
-            `).join(''); lucide.createIcons();
+            var container = document.getElementById('adminList'); if(!container) return;
+            var filtered = products;
+            if (adminCurrentPageFilter !== 'all') {
+                filtered = products.filter(function(p) { return (p.page || '\u9996\u9875') === adminCurrentPageFilter; });
+            }
+            container.innerHTML = filtered.map(function(p) {
+                var pageTag = p.page === '\u7075\u611F' ? '<span class="ml-1.5 px-1.5 py-0.5 bg-amber-50 text-amber-700 rounded text-[9px] font-medium">\u7075\u611F</span>' : 
+                              p.page === '\u9996\u9875' ? '<span class="ml-1.5 px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[9px] font-medium">\u9996\u9875</span>' : '';
+                return '<div class="flex items-center justify-between p-3 bg-neutral-50 rounded border border-neutral-100 text-xs font-light">' +
+                    '<div class="flex items-center gap-3">' +
+                        '<img src="' + p.images[0] + '" class="w-8 h-8 object-contain rounded bg-white border">' +
+                        '<div>' +
+                            '<p class="font-normal text-neutral-800">' + p.name + pageTag + '</p>' +
+                            '<p class="text-neutral-400 text-[10px]">' + p.category + ' \u00b7 \u00a5' + Number(p.price).toLocaleString() + '</p>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="flex items-center gap-1">' +
+                        '<button onclick="editProduct(' + p.id + ')" class="text-neutral-400 hover:text-[var(--accent)] transition-colors p-1"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>' +
+                        '<button onclick="deleteProduct(' + p.id + ')" class="text-neutral-400 hover:text-red-500 transition-colors p-1"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+            lucide.createIcons();
         }
 
         window.previewWidget = function() {
