@@ -34,34 +34,6 @@
       "date": "2026-05-23"
     },
     {
-      "id": 1779500579492,
-      "name": "12",
-      "price": 12,
-      "category": "餐台",
-      "page": "灵感",
-      "images": [
-        "12"
-      ],
-      "tags": "NEW",
-      "description": "",
-      "variants": [],
-      "detailImages": []
-    },
-    {
-      "id": 1779500573730,
-      "name": "11",
-      "price": 11,
-      "category": "餐台",
-      "page": "灵感",
-      "images": [
-        "11"
-      ],
-      "tags": "NEW",
-      "description": "",
-      "variants": [],
-      "detailImages": []
-    },
-    {
       "id": 1779500567899,
       "name": "10",
       "price": 10,
