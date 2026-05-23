@@ -220,7 +220,7 @@
             // 间隔加大2倍：基础半径乘以2
             // 产品数量增加时，自动增大半径以保持间隔
             const scaleFactor = Math.max(1, numCards / 6);
-            return baseRadius * 2 * scaleFactor;
+            return baseRadius * scaleFactor;
         }
         
         let radius = calculateRadius();
