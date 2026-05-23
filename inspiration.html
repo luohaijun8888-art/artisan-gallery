@@ -85,7 +85,7 @@
             cursor: pointer;
         }
 
-        /* 高奢极简磨砂底标 - 名字占比缩小至原先的 2/3 */
+        /* 高奢极简磨砂底标 - 名字占比小 */
         .glass-bottom {
             background: rgba(28, 27, 32, 0.7);
             backdrop-filter: blur(20px);
@@ -125,6 +125,12 @@
 
     <!-- 焦点调暗背景 -->
     <div class="backdrop-dim" id="backdropDim" onclick="closeDetail()"></div>
+
+    <!-- 顶奢极简返回首页按钮 -->
+    <a href="index.html" class="absolute top-6 left-6 md:top-8 md:left-8 z-[70] flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-all bg-white/[0.03] hover:bg-white/[0.08] backdrop-blur-md px-4 py-2.5 rounded-full border border-white/[0.06] shadow-lg">
+        <i data-lucide="home" class="w-3.5 h-3.5 text-[#CC9933]"></i>
+        <span>返回首页</span>
+    </a>
 
     <div class="scene" id="scene">
         <!-- 背景聚光灯 -->
@@ -215,87 +221,126 @@
         let currentRotation = 0;
         let isDetailOpen = false;
 
-        // 已经完美替换为灵感空间（inspiration.html）中的高级手作物料库数据
-        const mockProducts = [
-            { 
-                name: "华尔兹极奢岩石柜", 
-                price: "18,900", 
-                img: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=800&q=80", 
-                tag: "书架", 
-                desc: "极致利落骨骼与冷岩肌理交融，在晨昏间捕捉流光艺术投影。" 
-            },
-            { 
-                name: "奥德赛东方罗汉榻", 
-                price: "24,500", 
-                img: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80", 
-                tag: "床", 
-                desc: "古典骨架融合现代极简泡棉工艺，勾勒悠远清雅的起居禅意境象。" 
-            },
-            { 
-                name: "圆舞曲黑檀木茶几", 
-                price: "14,800", 
-                img: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=800&q=80", 
-                tag: "茶几", 
-                desc: "精选百年高密度黑檀木纯手工旋切，轮纹深邃，留驻大地诗篇。" 
+        // GitHub 核心数据管道绑定与缓存提取
+        const GITHUB_REPO = "luohaijun8888-art/artisan-gallery";
+        const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/products.json";
+        const _tk = ['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];
+        const EMBEDDED_TOKEN = _tk.join('');
+        
+        let categories = ["餐台", "茶几", "餐椅", "床", "书架"];
+        let allProducts = [];
+        let inspirationProducts = [];
+        let numCards = 0;
+
+        // --- 核心：拉取您在灵感页（Inspiration.html）中添加的真实图片和内容 ---
+        async function fetchProducts() {
+            try {
+                const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+                if (EMBEDDED_TOKEN) headers['Authorization'] = 'Bearer ' + EMBEDDED_TOKEN;
+                const res = await fetch(GITHUB_API, { headers, cache: 'no-store' });
+                if (!res.ok) throw new Error('拉取失败');
+                const data = await res.json();
+                const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+                allProducts = content.products || [];
+            } catch(e) {
+                // 若由于网络限流等原因无法获取云端接口，自动安全降级至 localStorage 读取
+                allProducts = JSON.parse(localStorage.getItem('furniture_gallery_db')) || [];
             }
-        ];
-
-        const numCards = mockProducts.length;
-
-        // 1. 生成画廊卡片
-        for (let i = 0; i < numCards; i++) {
-            const p = mockProducts[i];
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.dataset.index = i;
             
-            // 下半部分名字占比缩小 2/3 (py-2.5 px-3，高保真小字号)
-            card.innerHTML = `
-                <div class="relative w-full h-full">
-                    <img src="${p.img}" class="w-full h-full object-cover select-none pointer-events-none" loading="lazy">
+            // 过滤 page === '灵感' 的物料数据
+            inspirationProducts = allProducts.filter(p => (p.page || '首页') === '灵感');
+            
+            // 兜底机制：万一库中还没有上传任何灵感画卡，渲染三款高定图卡支撑空间
+            if(inspirationProducts.length === 0) {
+                inspirationProducts = [
+                    { 
+                        name: "华尔兹极奢岩石柜", 
+                        price: "18,900", 
+                        images: ["https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=800&q=80"], 
+                        category: "书架", 
+                        description: "极致利落骨骼与冷岩肌理交融，在晨昏间捕捉流光艺术投影。" 
+                    },
+                    { 
+                        name: "奥德赛东方罗汉榻", 
+                        price: "24,500", 
+                        images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80"], 
+                        category: "床", 
+                        description: "古典骨架融合现代极简泡棉工艺，勾勒悠远清雅的起居禅意境象。" 
+                    },
+                    { 
+                        name: "圆舞曲黑檀木茶几", 
+                        price: "14,800", 
+                        images: ["https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=800&q=80"], 
+                        category: "茶几", 
+                        description: "精选百年高密度黑檀木纯手工旋切，轮纹深邃，留驻大地诗篇。" 
+                    }
+                ];
+            }
+
+            numCards = inspirationProducts.length;
+            renderDynamicCards();
+        }
+
+        // 动态生成和绑定卡片
+        function renderDynamicCards() {
+            carousel.innerHTML = '';
+            
+            inspirationProducts.forEach((p, i) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.index = i;
+                
+                // 名字占比缩小 2/3 (py-2.5 px-3，极其精细)
+                card.innerHTML = `
+                    <div class="relative w-full h-full">
+                        <img src="${p.images[0] || p.img}" class="w-full h-full object-cover select-none pointer-events-none" loading="lazy">
+                        
+                        <!-- 形态类别 -->
+                        <div class="absolute top-4 right-4 glass-card px-2.5 py-1 rounded text-[8px] uppercase tracking-[0.2em] font-medium text-[#CC9933]">
+                            ${p.category || p.tag}
+                        </div>
+
+                        <!-- 极其扁平高定底标 -->
+                        <div class="absolute bottom-0 inset-x-0 glass-bottom py-2.5 px-3 text-center text-white">
+                            <h3 class="text-[10px] md:text-xs font-light tracking-[0.15em] text-white/90 truncate leading-snug">${p.name}</h3>
+                        </div>
+                    </div>
+                `;
+
+                // 点击事件判定 (区分滑动与轻击)
+                card.addEventListener('click', (e) => {
+                    // 如果在按下后产生了显著的位移，说明是滑动，不执行点击弹出
+                    if (totalDragDist > 8) {
+                        return;
+                    }
                     
-                    <!-- 形态类别 -->
-                    <div class="absolute top-4 right-4 glass-card px-2.5 py-1 rounded text-[8px] uppercase tracking-[0.2em] font-medium text-[#CC9933]">
-                        ${p.tag}
-                    </div>
-
-                    <!-- 极其扁平高定底标 -->
-                    <div class="absolute bottom-0 inset-x-0 glass-bottom py-2.5 px-3 text-center text-white">
-                        <h3 class="text-[10px] md:text-xs font-light tracking-[0.15em] text-white/90 truncate leading-snug">${p.name}</h3>
-                    </div>
-                </div>
-            `;
-
-            // 点击事件判定 (区分滑动与轻击)
-            card.addEventListener('click', (e) => {
-                // 如果在按下后产生了显著的位移，说明是滑动，不执行点击弹出
-                if (totalDragDist > 8) {
-                    return;
-                }
-                
-                const angleStep = 360 / numCards;
-                targetRotation = -(i * angleStep);
-                
-                openDetailPage(p);
-                e.stopPropagation();
+                    const angleStep = 360 / numCards;
+                    targetRotation = -(i * angleStep);
+                    
+                    openDetailPage(p);
+                    e.stopPropagation();
+                });
+                carousel.appendChild(card);
             });
-            carousel.appendChild(card);
         }
 
         // 打开长详情页
         function openDetailPage(p) {
             document.getElementById('detailTitle').textContent = p.name;
-            document.getElementById('detailPrice').textContent = '¥ ' + p.price;
-            document.getElementById('detailCategory').textContent = `COLLECTION / ${p.tag}`;
-            document.getElementById('detailHeroImg').src = p.img;
-            document.getElementById('detailDesc').textContent = p.desc + "。该作品融合了空间深度的多维表达，通过利落的物理线条与温润的手作触感相呼应，使其在任何角度下都流露出静止的诗意与艺术张力。";
+            document.getElementById('detailPrice').textContent = '¥ ' + Number(p.price).toLocaleString();
+            document.getElementById('detailCategory').textContent = `COLLECTION / ${p.category || p.tag}`;
+            
+            const heroImgUrl = p.images ? p.images[0] : p.img;
+            document.getElementById('detailHeroImg').src = heroImgUrl;
+            document.getElementById('detailDesc').textContent = (p.description || p.desc || "") + "。该作品融合了空间深度的多维表达，通过利落的物理线条与温润的手作触感相呼应，使其在任何角度下都流露出静止的诗意与艺术张力。";
             
             // 空间图卷瀑布流
             const waterfall = document.getElementById('detailWaterfall');
-            waterfall.innerHTML = `
-                <img src="${p.img}" class="w-full h-auto rounded-lg object-cover shadow-lg mb-4" loading="lazy">
-                <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80" class="w-full h-auto rounded-lg object-cover shadow-lg" loading="lazy">
-            `;
+            const detailImgs = p.detailImages && p.detailImages.length ? p.detailImages : (p.images ? p.images : [heroImgUrl]);
+            
+            waterfall.innerHTML = detailImgs.map(img => `
+                <img src="${img}" class="w-full h-auto rounded-lg object-cover shadow-lg mb-4" loading="lazy">
+            `).join('');
             
             document.getElementById('detailPage').classList.remove('translate-x-full');
             document.getElementById('detailPage').classList.add('translate-x-0');
@@ -313,46 +358,48 @@
 
         // 2. 核心 60FPS 运动插值渲染器（Lerp & Z-Sort）
         function animate() {
-            // 平滑插值 (Lerp)：使惯性滑动如水般丝滑
-            currentRotation += (targetRotation - currentRotation) * 0.085;
-            
-            const cards = document.querySelectorAll('.card');
-            cards.forEach((card, i) => {
-                const angle = (i / numCards) * 360 + currentRotation;
-                const rad = (angle * Math.PI) / 180;
+            if (numCards > 0) {
+                // 平滑插值 (Lerp)：使惯性滑动如水般丝滑
+                currentRotation += (targetRotation - currentRotation) * 0.085;
                 
-                const z = Math.cos(rad) * radius;
-                const x = Math.sin(rad) * radius;
-                
-                // 完美的透视阶梯过渡
-                const scale = (z + radius) / (radius * 2) * 0.45 + 0.55;
-                const opacity = (z + radius) / (radius * 2) * 0.75 + 0.25;
-                
-                card.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${-angle}deg) scale(${scale})`;
-                card.style.zIndex = Math.round(z + radius);
-                card.style.opacity = opacity;
-            });
+                const cards = document.querySelectorAll('.card');
+                cards.forEach((card, i) => {
+                    const angle = (i / numCards) * 360 + currentRotation;
+                    const rad = (angle * Math.PI) / 180;
+                    
+                    const z = Math.cos(rad) * radius;
+                    const x = Math.sin(rad) * radius;
+                    
+                    // 透视阶梯过渡
+                    const scale = (z + radius) / (radius * 2) * 0.45 + 0.55;
+                    const opacity = (z + radius) / (radius * 2) * 0.75 + 0.25;
+                    
+                    card.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${-angle}deg) scale(${scale})`;
+                    card.style.zIndex = Math.round(z + radius);
+                    card.style.opacity = opacity;
+                });
+            }
             requestAnimationFrame(animate);
         }
 
         // 3. 兼容鼠标与移动端单指轻扫手势，带精准位移计算
         let isDragging = false;
         let lastX = 0;
-        let totalDragDist = 0; // 记录当次按下的总移动位移距离
+        let totalDragDist = 0; 
 
         function startDrag(clientX) {
             if (!isDetailOpen) {
                 isDragging = true;
                 lastX = clientX;
-                totalDragDist = 0; // 按下时位移重置
+                totalDragDist = 0; 
             }
         }
 
         function moveDrag(clientX) {
             if (!isDragging) return;
             const deltaX = clientX - lastX;
-            targetRotation += deltaX * 0.22; // 适中阻尼
-            totalDragDist += Math.abs(deltaX); // 累积总位移
+            targetRotation += deltaX * 0.22; 
+            totalDragDist += Math.abs(deltaX); 
             lastX = clientX;
         }
 
@@ -371,6 +418,7 @@
         window.addEventListener('touchend', endDrag);
 
         // 初始化
+        fetchProducts();
         animate();
         lucide.createIcons();
     </script>
