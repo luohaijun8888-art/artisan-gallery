@@ -382,6 +382,21 @@
             requestAnimationFrame(animate);
         }
 
+        // 4. 自动缓慢旋转 - 持续缓慢转动画廊
+        let autoRotateSpeed = 0.08; // 每帧增加的旋转角度（越小越慢）
+        let lastAutoTime = performance.now();
+        
+        function tickAutoRotate(now) {
+            const dt = now - lastAutoTime;
+            lastAutoTime = now;
+            // 当详情页打开或用户正在拖拽时暂停自动旋转
+            if (!isDetailOpen && !isDragging) {
+                targetRotation += autoRotateSpeed * (dt / 16.67); // 归一化到60fps
+            }
+            requestAnimationFrame(tickAutoRotate);
+        }
+        requestAnimationFrame(tickAutoRotate);
+
         // 3. 兼容鼠标与移动端单指轻扫手势，带精准位移计算
         let isDragging = false;
         let lastX = 0;
