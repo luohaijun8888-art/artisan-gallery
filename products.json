@@ -11,20 +11,6 @@
   ],
   "products": [
     {
-      "id": 1779504432928,
-      "name": "13",
-      "price": 13,
-      "category": "餐台",
-      "page": "首页",
-      "images": [
-        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/image-bed@main/shining/compressed/1_(6)/12121.jpg"
-      ],
-      "tags": "NEW",
-      "description": "",
-      "variants": [],
-      "detailImages": []
-    },
-    {
       "id": 1779500579492,
       "name": "12",
       "price": 12,
