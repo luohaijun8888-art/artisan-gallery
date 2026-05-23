@@ -30,7 +30,7 @@
             position: relative; 
             width: 100vw; 
             height: 100vh; 
-            perspective: 2000px; 
+            perspective: 3500px; 
             display: flex;
             align-items: center;
             justify-content: center;
@@ -196,7 +196,7 @@
         const backdropDim = document.getElementById('backdropDim');
         
         // 适应移动端和桌面端的透视半径
-        const radius = window.innerWidth < 640 ? 480 : 680;
+        const radius = window.innerWidth < 640 ? 800 : 1200;
         
         let targetRotation = 0;
         let currentRotation = 0;
@@ -352,8 +352,8 @@
                     const x = Math.sin(rad) * radius;
                     
                     // 透视阶梯过渡
-                    const scale = (z + radius) / (radius * 2) * 0.45 + 0.55;
-                    const opacity = (z + radius) / (radius * 2) * 0.75 + 0.25;
+                    const scale = (z + radius) / (radius * 2) * 0.50 + 0.35;
+                    const opacity = (z + radius) / (radius * 2) * 0.75 + 0.10;
                     
                     card.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${-angle}deg) scale(${scale})`;
                     card.style.zIndex = Math.round(z + radius);
