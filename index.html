@@ -554,22 +554,7 @@ window.addCategory = function() { const v=document.getElementById('new_cat_name'
         }
 
         // --- Init ---
-        window.onload = () => { fetchProducts();
-
-        window.toggleAdminModal = function() {
-            const overlay = document.getElementById('adminModal');
-            const sidebar = document.getElementById('adminSidebar');
-            if (!overlay || !sidebar) { console.warn('admin elements missing'); return; }
-            const isOpen = !overlay.classList.contains('hidden');
-            if (isOpen) {
-                overlay.classList.add('hidden');
-                sidebar.style.transform = 'translateX(100%)';
-            } else {
-                overlay.classList.remove('hidden');
-                sidebar.style.transform = 'translateX(0)';
-            }
-        };
- lucide.createIcons(); };
+        window.onload = () => { fetchProducts(); lucide.createIcons(); };
     </script>
 
     <!-- 手机端底部导航 -->
