@@ -30,7 +30,7 @@
             position: relative; 
             width: 100vw; 
             height: 100vh; 
-            perspective: 3500px; 
+            perspective: 2000px; 
             display: flex;
             align-items: center;
             justify-content: center;
@@ -164,12 +164,31 @@
             <div class="px-8 pt-6 space-y-6">
                 <div>
                     <h1 class="text-2xl md:text-3xl font-light tracking-wider text-white mb-2 font-serif" id="detailTitle"></h1>
-                    
+                    <p class="text-xl font-light text-[#CC9933] tracking-wide" id="detailPrice"></p>
                 </div>
 
-                
+                <div class="border-t border-white/[0.05] pt-6 space-y-4">
+                    <p class="text-[11px] uppercase tracking-[0.2em] text-neutral-500 font-semibold">设计哲学 / PHILOSOPHY</p>
+                    <p class="text-sm text-neutral-300 leading-relaxed font-light" id="detailDesc"></p>
+                </div>
 
-                
+                <!-- 尊享特权背书 -->
+                <div class="bg-white/[0.01] border border-white/[0.03] p-5 rounded-lg space-y-4 text-xs text-neutral-400 font-light leading-relaxed">
+                    <div class="flex gap-3">
+                        <span class="text-[#CC9933]">✦</span>
+                        <div>
+                            <p class="font-normal text-white mb-0.5">物料质感基因</p>
+                            <p class="text-[11px] text-neutral-500">精选特级木材与天然矿物涂料，辅以东方榫卯结构与高密度天然油脂防护。</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <span class="text-[#CC9933]">✦</span>
+                        <div>
+                            <p class="font-normal text-white mb-0.5">专线尊享物流</p>
+                            <p class="text-[11px] text-neutral-500">高强度气相防震包装定制，尊享全国全境专人安装及全保价无忧托运服务。</p>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- 空间场景长图解说 -->
                 <div class="pt-8 space-y-6">
@@ -195,8 +214,16 @@
         const carousel = document.getElementById('carousel');
         const backdropDim = document.getElementById('backdropDim');
         
-        // 适应移动端和桌面端的透视半径
-        const radius = window.innerWidth < 640 ? 800 : 1200;
+        // 动态半径：根据产品数量自动调整，保持间隔不变
+        function calculateRadius() {
+            const baseRadius = window.innerWidth < 640 ? 480 : 680;
+            // 间隔加大2倍：基础半径乘以2
+            // 产品数量增加时，自动增大半径以保持间隔
+            const scaleFactor = Math.max(1, numCards / 6);
+            return baseRadius * 2 * scaleFactor;
+        }
+        
+        let radius = calculateRadius();
         
         let targetRotation = 0;
         let currentRotation = 0;
@@ -259,6 +286,8 @@
             }
 
             numCards = inspirationProducts.length;
+            // 产品数量变化后，重新计算半径
+            radius = calculateRadius();
             renderDynamicCards();
         }
 
@@ -308,12 +337,12 @@
         // 打开长详情页
         function openDetailPage(p) {
             document.getElementById('detailTitle').textContent = p.name;
-            // price removed
-            
+            document.getElementById('detailPrice').textContent = '¥ ' + Number(p.price).toLocaleString();
             document.getElementById('detailCategory').textContent = `COLLECTION / ${p.category || p.tag}`;
             
             const heroImgUrl = p.images ? p.images[0] : p.img;
             document.getElementById('detailHeroImg').src = heroImgUrl;
+            document.getElementById('detailDesc').textContent = (p.description || p.desc || "") + "。该作品融合了空间深度的多维表达，通过利落的物理线条与温润的手作触感相呼应，使其在任何角度下都流露出静止的诗意与艺术张力。";
             
             // 空间图卷瀑布流
             const waterfall = document.getElementById('detailWaterfall');
@@ -352,8 +381,9 @@
                     const x = Math.sin(rad) * radius;
                     
                     // 透视阶梯过渡
-                    const scale = (z + radius) / (radius * 2) * 0.50 + 0.35;
-                    const opacity = (z + radius) / (radius * 2) * 0.75 + 0.10;
+                    const scale = (z + radius) / (radius * 2) * 0.45 + 0.55;
+                    // 恢复透明度：所有卡片完全不透明
+                    const opacity = 1;
                     
                     card.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${-angle}deg) scale(${scale})`;
                     card.style.zIndex = Math.round(z + radius);
