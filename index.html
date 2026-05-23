@@ -304,6 +304,11 @@
 
                     <section class="space-y-3">
                         <h3 class="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">在册清单资产</h3>
+                        <div class="flex gap-2" id="adminPageTabs">
+                            <button onclick="filterAdminList('all')" class="admin-page-tab active px-3 py-1 text-[10px] rounded-full border border-neutral-200 transition-all" data-page="all">全部</button>
+                            <button onclick="filterAdminList('首页')" class="admin-page-tab px-3 py-1 text-[10px] rounded-full border border-neutral-200 transition-all" data-page="首页">📄 首页</button>
+                            <button onclick="filterAdminList('灵感')" class="admin-page-tab px-3 py-1 text-[10px] rounded-full border border-neutral-200 transition-all" data-page="灵感">💡 灵感</button>
+                        </div>
                         <div id="adminList" class="space-y-2.5"></div>
                     </section>
                 </div>
