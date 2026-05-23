@@ -11,6 +11,29 @@
   ],
   "products": [
     {
+      "id": 1779524382239,
+      "name": "Bestier 71.5\" L型电竞桌",
+      "category": "学习桌",
+      "price": 899,
+      "page": "灵感",
+      "images": [
+        "https://raw.githubusercontent.com/luohaijun8888-art/artisan-gallery/main/images/products/bestier-desk-main.jpg",
+        "https://raw.githubusercontent.com/luohaijun8888-art/artisan-gallery/main/images/products/bestier-desk-2.jpg",
+        "https://raw.githubusercontent.com/luohaijun8888-art/artisan-gallery/main/images/products/bestier-desk-3.jpg",
+        "https://raw.githubusercontent.com/luohaijun8888-art/artisan-gallery/main/images/products/bestier-desk-4.jpg",
+        "https://raw.githubusercontent.com/luohaijun8888-art/artisan-gallery/main/images/products/bestier-desk-5.jpg"
+      ],
+      "tags": [
+        "电竞",
+        "LED灯",
+        "L型",
+        "多功能"
+      ],
+      "description": "71.5英寸L型电竞桌，带LED灯效和电源插座，碳纤维纹理桌面，配备显示器支架，专为游戏玩家设计。",
+      "featured": false,
+      "date": "2026-05-23"
+    },
+    {
       "id": 1779504469887,
       "name": "13",
       "price": 22,
