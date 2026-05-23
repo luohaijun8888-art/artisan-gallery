@@ -11,20 +11,6 @@
   ],
   "products": [
     {
-      "id": 1779500585621,
-      "name": "13",
-      "price": 13,
-      "category": "餐台",
-      "page": "灵感",
-      "images": [
-        "13"
-      ],
-      "tags": "NEW",
-      "description": "",
-      "variants": [],
-      "detailImages": []
-    },
-    {
       "id": 1779500579492,
       "name": "12",
       "price": 12,
