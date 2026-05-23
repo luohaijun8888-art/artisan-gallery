@@ -158,6 +158,11 @@
             </div>
         </header>
 
+        <!-- 年份筛选轴 -->
+        <div class="relative mb-6 fade-up" style="animation-delay:0.05s">
+            <div id="yearContainer" class="flex overflow-x-auto gap-6 no-scrollbar pb-1 touch-pan-x text-xs tracking-[0.12em] text-neutral-400"></div>
+        </div>
+
         <!-- 诗意分类轴 -->
         <div class="relative mb-12 md:mb-16 fade-up" style="animation-delay:0.1s">
             <div id="categoryContainer" class="flex overflow-x-auto gap-8 no-scrollbar pb-2 touch-pan-x text-xs uppercase tracking-[0.15em] text-neutral-400"></div>
@@ -291,6 +296,7 @@
                             <select id="p_category" class="border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent text-neutral-500"></select>
                             <input type="number" id="p_price" placeholder="高定定价 (¥)" class="border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent">
                         </div>
+                        <input type="text" id="p_year" placeholder="年份 (如 2025, 留空=不分类)" class="w-full border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent text-neutral-500">
                         <select id="p_page" class="w-full border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent text-neutral-500">
                             <option value="首页">📄 投放至主页大厅</option>
                             <option value="灵感">💡 归档至灵感图集</option>
@@ -355,6 +361,7 @@
         let categories = ["餐台", "茶几", "餐椅", "床", "书架"];
         let products = [];
         let widgets = [];
+        let currentYear = 'all';
         let currentCategory = 'all';
         let currentSearch = '';
 
@@ -396,6 +403,7 @@
                 products = JSON.parse(localStorage.getItem('furniture_gallery_db')) || [];
                 widgets = JSON.parse(localStorage.getItem('artisan_widgets')) || [];
             }
+            renderYearFilter();
             renderCategories();
             renderProducts();
             renderWidgets();
@@ -465,6 +473,7 @@
         document.getElementById('adminPasswordInput').onkeypress = (e) => { if (e.key === 'Enter') verifyAdmin(); };
 
         window.goHome = function(e) { if(e) e.preventDefault(); closeDetail(); window.scrollTo({top:0, behavior:'smooth'}); };
+        window.setYear = function(yr) { currentYear = yr; renderYearFilter(); renderProducts(); };
         window.setCategory = function(cat) { currentCategory = cat; renderCategories(); renderProducts(); };
         window.handleSearch = function(val) { currentSearch = val.trim(); renderProducts(); };
 
@@ -484,7 +493,7 @@
 
         function renderProducts() {
             const grid = document.getElementById('productGrid');
-            const filtered = products.filter(p => (currentCategory==='all' || p.category===currentCategory) && p.name.toLowerCase().includes(currentSearch.toLowerCase()) && p.page!=='灵感');
+            const filtered = products.filter(p => (currentCategory==='all' || p.category===currentCategory) && (currentYear==='all' || (p.year||'')===currentYear) && p.name.toLowerCase().includes(currentSearch.toLowerCase()) && p.page!=='灵感');
             if(!filtered.length) { grid.innerHTML = '<div class="col-span-full py-24 text-center opacity-20 text-xs tracking-widest font-light italic">未探寻到相关艺术作品</div>'; return; }
             
             grid.innerHTML = filtered.map((p,idx) => `
@@ -524,6 +533,14 @@
             document.getElementById('detailTopTitle').textContent = `COLLECTION / ${p.category}`;
             window.scrollTo(0,0); renderDetail();
         };
+
+        function renderYearFilter() {
+            const c = document.getElementById('yearContainer'); if(!c) return;
+            const years = [...new Set(products.map(p => p.year).filter(Boolean))].sort().reverse();
+            let h = '<button onclick="setYear('all')" class="category-pill ' + (currentYear==='all'?'active':'') + ' font-light">ALL / 全部</button>';
+            h += years.map(y => '<button onclick="setYear('' + y + '')" class="category-pill ' + (currentYear===y?'active':'') + ' font-light">' + y + '</button>').join('');
+            c.innerHTML = h;
+        }
 
         window.closeDetail = function() {
             document.getElementById('detailPage').classList.add('hidden');
@@ -679,7 +696,7 @@
             
             products.unshift({
                 id: Date.now(), name, price: Number(price), category: document.getElementById('p_category').value,
-                page: document.getElementById('p_page').value, images, tags: 'NEW', description: '', variants: [], detailImages: []
+                page: document.getElementById('p_page').value, images, tags: 'NEW', description: '', variants: [], detailImages: [], year: document.getElementById('p_year') ? document.getElementById('p_year').value : ''
             });
             document.getElementById('p_name').value = ''; document.getElementById('p_price').value = '';
             document.getElementById('imageInputs').innerHTML = '<input type="text" placeholder="主图主轴超链 URL" class="w-full border-b border-neutral-200 py-2 text-[11px] outline-none bg-transparent img-input">';
