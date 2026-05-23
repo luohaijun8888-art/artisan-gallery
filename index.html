@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -6,376 +6,240 @@
     <title>SHANYAO | 闪耀家具图册</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Noto+Serif+SC:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --accent: #CC9933;       /* 古董哑光金 */
-            --bg: #FBFBFA;           /* 质感象牙白 */
-            --text-main: #161615;    /* 沉稳高定黑 */
-            --text-muted: #8A8A85;   /* 诗意岩石灰 */
-        }
-        body { 
-            font-family: 'Inter', 'Noto Serif SC', serif; 
-            background-color: var(--bg); 
-            color: var(--text-main); 
-            scroll-behavior: smooth; 
-            -webkit-tap-highlight-color: transparent;
-            padding-bottom: 80px;
-        }
-        @media (min-width: 769px) { body { padding-bottom: 0; } }
-        
-        .serif-title { font-family: 'Cinzel', 'Noto Serif SC', serif; tracking: 0.05em; }
-        .glass { background: rgba(251, 251, 250, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); }
-        
-        /* --- 艺术级瀑布流 --- */
-        .masonry-grid {
-            column-count: 1;
-            column-gap: 1.5rem;
-            width: 100%;
-        }
-        @media (min-width: 640px) {
-            .masonry-grid {
-                column-count: 2;
-                column-gap: 2rem;
-            }
-        }
-        @media (min-width: 1024px) {
-            .masonry-grid {
-                column-count: 3;
-                column-gap: 2.5rem;
-            }
-        }
-        
-        .masonry-item {
-            break-inside: avoid;
-            display: inline-block;
-            width: 100%;
-            margin-bottom: 2.5rem;
-        }
+        :root { --accent: #C5A059; --bg: #F9F9F7; --text: #1A1A1A; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+        .serif { font-family: 'Playfair Display', serif; }
+        .glass { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .product-card { transition: all 0.6s cubic-bezier(0.16,1,0.3,1); }
+        @media (hover:hover) { .product-card:hover { transform: translateY(-8px); } .product-card:hover .product-image { transform: scale(1.05); } }
+        .product-image-container { overflow: hidden; background: #f0f0ed; border-radius: 2px; }
+        .product-image { transition: transform 1.2s cubic-bezier(0.16,1,0.3,1); }
+        @media (max-width:768px) { .product-image-container { aspect-ratio: auto !important; min-height: 200px; } }
+        .category-pill { transition: all 0.3s ease; white-space: nowrap; }
+        .category-pill.active { background: var(--text) !important; color: white !important; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+        .fade-up { animation: fadeIn 0.6s ease-out forwards; }
+        #importInput { display: none; }
+        #viewport { width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:grab; position:relative; }
+        #viewport:active { cursor: grabbing; }
+        #mainDetailImg { transition: transform 0.15s cubic-bezier(0.25,1,0.5,1); transform-origin: 0 0; user-select: none; pointer-events: none; will-change: transform; }
+        @media (max-width:640px) { .mobile-grid { grid-template-columns: repeat(2,1fr); gap:12px; } .mobile-hide { display:none; } .mobile-full-modal { padding-bottom: env(safe-area-inset-bottom); } }
+        .mobile-nav { display: none; }
+        @media (max-width:768px) { .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(0,0,0,0.05); z-index: 100; padding: 8px 0; padding-bottom: calc(8px + env(safe-area-inset-bottom)); } .mobile-nav a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0; font-size: 10px; font-weight: 600; opacity: 0.5; transition: all 0.2s; } .mobile-nav a.active { opacity: 1; color: var(--accent); } .mobile-nav a i { width: 22px; height: 22px; } }
+        body { padding-bottom: 70px; }
+        @media (min-width:769px) { body { padding-bottom: 0; } }
+        #authOverlay { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .save-indicator { position: fixed; bottom: 20px; right: 20px; z-index: 200; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; opacity: 0; transition: opacity 0.3s; }
+        .save-indicator.saving { background: #FEF3C7; color: #92400E; opacity: 1; }
+        .save-indicator.saved { background: #D1FAE5; color: #065F46; opacity: 1; }
+        .save-indicator.error { background: #FEE2E2; color: #991B1B; opacity: 1; }
+    
+/* Detail page - Taobao style */
+#detailPage{background:#fff;min-height:100vh}
+.carousel-wrap{position:relative;overflow:hidden;background:#f5f5f3;max-width:600px;margin:0 auto}
+.carousel-track{display:flex;transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.carousel-track img{flex-shrink:0;width:100%;aspect-ratio:1/1;object-fit:contain;background:#f5f5f3}
+.carousel-dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px}
+.carousel-dot{width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,.2);transition:all .3s}
+.carousel-dot.active{background:var(--text);width:18px;border-radius:3px}
+.variant-btn{padding:6px 14px;border:1px solid #e5e5e5;border-radius:4px;font-size:12px;cursor:pointer;transition:all .2s;background:#fff}
+.variant-btn.active{border-color:var(--text);background:var(--text);color:#fff}
+.variant-btn:hover:not(.active){border-color:#999}
+.thumb-row{display:flex;gap:8px;overflow-x:auto;padding:8px 0}
+.thumb-row img{width:56px;height:56px;object-fit:cover;border-radius:4px;border:2px solid transparent;cursor:pointer;flex-shrink:0;transition:border-color .2s}
+.thumb-row img.active{border-color:var(--text)}
+.detail-section img{width:100%;display:block}
+/* Widgets */
+.widget-card{background:#fff;border:1px solid rgba(0,0,0,.05);border-radius:8px;overflow:hidden;margin-bottom:16px;transition:all .3s}
+.widget-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.admin-tab{padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.35;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.admin-tab.active{opacity:1;border-bottom-color:var(--text)}
+.admin-tab:hover:not(.active){opacity:.6}
+.code-editor{font-family:'Courier New',monospace;font-size:12px;background:#fafafa;border:1px solid rgba(0,0,0,.08);border-radius:6px;padding:12px;width:100%;min-height:200px;resize:vertical;outline:none;tab-size:2;line-height:1.6}
+.code-editor:focus{border-color:var(--accent);background:#fff}
 
-        .product-card { transition: all 0.6s cubic-bezier(0.15, 0.85, 0.35, 1); }
-        @media (hover: hover) { 
-            .product-card:hover { transform: translateY(-4px); }
-            .product-card:hover .product-image { transform: scale(1.03); opacity: 0.95; }
-        }
-        
-        .product-image-container { 
-            overflow: hidden; 
-            background: #F3F3F1; 
-            border-radius: 8px;
-            box-shadow: 0 4px 20px -10px rgba(0,0,0,0.03);
-            transition: box-shadow 0.6s ease;
-        }
-        .product-card:hover .product-image-container {
-            box-shadow: 0 16px 40px -10px rgba(204,153,51,0.08);
-        }
-        .product-image { 
-            transition: transform 1.2s cubic-bezier(0.15, 0.85, 0.35, 1), opacity 0.4s ease; 
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        
-        .category-pill { transition: all 0.4s cubic-bezier(0.15, 0.85, 0.35, 1); position: relative; }
-        .category-pill::after { content: ''; position: absolute; bottom: -2px; left: 50%; width: 0; height: 1px; background: var(--accent); transition: all 0.4s ease; transform: translateX(-50%); }
-        .category-pill.active { color: var(--accent) !important; font-weight: 500; }
-        .category-pill.active::after { width: 16px; }
-        
-        .no-scrollbar::-webkit-scrollbar { display: none; } 
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        @keyframes subtleFadeUp { 
-            from { opacity: 0; transform: translateY(15px); filter: blur(2px); } 
-            to { opacity: 1; transform: translateY(0); filter: blur(0); } 
-        }
-        .fade-up { animation: subtleFadeUp 0.8s cubic-bezier(0.15, 0.85, 0.35, 1) forwards; }
-        
-        #zoomModal { position: fixed; inset: 0; background: #0F0F0E; z-index: 200; display: none; align-items: center; justify-content: center; }
-        #zoomViewport { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; cursor: grab; }
-        #zoomImg { max-width: 95%; max-height: 90%; object-fit: contain; transition: transform 0.15s ease-out; }
-
-        .mobile-nav { 
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
-            width: calc(100% - 32px); max-width: 380px; height: 56px;
-            background: rgba(22, 22, 21, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-radius: 28px; display: flex; align-items: center; justify-content: space-around;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15); z-index: 90; padding: 0 10px;
-        }
-        @media (min-width: 769px) { .mobile-nav { display: none; } }
-        .mobile-nav a { display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 500; letter-spacing: 0.1em; transition: all 0.3s; gap: 2px;}
-        .mobile-nav a i { width: 18px; height: 18px; margin-bottom: 1px; stroke-width: 1.5; }
-        .mobile-nav a.active { color: var(--accent); }
-
-        .save-indicator { position: fixed; top: 100px; right: 24px; z-index: 200; padding: 10px 20px; border-radius: 4px; font-size: 11px; font-weight: 500; tracking: 0.05em; opacity: 0; transition: all 0.4s ease; transform: translateY(-10px); }
-        .save-indicator.saving { background: #161615; color: #fff; border-left: 2px solid var(--accent); opacity: 1; transform: translateY(0); }
-        .save-indicator.saved { background: #EFFFFA; color: #00A36C; border-left: 2px solid #00A36C; opacity: 1; transform: translateY(0); }
-        .save-indicator.error { background: #FFEEEE; color: #D9383A; border-left: 2px solid #D9383A; opacity: 1; transform: translateY(0); }
-    </style>
+</style>
 </head>
-<body class="selection:bg-neutral-200">
+<body class="selection:bg-yellow-100">
 
     <div id="saveIndicator" class="save-indicator"></div>
 
-    <!-- 极简导航栏 -->
-    <nav class="fixed top-0 w-full z-[60] glass border-b border-black/[0.02]">
-        <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 md:h-24 flex items-center justify-between">
-            <div class="flex items-center gap-12">
-                <a href="#" onclick="goHome(event)" class="text-xl md:text-2xl font-medium tracking-[0.25em] serif-title">SHANYAO</a>
-                <div class="hidden md:flex gap-8 text-[11px] uppercase tracking-[0.2em] font-medium opacity-50">
-                    <a href="#" onclick="goHome(event)" class="hover:text-[var(--accent)] hover:opacity-100 transition-all">首页 / HOME</a>
-                    <a href="inspiration.html" class="hover:text-[var(--accent)] hover:opacity-100 transition-all">灵感 / INSPIRATION</a>
+    <nav class="fixed top-0 w-full z-[60] glass border-b border-black/5">
+        <div class="max-w-[1400px] mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
+            <div class="flex items-center gap-4 md:gap-8">
+                <a href="#" onclick="goHome(event)" class="text-xl md:text-2xl font-bold tracking-[0.2em] serif">SHANYAO</a>
+                <div class="hidden md:flex gap-6 text-sm uppercase tracking-widest font-medium opacity-60">
+                    <a href="#" onclick="goHome(event)" class="hover:opacity-100 transition-opacity">首页</a>
+                    <a href="inspiration.html" class="hover:opacity-100 transition-opacity">灵感</a>
                 </div>
             </div>
-            <div class="flex items-center gap-6">
-                <button onclick="handleAdminAccess()" class="flex items-center gap-2 group text-neutral-400 hover:text-[var(--text-main)] transition-colors">
-                    <span class="text-[10px] uppercase tracking-[0.2em] font-medium hidden sm:inline opacity-60 group-hover:opacity-100">Curation 工作台</span>
-                    <i data-lucide="menu" class="w-5 h-5 stroke-[1.2]"></i>
+            <div class="flex items-center gap-4">
+                <button onclick="handleAdminAccess()" class="flex items-center gap-2 group">
+                    <span class="hidden sm:inline text-[10px] uppercase tracking-widest font-bold group-hover:text-[var(--accent)] transition-colors">管理</span>
+                    <i data-lucide="settings" class="w-5 h-5 opacity-70"></i>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- 主体视窗 -->
-    <div id="homePage" class="pt-28 md:pt-40 pb-24 max-w-[1400px] mx-auto px-6 md:px-12">
-        <header id="top" class="mb-14 md:mb-20 fade-up">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-8">
-                <div class="max-w-3xl">
-                    <h2 class="text-[10px] uppercase tracking-[0.4em] text-[var(--accent)] font-semibold mb-4">ESTABLISHED 2026</h2>
-                    <!-- 调整后标题：上下两行错落，突出“闪”与“耀” -->
-                    <h1 class="text-4xl md:text-6xl serif-title leading-[1.35] text-neutral-900 font-light">
-                        <span class="text-neutral-950 font-semibold border-b-2 border-[var(--accent)] pb-0.5">闪</span><span class="text-neutral-400 font-light">光留韵</span>
-                        <br>
-                        <span class="italic text-neutral-950 font-semibold border-b-2 border-[var(--accent)] pb-0.5">耀</span><span class="italic text-neutral-400 font-light">影成诗</span>
-                    </h1>
-                    <p class="text-xs text-neutral-400 mt-5 tracking-[0.1em] font-light leading-relaxed">让空间充满诗意，精选艺术家具高定画册</p>
+    <div id="homePage" class="pt-20 md:pt-28 pb-20 max-w-[1400px] mx-auto px-4 md:px-6">
+        <header id="top" class="mb-10 md:mb-16 fade-up">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8">
+                <div class="max-w-2xl">
+                    <h2 class="text-[10px] uppercase tracking-[0.4em] text-[var(--accent)] font-bold mb-2 md:mb-4">Collection 2026</h2>
+                    <h1 class="text-3xl md:text-7xl serif leading-tight"><span class="text-[#1A1A1A]">闪</span><span class="text-black/35">光留韵</span><br><span class="italic"><span class="text-[#1A1A1A]">耀</span><span class="text-black/35">影成诗</span></span></h1>
                 </div>
                 <div class="flex flex-col items-end gap-6 w-full md:w-auto">
-                    <div class="relative w-full md:w-72 group">
-                        <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="探索灵感单品..." class="w-full bg-transparent border-b border-black/[0.08] py-2 focus:border-black outline-none transition-all placeholder:text-neutral-300 text-sm tracking-wide">
-                        <i data-lucide="search" class="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 opacity-30 group-focus-within:opacity-100 transition-opacity stroke-[1.5]"></i>
+                    <div class="relative w-full md:w-80 group">
+                        <input type="text" id="searchInput" placeholder="搜索家具..." class="w-full bg-transparent border-b border-black/10 py-2 focus:border-black outline-none transition-all placeholder:text-black/20 text-base md:text-lg">
+                        <i data-lucide="search" class="absolute right-0 top-1/2 -translate-y-1/2 w-5 h-5 opacity-20 group-focus-within:opacity-100 transition-opacity"></i>
                     </div>
                 </div>
             </div>
         </header>
 
-        <!-- 年份筛选轴 -->
-        <div class="relative mb-6 fade-up" style="animation-delay:0.05s">
-            <div id="yearContainer" class="flex overflow-x-auto gap-6 no-scrollbar pb-1 touch-pan-x text-xs tracking-[0.12em] text-neutral-400"></div>
+        <div class="relative mb-8 md:mb-12 fade-up" style="animation-delay:0.1s">
+            <div id="categoryContainer" class="flex overflow-x-auto gap-3 no-scrollbar pb-2 touch-pan-x"></div>
         </div>
 
-        <!-- 诗意分类轴 -->
-        <div class="relative mb-12 md:mb-16 fade-up" style="animation-delay:0.1s">
-            <div id="categoryContainer" class="flex overflow-x-auto gap-8 no-scrollbar pb-2 touch-pan-x text-xs uppercase tracking-[0.15em] text-neutral-400"></div>
-        </div>
-
-        <!-- 自定义小工具动态投放区 -->
-        <div id="widgetContainer" class="mb-12"></div>
-        
-        <!-- 核心瀑布流网格 -->
-        <div id="productGrid" class="masonry-grid scroll-mt-24"></div>
+        <div id="widgetContainer" class="mb-8 md:mb-12"></div>
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 md:gap-x-10 gap-y-10 md:gap-y-16 scroll-mt-24"></div>
     </div>
 
-    <!-- 高奢沉浸式详情剧幕 -->
-    <div id="detailPage" class="hidden min-h-screen pb-24 bg-white">
-        <div class="sticky top-0 z-50 glass border-b border-black/[0.02] flex items-center justify-between h-16 px-6 md:px-12">
-            <button onclick="closeDetail()" class="flex items-center gap-2 text-xs uppercase tracking-[0.15em] opacity-50 hover:opacity-100 transition-opacity">
-                <i data-lucide="arrow-left" class="w-4 h-4 stroke-[1.5]"></i>
-                <span>返回画廊 / BACK</span>
-            </button>
-            <div class="text-[11px] font-medium tracking-[0.2em] uppercase text-neutral-400" id="detailTopTitle"></div>
-            <div class="w-20"></div>
-        </div>
-
-        <div class="pt-8 md:pt-16 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 px-6">
-            <!-- 左：多维度视觉轮播 -->
-            <div class="space-y-4">
-                <div class="relative overflow-hidden bg-[#FBFBFA] rounded-sm aspect-square flex items-center justify-center group" id="carouselWrap">
-                    <button onclick="prevSlide()" class="absolute left-4 z-10 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-white shadow-sm"><i data-lucide="chevron-left" class="w-4 h-4 text-neutral-600"></i></button>
-                    <button onclick="nextSlide()" class="absolute right-4 z-10 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-white shadow-sm"><i data-lucide="chevron-right" class="w-4 h-4 text-neutral-600"></i></button>
-                    <div class="flex w-full h-full transition-transform duration-700 cubic-bezier(0.15, 0.85, 0.35, 1)" id="carouselTrack"></div>
-                    <div class="absolute bottom-4 left-50% translate-x-[-50%] flex gap-1.5" id="carouselDots"></div>
-                </div>
-                <div id="thumbSection" class="pt-2">
-                    <div class="thumb-row no-scrollbar flex gap-3 overflow-x-auto" id="thumbRow"></div>
-                </div>
-            </div>
-
-            <!-- 右：高定作品叙事描述 -->
-            <div class="flex flex-col justify-between py-2">
-                <div class="space-y-6">
-                    <div class="border-b border-black/[0.04] pb-6">
-                        <h1 class="text-3xl md:text-4xl font-light tracking-wide text-neutral-900 mb-4" id="detailName"></h1>
-                        <div class="flex items-baseline gap-4">
-                            <span class="text-2xl font-light text-[var(--accent)] tracking-wide" id="detailPrice"></span>
-                            <span class="text-xs text-neutral-300 line-through font-light" id="detailOrigPrice"></span>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <p class="text-xs uppercase tracking-[0.2em] text-neutral-400 font-medium mb-3">作品释义 / ESSENCE</p>
-                        <p class="text-sm text-neutral-500 leading-relaxed font-light" id="detailDesc"></p>
-                    </div>
-                    
-                    <div id="variantSection" class="pt-2">
-                        <p class="text-xs uppercase tracking-[0.2em] text-neutral-400 font-medium mb-3">限定形态 / MATERIAL</p>
-                        <div id="variantBtns" class="flex flex-wrap gap-2.5"></div>
-                    </div>
-                </div>
-
-                <div class="bg-[#FBFBFA] p-6 rounded border border-black/[0.01] text-xs text-neutral-400 space-y-3 font-light mt-8">
-                    <div class="flex gap-2"><span class="text-[var(--accent)]">✦</span><p><b>物料基因</b>：精选全球特级原产木域，天然质地，环保天然涂装体系。</p></div>
-                    <div class="flex gap-2"><span class="text-[var(--accent)]">✦</span><p><b>安全达</b>：专属高规防震蜂窝木框架包装，全流程极速多重保价物流。</p></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 瀑布宏大底座细节图解 -->
-        <div class="max-w-4xl mx-auto px-6 mt-20 md:mt-32">
-            <div class="text-center mb-12">
-                <p class="text-[10px] uppercase tracking-[0.3em] text-[var(--accent)] font-medium mb-2">SCENARIO VISUAL</p>
-                <h3 class="text-lg font-light tracking-widest text-neutral-400">— 空间视觉细节 —</h3>
-            </div>
-            <div id="detailImages" class="space-y-4"></div>
-        </div>
-    </div>
-
-    <!-- 高清防抖触觉大图放大器 -->
-    <div id="zoomModal">
-        <button onclick="closeZoom()" class="absolute top-6 right-6 z-50 text-white/40 hover:text-white transition-colors"><i data-lucide="x" class="w-6 h-6 stroke-[1.2]"></i></button>
-        <div id="zoomViewport"><img id="zoomImg" src="" alt="Zoom Image"></div>
-    </div>
-
-    <!-- 管理权核验遮罩 -->
+    <!-- 密码验证弹窗 -->
     <div id="authOverlay" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4">
-        <div class="bg-white p-8 md:p-12 w-full max-w-sm shadow-2xl rounded-sm text-center border border-black/[0.03]">
-            <h3 class="serif-title text-2xl tracking-widest mb-2 font-light">核验特权</h3>
-            <p class="text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-8 font-medium">SECRET ACCESS PASSWORD</p>
-            <input type="password" id="adminPasswordInput" placeholder="••••" class="w-full border-b border-black/[0.08] py-3 text-center text-2xl tracking-[0.4em] outline-none focus:border-black transition-colors bg-transparent font-light">
-            <p id="authError" class="text-red-500 text-[10px] mt-4 tracking-widest uppercase hidden font-medium">密码校验未通过</p>
-            <div class="flex gap-4 mt-8">
-                <button onclick="closeAuth()" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-[0.15em] opacity-40">返回</button>
-                <button onclick="verifyAdmin()" class="flex-1 bg-black text-white py-3 text-[10px] font-bold uppercase tracking-[0.15em] tracking-wide">核验</button>
+        <div class="bg-white p-8 md:p-10 w-full max-w-sm shadow-2xl rounded-sm text-center">
+            <h3 class="serif text-2xl mb-2">身份核验</h3>
+            <p class="text-[10px] uppercase tracking-widest opacity-40 mb-8 font-bold">请输入管理密码以继续</p>
+            <input type="password" id="adminPasswordInput" placeholder="••••" class="w-full border-b border-black/10 py-4 text-center text-2xl tracking-[0.5em] outline-none focus:border-black transition-colors bg-transparent">
+            <p id="authError" class="text-red-500 text-[10px] mt-4 font-bold tracking-widest uppercase hidden">密码错误，请重试</p>
+            <div class="flex gap-4 mt-10">
+                <button onclick="closeAuth()" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest opacity-40">取消</button>
+                <button onclick="verifyAdmin()" class="flex-1 bg-black text-white py-3 text-[10px] font-bold uppercase tracking-widest">确认进入</button>
             </div>
         </div>
     </div>
 
-    <!-- 图册控制后台抽屉 -->
-    <div id="adminModal" class="fixed inset-0 z-[100] hidden">
-        <div class="absolute inset-0 bg-black/10 backdrop-blur-md" onclick="toggleAdminModal()"></div>
+    <!-- 详情模态框 -->
+    <div <!-- Detail Page (Taobao style) -->
+<div id="detailPage" class="hidden min-h-screen pb-20">
+<div class="sticky top-0 z-50 glass border-b border-black/5 flex items-center h-14 px-4">
+<button onclick="closeDetail()" class="flex items-center gap-2 text-sm font-medium opacity-60 hover:opacity-100"><i data-lucide="arrow-left" class="w-5 h-5"></i><span class="hidden sm:inline">返回</span></button>
+<div class="flex-1 text-center text-sm font-bold tracking-widest uppercase opacity-40" id="detailTopTitle"></div><div class="w-16"></div></div>
+<div class="carousel-wrap" id="carouselWrap"><div class="carousel-track" id="carouselTrack"></div><div class="carousel-dots" id="carouselDots"></div></div>
+<div class="max-w-3xl mx-auto px-4 md:px-8"><div class="py-6 border-b border-black/5">
+<p class="text-2xl md:text-3xl font-bold serif mb-2" id="detailName"></p>
+<div class="flex items-baseline gap-3 mb-4"><span class="text-red-500 text-xl md:text-2xl font-bold" id="detailPrice"></span><span class="text-xs opacity-40 line-through" id="detailOrigPrice"></span></div>
+<div class="text-xs opacity-40 mb-4" id="detailDesc"></div>
+<div id="variantSection" class="mb-4"><p class="text-xs font-bold uppercase tracking-widest mb-3 opacity-60" id="variantLabel">颜色</p><div id="variantBtns" class="flex flex-wrap gap-2"></div></div>
+<div id="thumbSection" class="border-t border-black/5 pt-4"><p class="text-xs font-bold uppercase tracking-widest mb-2 opacity-40">主图预览</p><div class="thumb-row no-scrollbar" id="thumbRow"></div></div></div>
+<div class="py-6"><p class="text-xs font-bold uppercase tracking-widest mb-6 opacity-40 text-center">— 产品详情 —</p><div id="detailImages" class="detail-section space-y-0"></div></div></div></div>
+<div id="adminModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="toggleAdminModal()"></div>
         <div class="absolute right-0 top-0 bottom-0 w-full max-w-lg bg-white shadow-2xl flex flex-col translate-x-full transition-transform duration-500 ease-out" id="adminSidebar">
-            <div class="p-6 md:p-8 border-b border-neutral-100 flex justify-between items-center bg-[#FBFBFA]">
-                <h2 class="text-lg tracking-widest serif-title">CURATION BACKSTAGE</h2>
-                <div class="flex gap-2" id="adminTabs">
-                    <div class="admin-tab active bg-black text-white px-3 py-1.5 rounded text-[10px] uppercase tracking-wider cursor-pointer" id="tab-products" onclick="switchAdminTab('products')">单品</div>
-                    <div class="admin-tab bg-neutral-100 text-neutral-400 px-3 py-1.5 rounded text-[10px] uppercase tracking-wider cursor-pointer" id="tab-widgets" onclick="switchAdminTab('widgets')">组件</div>
-                </div>
-                <button onclick="resetToken()" title="Reset Token" class="text-xs opacity-20 hover:opacity-100 transition-opacity">🔑</button>
-                <div class="flex items-center gap-1">
-                    <button title="Export" onclick="exportToExcel()" class="p-2 hover:bg-neutral-100 rounded-full"><i data-lucide="download" class="w-4 h-4 opacity-60"></i></button>
-                    <label title="Import" for="importInput" class="p-2 hover:bg-neutral-100 rounded-full cursor-pointer"><i data-lucide="upload" class="w-4 h-4 opacity-60"></i></label>
+            <div class="p-6 md:p-8 border-b flex justify-between items-center">
+                <h2 class="text-xl md:text-2xl serif">图册管理</h2>
+    <div class="flex gap-1 ml-4" id="adminTabs">
+      <div class="admin-tab active" onclick="switchAdminTab('products')">产品</div>
+      <div class="admin-tab" onclick="switchAdminTab('widgets')">小工具</div>
+    </div><button onclick="resetToken()" title="重置Token" class="text-[10px] opacity-30 hover:opacity-100 hover:text-red-500 transition-all ml-2">🔑</button>
+                <div class="flex items-center gap-1 md:gap-2">
+                    <button title="导出 CSV" onclick="exportToExcel()" class="p-2 hover:bg-black/5 rounded-full"><i data-lucide="download" class="w-5 h-5"></i></button>
+                    <label title="导入 CSV" for="importInput" class="p-2 hover:bg-black/5 rounded-full cursor-pointer"><i data-lucide="upload" class="w-5 h-5"></i></label>
                     <input type="file" id="importInput" accept=".csv" onchange="importFromExcel(event)">
-                    <button onclick="toggleAdminModal()" class="p-2 hover:bg-neutral-100 rounded-full"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    <button onclick="toggleAdminModal()" class="p-2 hover:bg-black/5 rounded-full ml-1"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
             </div>
-            
-            <div class="flex-1 overflow-y-auto p-6 md:p-8 no-scrollbar space-y-8">
-                <div id="adminProductSection" class="space-y-8">
-                    <section class="space-y-3">
-                        <h3 class="text-[10px] uppercase tracking-[0.15em] text-[var(--accent)] font-semibold">分类架构</h3>
-                        <div class="flex gap-3">
-                            <input type="text" id="new_cat_name" placeholder="追加新家具形态分类..." class="flex-1 border-b border-neutral-200 py-1.5 text-xs outline-none bg-transparent">
-                            <button onclick="addCategory()" class="bg-neutral-900 text-white px-4 py-1.5 text-[10px] tracking-widest uppercase rounded-sm">追加</button>
+            <div class="flex-1 overflow-y-auto p-6 md:p-8 no-scrollbar">
+                <div class="space-y-10">
+                    <section>
+                        <h3 class="text-[10px] uppercase tracking-widest font-bold text-[var(--accent)] mb-4 md:mb-6">分类管理</h3>
+                        <div class="flex gap-2 mb-4">
+                            <input type="text" id="new_cat_name" placeholder="新分类名称" class="flex-1 border-b py-2 text-sm outline-none bg-transparent">
+                            <button onclick="addCategory()" class="bg-black text-white px-4 py-2 text-[10px] font-bold uppercase">添加</button>
                         </div>
-                        <div id="adminCatList" class="flex flex-wrap gap-2 pt-2"></div>
+                        <div id="adminCatList" class="flex flex-wrap gap-2"></div>
                     </section>
-                    
-                    <section class="bg-[#FBFBFA] p-5 md:p-6 border border-neutral-100 rounded-sm space-y-4">
-                        <h3 class="text-[10px] uppercase tracking-[0.15em] text-[var(--accent)] font-semibold">构筑新灵感单品</h3>
-                        <input type="text" id="p_name" placeholder="单品名称" class="w-full border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent">
-                        <div class="grid grid-cols-2 gap-4">
-                            <select id="p_category" class="border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent text-neutral-500"></select>
-                            <input type="number" id="p_price" placeholder="高定定价 (¥)" class="border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent">
-                            <input type="text" id="p_year" placeholder="年份" class="border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent">
-                            <input type="text" id="p_tags" placeholder="标签（逗号分隔）" class="w-full border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent">
+                    <section class="bg-black/[0.02] p-4 md:p-6 rounded-lg">
+                        <h3 class="text-[10px] uppercase tracking-widest font-bold text-[var(--accent)] mb-6">发布新作品</h3>
+                        <div class="space-y-4">
+                            <input type="text" id="p_name" placeholder="作品名称" class="w-full border-b bg-transparent py-3 outline-none text-sm">
+                            <div class="grid grid-cols-2 gap-4">
+                                <select id="p_category" class="border-b py-3 outline-none bg-transparent text-sm"></select>
+                                <input type="number" id="p_price"
+                                        <input type="text" id="p_year" placeholder="年份" class="w-full border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent"> placeholder="价格 (¥)" class="border-b bg-transparent py-3 outline-none text-sm">
+                            </div>
+                            <select id="p_page" class="w-full border-b py-3 outline-none bg-transparent text-sm">
+                                <option value="首页">📄 首页</option>
+                                <option value="灵感">💡 灵感</option>
+                            </select>
+                            <div id="imageInputs" class="space-y-3">
+                                <input type="text" placeholder="主图链接 URL" class="w-full border-b bg-transparent py-2 text-xs outline-none img-input">
+                            </div>
+                            <button onclick="addImageInput()" class="text-[10px] font-bold opacity-40 hover:opacity-100 flex items-center gap-2 pt-2">
+                                <i data-lucide="plus" class="w-4 h-4"></i> 添加更多视角
+                            </button>
+                            <button onclick="addProduct()" class="w-full bg-black text-white py-4 mt-6 hover:bg-black/80 transition-all font-bold tracking-widest uppercase text-[10px]">保存作品</button>
                         </div>
-                        <input type="text" id="p_year" placeholder="年份 (如 2025, 留空=不分类)" class="w-full border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent text-neutral-500">
-                        <select id="p_page" class="w-full border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent text-neutral-500">
-                            <option value="首页">📄 投放至主页大厅</option>
-                            <option value="灵感">💡 归档至灵感图集</option>
-                        </select>
-                        <div id="imageInputs" class="space-y-2">
-                            <input type="text" placeholder="主图主轴超链 URL" class="w-full border-b border-neutral-200 py-2 text-[11px] outline-none bg-transparent img-input">
-                        </div>
-                        <button onclick="addImageInput()" class="text-[10px] font-medium text-neutral-400 hover:text-black flex items-center gap-1.5 pt-1 transition-colors"><i data-lucide="plus" class="w-3 h-3"></i> 拓展多维透视立体视角</button>
-                        <button onclick="addProduct()" class="admin-add-btn w-full bg-neutral-950 text-white py-3.5 mt-4 hover:bg-neutral-800 transition-all font-medium tracking-[0.15em] uppercase text-[10px] rounded-sm">收录至线上图册</button>
                     </section>
+                    <section id="adminWidgetSection" class="hidden">
+                        <h3 class="text-[10px] uppercase tracking-widest font-bold text-[var(--accent)] mb-4 md:mb-6">添加小工具</h3>
+                        <p class="text-xs opacity-40 mb-4">添加自定义 HTML/CSS/JS 代码片段，将在首页展示</p>
+                        <div class="space-y-3 mb-6">
+                            <input type="text" id="w_name" placeholder="小工具名称" class="w-full border-b bg-transparent py-3 outline-none text-sm">
+                            <select id="w_position" class="w-full border-b py-3 outline-none bg-transparent text-sm">
+                                <option value="top">📍 顶部横幅</option>
+                                <option value="between">🔀 产品之间</option>
+                                <option value="bottom">📌 底部区域</option>
+                            </select>
+                            <textarea id="w_code" class="code-editor" placeholder="在此粘贴 HTML/CSS/JS 代码...
 
-                    <section class="space-y-3">
-                        <h3 class="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">在册清单资产</h3>
-                        <div id="adminList" class="space-y-2.5"></div>
-                    </section>
-                </div>
-
-                <div id="adminWidgetSection" class="hidden space-y-6">
-                    <section class="space-y-3">
-                        <h3 class="text-[10px] uppercase tracking-[0.15em] text-[var(--accent)] font-semibold">营销流小工具注入</h3>
-                        <input type="text" id="w_name" placeholder="别名标识" class="w-full border-b border-neutral-200 py-2 outline-none text-xs bg-transparent">
-                        <select id="w_position" class="w-full border-b border-neutral-200 py-2 outline-none text-xs bg-transparent text-neutral-500">
-                            <option value="top">📍 顶置巨幕通栏</option>
-                            <option value="between">🔀 画廊画卷中插</option>
-                            <option value="bottom">📌 底座脚注区</option>
-                        </select>
-                        <textarea id="w_code" class="w-full text-xs font-mono p-3 bg-neutral-50 border border-neutral-200 rounded outline-none h-40" placeholder="在此塞入原生高阶 HTML/CSS 视觉逻辑代码片段..."></textarea>
-                        <div class="flex gap-2">
-                            <button onclick="previewWidget()" class="flex-1 py-2.5 text-[10px] tracking-wider border border-neutral-200 rounded-sm hover:bg-neutral-50 transition-colors">解析预览</button>
-                            <button onclick="addWidget()" class="flex-1 bg-black text-white py-2.5 text-[10px] tracking-wider rounded-sm">确认部署</button>
+示例：
+<div style='text-align:center;padding:20px'>
+  <h2>欢迎光临</h2>
+  <p>本店新品上市</p>
+</div>"></textarea>
+                            <div class="flex gap-2">
+                                <button onclick="previewWidget()" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest border hover:bg-black/5">预览</button>
+                                <button onclick="addWidget()" class="flex-1 bg-black text-white py-3 text-[10px] font-bold uppercase tracking-widest">添加</button>
+                            </div>
+                            <div id="widgetPreview" class="hidden border rounded-lg overflow-hidden bg-white mt-2"></div>
                         </div>
-                        <div id="widgetPreview" class="hidden border border-neutral-200 rounded bg-white p-3"></div>
+                        <h3 class="text-[10px] uppercase tracking-widest font-bold text-black/30 mb-4">已添加的小工具</h3>
+                        <div id="adminWidgetList" class="space-y-3"></div>
                     </section>
-                    <section class="space-y-3">
-                        <h3 class="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">运行中组件</h3>
-                        <div id="adminWidgetList" class="space-y-2.5"></div>
+                    <section id="adminProductSection" class="pt-6">
+                        <h3 class="text-[10px] uppercase tracking-widest font-bold text-black/30 mb-6">现有清单</h3>
+                        <div id="adminList" class="space-y-3"></div>
                     </section>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- 移动端常驻触控底盘 -->
-    <div class="mobile-nav">
-        <a href="#" onclick="goHome(event)" class="active" id="mNavHome"><i data-lucide="home"></i>画廊</a>
-        <a href="inspiration.html" id="mNavInspire"><i data-lucide="compass"></i>灵感</a>
-        <a href="#" onclick="handleAdminAccess()"><i data-lucide="box"></i>控制台</a>
     </div>
 
     <script>
-        // --- 核心安全管道与 GitHub 数据绑定 ---
+        // --- GitHub Sync Config ---
         const GITHUB_REPO = "luohaijun8888-art/artisan-gallery";
         const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/products.json";
-        const _tk=['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];
-        const EMBEDDED_TOKEN=_tk.join('');
-        
-        let githubToken = EMBEDDED_TOKEN;
+        const _tk=['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];const EMBEDDED_TOKEN=_tk.join('');if(localStorage.getItem('gh_token')&&localStorage.getItem('gh_token')!==EMBEDDED_TOKEN){localStorage.removeItem('gh_token');}let githubToken=EMBEDDED_TOKEN;
         let dataSha = null;
+
+        // --- System ---
         const adminPassword = "8888";
         let isAuthenticated = false;
 
+        // --- Data ---
         let categories = ["餐台", "茶几", "餐椅", "床", "书架"];
-        let products = [];
         let widgets = [];
-        let currentYear = 'all';
+        let products = [];
         let currentCategory = 'all';
         let currentSearch = '';
+        let scale = 1, pos = {x:0,y:0}, isDragging = false, dragStart = {x:0,y:0};
 
-        let currentDetail = null;
-        let currentVariantIdx = 0;
-        let carouselIdx = 0;
-
-        let zoomScale = 1;
-        let isZoomed = false;
-        let startX = 0, startY = 0;
-        let translateX = 0, translateY = 0;
-
+        // --- Save indicator ---
         function showSaveStatus(status, msg) {
             const el = document.getElementById('saveIndicator');
             el.className = 'save-indicator ' + status;
@@ -383,65 +247,70 @@
             setTimeout(() => { el.className = 'save-indicator'; }, 2500);
         }
 
+        // --- GitHub API sync ---
         async function fetchProducts() {
             try {
                 const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
                 if (githubToken) headers['Authorization'] = 'Bearer ' + githubToken;
-                const res = await fetch(GITHUB_API, { headers, cache: 'no-store' });
-                if (!res.ok) throw new Error('数据拉取失败');
+                const res = await fetch(GITHUB_API, { headers });
+                if (!res.ok) throw new Error('fetch failed');
                 const data = await res.json();
                 dataSha = data.sha;
                 const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-                
                 categories = content.categories || categories;
                 products = content.products || [];
                 widgets = content.widgets || [];
-                
                 localStorage.setItem('artisan_categories', JSON.stringify(categories));
                 localStorage.setItem('furniture_gallery_db', JSON.stringify(products));
                 localStorage.setItem('artisan_widgets', JSON.stringify(widgets));
             } catch(e) {
+                console.warn('GitHub fetch failed, using localStorage cache', e);
                 categories = JSON.parse(localStorage.getItem('artisan_categories')) || categories;
                 products = JSON.parse(localStorage.getItem('furniture_gallery_db')) || [];
                 widgets = JSON.parse(localStorage.getItem('artisan_widgets')) || [];
             }
-            renderYearFilter();
             renderCategories();
             renderProducts();
             renderWidgets();
         }
 
         async function saveToGitHub() {
-            if (!githubToken) { showSaveStatus('error', '未检测到发布Token凭证'); return; }
-            showSaveStatus('saving', '同步云端部署中...');
+            if (!githubToken) { showSaveStatus('error', '未设置Token'); return; }
+            showSaveStatus('saving', '同步中...');
             try {
+                // Always fetch latest SHA first to avoid conflicts
                 const headRes = await fetch(GITHUB_API, {
-                    headers: { 'Authorization': 'Bearer ' + githubToken, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' },
-                    cache: 'no-store'
+                    headers: { 'Authorization': 'Bearer ' + githubToken, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }
                 });
                 if (headRes.ok) { const headData = await headRes.json(); dataSha = headData.sha; }
 
                 const data = { categories, products, widgets };
                 const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-                const body = { message: '✨ 艺术画廊UI布局精细调整: ' + new Date().toISOString(), content: content, sha: dataSha };
-                
+                const body = { message: 'update products ' + new Date().toISOString(), content: content, sha: dataSha };
                 const res = await fetch(GITHUB_API, {
                     method: 'PUT',
                     headers: { 'Authorization': 'Bearer ' + githubToken, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
                 });
                 if (res.status === 401) {
-                    showSaveStatus('error', '凭证失效'); return;
+                    showSaveStatus('error', 'Token已失效');
+                    const t = prompt('Token已失效，请输入新的GitHub Token：');
+                    if (t) { githubToken = t.trim(); localStorage.setItem('gh_token', githubToken); await saveToGitHub(); }
+                    return;
                 }
                 if (res.status === 409) {
-                    dataSha = null; await saveToGitHub(); return;
+                    showSaveStatus('error', 'SHA冲突，重试中...');
+                    dataSha = null;
+                    await saveToGitHub();
+                    return;
                 }
-                if (!res.ok) throw new Error('云写入错误');
+                if (!res.ok) { const errText = await res.text(); throw new Error('HTTP ' + res.status + ': ' + errText.substring(0, 100)); }
                 const result = await res.json();
                 dataSha = result.content.sha;
-                showSaveStatus('saved', '云端数据同步成功');
+                showSaveStatus('saved', '已同步到云端');
             } catch(e) {
-                showSaveStatus('error', '云同步失败: ' + e.message);
+                console.error('GitHub save failed', e);
+                showSaveStatus('error', '同步失败: ' + e.message);
             }
             localStorage.setItem('artisan_categories', JSON.stringify(categories));
             localStorage.setItem('furniture_gallery_db', JSON.stringify(products));
@@ -450,373 +319,250 @@
 
         async function saveAll() { await saveToGitHub(); }
 
+        // --- Auth ---
         window.handleAdminAccess = function() {
             if (isAuthenticated) { toggleAdminModal(); }
             else { document.getElementById('authOverlay').classList.remove('hidden'); document.getElementById('adminPasswordInput').focus(); }
         };
-        window.resetToken = function() {
-            if (confirm("是否清除浏览器本地保存的特权访问凭据？")) {
-                githubToken = ""; localStorage.removeItem("gh_token"); showSaveStatus("error", "凭据抹除");
-            }
-        };
-        window.closeAuth = function() {
-            document.getElementById('authOverlay').classList.add('hidden');
-            document.getElementById('adminPasswordInput').value = '';
-            document.getElementById('authError').classList.add('hidden');
-        };
+        window.resetToken=function(){if(confirm("Token将被清除，下次管理时需重新输入。确认？")){githubToken="";localStorage.removeItem("gh_token");showSaveStatus("error","Token已重置");}}; window.closeAuth = function() { document.getElementById('authOverlay').classList.add('hidden'); document.getElementById('adminPasswordInput').value = ''; document.getElementById('authError').classList.add('hidden'); };
         window.verifyAdmin = function() {
             const input = document.getElementById('adminPasswordInput');
             if (input.value === adminPassword) {
-                isAuthenticated = true; closeAuth(); toggleAdminModal();
+                isAuthenticated = true;
+                // Prompt for GitHub token if not set
+                if (!githubToken) {
+                    const token = prompt('首次使用管理功能，请输入 GitHub Token 以同步数据：\n（Token 将保存在浏览器本地）');
+                    if (token) { githubToken = token.trim(); localStorage.setItem('gh_token', githubToken); fetchProducts(); }
+                }
+                closeAuth(); toggleAdminModal();
             } else {
-                document.getElementById('authError').classList.remove('hidden'); input.value = ''; input.focus();
+                document.getElementById('authError').classList.remove('hidden');
+                input.value = ''; input.focus();
             }
         };
         document.getElementById('adminPasswordInput').onkeypress = (e) => { if (e.key === 'Enter') verifyAdmin(); };
 
-        window.goHome = function(e) { if(e) e.preventDefault(); closeDetail(); window.scrollTo({top:0, behavior:'smooth'}); };
-        window.setYear = function(yr) { currentYear = yr; renderYearFilter(); renderProducts(); };
+        // --- Render ---
         window.setCategory = function(cat) { currentCategory = cat; renderCategories(); renderProducts(); };
-        window.handleSearch = function(val) { currentSearch = val.trim(); renderProducts(); };
-
         function renderCategories() {
             const c = document.getElementById('categoryContainer'); if(!c) return;
-            let h = `<button onclick="setCategory('all')" class="category-pill ${currentCategory==='all'?'active':''} font-light">ALL / 全部</button>`;
-            h += categories.map(cat => `<button onclick="setCategory('${cat}')" class="category-pill ${currentCategory===cat?'active':''} font-light">${cat}</button>`).join('');
+            let h = '<button onclick="setCategory(\'all\')" class="category-pill ' + (currentCategory==='all'?'active':'') + ' px-6 py-2.5 rounded-full bg-white text-[11px] md:text-sm font-medium tracking-wide">全部</button>';
+            h += categories.map(cat => '<button onclick="setCategory(\''+cat+'\')" class="category-pill ' + (currentCategory===cat?'active':'') + ' px-6 py-2.5 rounded-full bg-white text-[11px] md:text-sm font-medium tracking-wide hover:bg-black/5">'+cat+'</button>').join('');
             c.innerHTML = h;
-            
-            const sel = document.getElementById('p_category'); if(sel) sel.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+            const sel = document.getElementById('p_category');
+            if(sel) sel.innerHTML = categories.map(cat => '<option value="'+cat+'">'+cat+'</option>').join('');
             const acl = document.getElementById('adminCatList');
-            if(acl) { 
-                acl.innerHTML = categories.map(cat => `<div class="flex items-center gap-1.5 bg-neutral-50 px-2.5 py-1 rounded border border-neutral-100 text-[11px] font-light text-neutral-500"><span>${cat}</span><button onclick="removeCategory('${cat}')" class="opacity-40 hover:opacity-100 hover:text-red-500"><i data-lucide="x" class="w-3 h-3"></i></button></div>`).join(''); 
-                lucide.createIcons(); 
-            }
+            if(acl) { acl.innerHTML = categories.map(cat => '<div class="flex items-center gap-2 bg-black/5 px-3 py-1.5 rounded-full text-xs font-medium group"><span>'+cat+'</span><button onclick="removeCategory(\''+cat+'\')" class="opacity-40 group-hover:opacity-100 hover:text-red-500 transition-all"><i data-lucide="x" class="w-3 h-3"></i></button></div>').join(''); lucide.createIcons(); }
         }
-
         function renderProducts() {
             const grid = document.getElementById('productGrid');
-            const filtered = products.filter(p => (currentCategory==='all' || p.category===currentCategory) && (currentYear==='all' || (p.year||'')===currentYear) && p.name.toLowerCase().includes(currentSearch.toLowerCase()) && p.page!=='灵感');
-            if(!filtered.length) { grid.innerHTML = '<div class="col-span-full py-24 text-center opacity-20 text-xs tracking-widest font-light italic">未探寻到相关艺术作品</div>'; return; }
-            
-            grid.innerHTML = filtered.map((p,idx) => `
-                <div class="masonry-item product-card cursor-pointer group fade-up" style="animation-delay:${idx*0.03}s" onclick="openDetail(${p.id})">
-                    <div class="product-image-container relative mb-4">
-                        <!-- 已移除左上角的 HOT/NEW 标签层，让画面绝对纯净 -->
-                        <img src="${p.images && p.images[0] ? p.images[0] : ''}" 
-                             class="product-image w-full h-auto object-cover" 
-                             style="min-height: 150px;"
-                             loading="lazy"
-                             alt="${p.name}">
-                    </div>
-                    <div class="flex justify-between items-start px-0.5">
-                        <div class="space-y-1">
-                            <h3 class="text-sm md:text-base font-light text-neutral-800 tracking-wide">${p.name}</h3>
-                            <p class="text-[9px] uppercase tracking-[0.15em] text-neutral-400 font-light">${p.category}</p>
-                        </div>
-                        <div class="flex flex-col items-end gap-1">
-                            <p class="text-xs font-light tracking-wide text-neutral-500">&yen;${Number(p.price).toLocaleString()}</p>
-                            <div class="flex gap-1 opacity-20 group-hover:opacity-60 transition-opacity">
-                                <span class="w-1 h-1 bg-neutral-900 rounded-full"></span>
-                                <span class="w-1 h-1 bg-neutral-900 rounded-full"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            lucide.createIcons();
-            renderAdminProductList();
-        }
-
-        window.openDetail = function(id) {
-            const p = products.find(x => x.id === id); if(!p) return;
-            currentDetail = p; currentVariantIdx = 0; carouselIdx = 0;
-            document.getElementById('homePage').classList.add('hidden');
-            document.getElementById('detailPage').classList.remove('hidden');
-            document.getElementById('detailTopTitle').textContent = `COLLECTION / ${p.category}`;
-            window.scrollTo(0,0); renderDetail();
-        };
-
-        function renderYearFilter() {
-            const c = document.getElementById('yearContainer'); if(!c) return;
-            const years = [...new Set(products.map(p => p.year).filter(Boolean))].sort().reverse();
-            let h = '<button onclick="setYear('all')" class="category-pill ' + (currentYear==='all'?'active':'') + ' font-light">ALL / 全部</button>';
-            h += years.map(y => '<button onclick="setYear('' + y + '')" class="category-pill ' + (currentYear===y?'active':'') + ' font-light">' + y + '</button>').join('');
-            c.innerHTML = h;
-        }
-
-        window.closeDetail = function() {
-            document.getElementById('detailPage').classList.add('hidden');
-            document.getElementById('homePage').classList.remove('hidden');
-            currentDetail = null;
-        };
-
-        function getCurrentImages() {
-            if (!currentDetail) return [];
-            if (currentDetail.variants && currentDetail.variants[currentVariantIdx] && currentDetail.variants[currentVariantIdx].images) {
-                return currentDetail.variants[currentVariantIdx].images;
-            }
-            return currentDetail.images || [];
-        }
-
-        function renderDetail() {
-            const p = currentDetail; if(!p) return;
-            document.getElementById('detailName').textContent = p.name;
-            document.getElementById('detailPrice').textContent = '¥' + Number(p.price).toLocaleString();
-            document.getElementById('detailOrigPrice').textContent = '¥' + Math.round(Number(p.price) * 1.45).toLocaleString();
-            document.getElementById('detailDesc').textContent = p.description || '本款单品秉承纯粹的手作底蕴，利落骨骼蕴藉东方哲思，精选特级原生基料，构筑独树一帜的起居美学气场。';
-            
-            const vs = document.getElementById('variantSection');
-            if(p.variants && p.variants.length > 0){
-                vs.classList.remove('hidden');
-                document.getElementById('variantBtns').innerHTML = p.variants.map((v,i) => `
-                    <button class="px-4 py-1.5 border ${i===currentVariantIdx?'border-neutral-900 text-neutral-900 bg-neutral-50':'border-neutral-200 text-neutral-400'} rounded-sm text-xs font-light transition-all" onclick="selectVariant(${i})">${v.name}</button>
-                `).join('');
-            } else { vs.classList.add('hidden'); }
-            
-            renderCarousel();
-            
-            const di = document.getElementById('detailImages');
-            if(p.detailImages && p.detailImages.length) {
-                di.innerHTML = p.detailImages.map(u => `<img src="${u}" class="w-full h-auto object-cover rounded-sm shadow-sm" loading="lazy">`).join('');
-            } else if (getCurrentImages().length > 1) {
-                di.innerHTML = getCurrentImages().map(u => `<img src="${u}" class="w-full h-auto object-cover rounded-sm shadow-sm" loading="lazy">`).join('');
-            } else {
-                di.innerHTML = '<p class="text-center py-12 text-xs text-neutral-300 italic font-light tracking-widest">余下画轴尚未轻展</p>';
-            }
+            const filtered = products.filter(p => (currentCategory==='all'||p.category===currentCategory) && p.name.toLowerCase().includes(currentSearch.toLowerCase())&&p.page!=='灵感');
+            if(!filtered.length) { grid.innerHTML = '<div class="col-span-full py-20 text-center opacity-30 text-sm italic">未找到相关作品</div>'; return; }
+            grid.innerHTML = filtered.map((p,idx) => '<div class="product-card cursor-pointer group fade-up" style="animation-delay:'+idx*0.05+'s" onclick="openDetail('+p.id+')"><div class="product-image-container aspect-[3/4] md:aspect-[4/5] relative mb-4 md:mb-6">'+(p.tags?'<span class="absolute top-3 left-3 md:top-4 md:left-4 z-10 bg-white px-2 md:px-3 py-1 text-[8px] md:text-[9px] font-bold tracking-widest uppercase shadow-sm">'+p.tags+'</span>':'')+'<img src="'+p.images[0]+'" class="product-image w-full h-full object-contain" loading="lazy"></div><div class="flex justify-between items-baseline px-1"><div><p class="text-[8px] md:text-[9px] uppercase tracking-[0.2em] opacity-40 font-bold mb-1">'+p.category+'</p><h3 class="text-base md:text-lg serif font-medium tracking-wide">'+p.name+'</h3></div><p class="text-xs md:text-sm opacity-50 tracking-wide">&yen;'+Number(p.price).toLocaleString()+'</p></div></div>').join('');
             lucide.createIcons();
         }
 
-        function renderCarousel() {
-            const imgs = getCurrentImages();
-            const track = document.getElementById('carouselTrack');
-            const dots = document.getElementById('carouselDots');
-            const thumb = document.getElementById('thumbRow');
-            
-            if(!imgs.length) { track.innerHTML = ''; dots.innerHTML = ''; thumb.innerHTML = ''; return; }
-            if(carouselIdx >= imgs.length) carouselIdx = 0;
-            
-            track.innerHTML = imgs.map(u => `<div class="w-full flex-shrink-0 h-full flex items-center justify-center p-6 bg-transparent"><img src="${u}" onclick="openZoom('${u}')" loading="lazy" class="max-w-full max-h-full object-contain cursor-zoom-in"></div>`).join('');
-            track.style.transform = `translateX(-${carouselIdx * 100}%)`;
-            
-            dots.innerHTML = imgs.map((_,i) => `<div class="w-1 h-1 rounded-full ${i===carouselIdx?'bg-neutral-800 scale-125':'bg-neutral-200'} transition-all duration-300"></div>`).join('');
-            thumb.innerHTML = imgs.map((u,i) => `<img src="${u}" class="w-14 h-14 object-contain p-1 border rounded bg-white transition-all ${i===carouselIdx?'border-neutral-900 scale-95 opacity-100':'border-neutral-200 opacity-40 hover:opacity-70'}" onclick="goCarousel(${i})" loading="lazy">`).join('');
-            initCarouselSwipe();
-        }
+        // --- Zoom ---
+        // --- Detail page (Taobao style) ---
+let currentDetail=null,currentVariantIdx=0,carouselIdx=0;
+window.openDetail=function(id){const p=products.find(x=>x.id===id);if(!p)return;currentDetail=p;currentVariantIdx=0;carouselIdx=0;
+document.getElementById('homePage').classList.add('hidden');document.getElementById('detailPage').classList.remove('hidden');
+document.getElementById('detailTopTitle').textContent=p.category;window.scrollTo(0,0);renderDetail();};
+window.closeDetail=function(){document.getElementById('detailPage').classList.add('hidden');document.getElementById('homePage').classList.remove('hidden');currentDetail=null;};
+function getCurrentImages(){if(!currentDetail)return[];if(currentDetail.variants&&currentDetail.variants.length)return currentDetail.variants[currentVariantIdx].images||[];return currentDetail.images||[];}
+function renderDetail(){const p=currentDetail;if(!p)return;
+document.getElementById('detailName').textContent=p.name;document.getElementById('detailPrice').textContent='¥'+Number(p.price).toLocaleString();
+document.getElementById('detailOrigPrice').textContent='¥'+Math.round(Number(p.price)*1.5).toLocaleString();
+document.getElementById('detailDesc').textContent=p.description||'';
+const vs=document.getElementById('variantSection');
+if(p.variants&&p.variants.length>1){vs.classList.remove('hidden');document.getElementById('variantLabel').textContent='颜色/规格';
+document.getElementById('variantBtns').innerHTML=p.variants.map((v,i)=>'<button class="variant-btn '+(i===currentVariantIdx?'active':'')+'" onclick="selectVariant('+i+')">'+v.name+'</button>').join('');}
+else{vs.classList.add('hidden')}renderCarousel();
+const di=document.getElementById('detailImages');
+if(p.detailImages&&p.detailImages.length)di.innerHTML=p.detailImages.map(u=>'<img src="'+u+'" loading="lazy">').join('');else di.innerHTML='';lucide.createIcons();}
+function renderCarousel(){const imgs=getCurrentImages();const track=document.getElementById('carouselTrack');const dots=document.getElementById('carouselDots');
+if(!imgs.length){track.innerHTML='';dots.innerHTML='';return}if(carouselIdx>=imgs.length)carouselIdx=0;
+track.innerHTML=imgs.map(u=>'<img src="'+u+'" loading="lazy">').join('');
+track.style.transform='translateX(-'+carouselIdx*100+'%)';
+dots.innerHTML=imgs.map((_,i)=>'<div class="carousel-dot '+(i===carouselIdx?'active':'')+'"></div>').join('');
+const tr=document.getElementById('thumbRow');tr.innerHTML=imgs.map((u,i)=>'<img src="'+u+'" class="'+(i===carouselIdx?'active':'')+'" onclick="goCarousel('+i+')">').join('');initCarouselSwipe();}
+window.selectVariant=function(i){currentVariantIdx=i;carouselIdx=0;renderDetail()};
+window.goCarousel=function(i){carouselIdx=i;renderCarousel()};
+function initCarouselSwipe(){const wrap=document.getElementById('carouselWrap');let sx=0,moving=false;
+wrap.ontouchstart=e=>{sx=e.touches[0].clientX;moving=true};
+wrap.ontouchend=e=>{if(!moving)return;moving=false;const dx=e.changedTouches[0].clientX-sx;const imgs=getCurrentImages();
+if(dx<-40&&carouselIdx<imgs.length-1)carouselIdx++;else if(dx>40&&carouselIdx>0)carouselIdx--;renderCarousel();};}
 
-        window.selectVariant = function(i) { currentVariantIdx = i; carouselIdx = 0; renderDetail(); };
-        window.goCarousel = function(i) { carouselIdx = i; renderCarousel(); };
-        window.nextSlide = function() { const imgs = getCurrentImages(); if(carouselIdx < imgs.length - 1) { carouselIdx++; renderCarousel(); } };
-        window.prevSlide = function() { if(carouselIdx > 0) { carouselIdx--; renderCarousel(); } };
-
-        function initCarouselSwipe() {
-            const wrap = document.getElementById('carouselWrap'); let sx = 0, moving = false;
-            wrap.ontouchstart = e => { sx = e.touches[0].clientX; moving = true; };
-            wrap.ontouchend = e => {
-                if(!moving) return; moving = false;
-                const dx = e.changedTouches[0].clientX-sx;
-                if(dx < -50) nextSlide(); else if(dx > 50) prevSlide();
-            };
-        }
-
-        window.openZoom = function(url) {
-            const modal = document.getElementById('zoomModal');
-            const img = document.getElementById('zoomImg');
-            img.src = url; modal.style.display = 'flex'; document.body.style.overflow = 'hidden';
-            zoomScale = 1; translateX = 0; translateY = 0;
-            img.style.transform = `translate(0px, 0px) scale(1)`;
-            initZoomGestures();
-        };
-
-        window.closeZoom = function() {
-            document.getElementById('zoomModal').style.display = 'none'; document.body.style.overflow = '';
-        };
-
-        function initZoomGestures() {
-            const view = document.getElementById('zoomViewport'); const img = document.getElementById('zoomImg'); let lastTap = 0;
-            view.onclick = function() {
-                const now = new Date().getTime();
-                if(now - lastTap < 300) {
-                    if (zoomScale > 1) { zoomScale = 1; translateX = 0; translateY = 0; } else { zoomScale = 2.5; }
-                    img.style.transition = 'transform 0.3s cubic-bezier(0.15, 0.85, 0.35, 1)';
-                    img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${zoomScale})`;
-                }
-                lastTap = now;
-            };
-            view.ontouchstart = function(e) {
-                if(zoomScale <= 1) return; img.style.transition = 'none';
-                startX = e.touches[0].clientX - translateX; startY = e.touches[0].clientY - translateY; isZoomed = true;
-            };
-            view.ontouchmove = function(e) {
-                if(!isZoomed) return;
-                translateX = e.touches[0].clientX - startX; translateY = e.touches[0].clientY - startY;
-                img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${zoomScale})`;
-            };
-            view.ontouchend = function() { isZoomed = false; };
-        }
-
-        window.toggleAdminModal = function() {
-            const modal = document.getElementById('adminModal'); const sidebar = document.getElementById('adminSidebar');
-            if(modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden'); setTimeout(() => sidebar.classList.remove('translate-x-full'), 10);
-            } else {
-                sidebar.classList.add('translate-x-full'); setTimeout(() => modal.classList.add('hidden'), 400);
-            }
-        };
-
-        window.switchAdminTab = function(tab) {
-            const pBtn = document.getElementById('tab-products'); const wBtn = document.getElementById('tab-widgets');
-            pBtn.className = tab==='products'?'admin-tab active bg-black text-white px-3 py-1.5 rounded text-[10px]':'admin-tab bg-neutral-100 text-neutral-400 px-3 py-1.5 rounded text-[10px]';
-            wBtn.className = tab==='widgets'?'admin-tab active bg-black text-white px-3 py-1.5 rounded text-[10px]':'admin-tab bg-neutral-100 text-neutral-400 px-3 py-1.5 rounded text-[10px]';
-            document.getElementById('adminProductSection').className = tab==='products'?'space-y-8':'hidden';
-            document.getElementById('adminWidgetSection').className = tab==='widgets'?'space-y-6':'hidden';
-            if(tab === 'widgets') renderAdminWidgetList();
-        };
-
-        window.addCategory = function() {
-            const v = document.getElementById('new_cat_name').value.trim(); if(!v || categories.includes(v)) return;
-            categories.push(v); document.getElementById('new_cat_name').value = ''; saveAll(); renderCategories();
-        };
-
-        window.removeCategory = function(cat) {
-            if(confirm(`确定裁撤并断开 "${cat}" 家具品类链条？`)){
-                categories = categories.filter(c => c !== cat); saveAll(); renderCategories();
-            }
-        };
-
-        window.addImageInput = function() {
-            const container = document.getElementById('imageInputs'); const input = document.createElement('input');
-            input.type = 'text'; input.placeholder = '拓展立体视角超链 URL...';
-            input.className = 'w-full border-b border-neutral-200 py-2 text-[11px] outline-none bg-transparent img-input';
-            container.appendChild(input);
-        };
-
-        window.addProduct = function() {
-            const name = document.getElementById('p_name').value.trim(); const price = document.getElementById('p_price').value;
-            const images = Array.from(document.querySelectorAll('.img-input')).map(i => i.value).filter(v => v);
-            if(!name || !price || !images.length) return alert('核心资产数据结构未闭环');
-            if(products.some(p => p.name === name)) return alert('在册库中已收录同名艺术单品');
-            
-            products.unshift({
-                id: Date.now(), name, price: Number(price), category: document.getElementById('p_category').value,
-                page: document.getElementById('p_page').value, images, tags: 'NEW', description: '', variants: [], detailImages: [], year: document.getElementById('p_year') ? document.getElementById('p_year').value : ''
-            });
-            document.getElementById('p_name').value = ''; document.getElementById('p_price').value = '';
-            document.getElementById('imageInputs').innerHTML = '<input type="text" placeholder="主图主轴超链 URL" class="w-full border-b border-neutral-200 py-2 text-[11px] outline-none bg-transparent img-input">';
-            saveAll(); renderProducts(); toggleAdminModal();
-        };
-
-        window.deleteProduct = function(id) {
-            if(confirm('确认从数字化图册资产中安全除名本款产品？')) { products = products.filter(p => p.id !== id); saveAll(); renderProducts(); }
-        };
-
+window.addCategory = function() { const v=document.getElementById('new_cat_name').value.trim();if(!v||categories.includes(v))return;categories.push(v);document.getElementById('new_cat_name').value='';saveAll();renderCategories(); };
+        window.removeCategory = function(cat) { if(confirm('确定删除分类 "'+cat+'"？')){categories=categories.filter(c=>c!==cat);saveAll();renderCategories();} };
+        window.addProduct = function() { const name=document.getElementById('p_name').value.trim(),price=document.getElementById('p_price').value,images=Array.from(document.querySelectorAll('.img-input')).map(i=>i.value).filter(v=>v);if(!name||!price||!images.length)return alert('信息不完整');if(products.some(p=>p.name===name))return alert('作品名重复');products.unshift({id:Date.now(),name,price,category:document.getElementById('p_category').value,page:document.getElementById('p_page').value,images,tags:'NEW'});saveAll();renderProducts();toggleAdminModal(); };
+        let editingId = null;
         window.editProduct = function(id) {
-            const p = products.find(x => x.id === id);
-            if (!p) return;
-            document.getElementById('p_name').value = p.name || '';
-            document.getElementById('p_price').value = p.price || '';
-            document.getElementById('p_category').value = p.category || '';
-            document.getElementById('p_page').value = p.page || '首页';
-            document.getElementById('p_year').value = p.year || '';
-            document.getElementById('p_tags').value = (p.tags || []).join(', ');
-            const btn = document.querySelector('button[onclick]');
-            document.querySelectorAll('.admin-add-btn').forEach(b => { b.textContent = '✏️ 更新产品资料'; b.dataset.editId = id; b.onclick = function() { updateProduct(id); }; });
-            document.getElementById('adminSidebar').scrollTop = 0;
+            editingId = id;
+            renderAdminList();
         };
-
-        window.updateProduct = function(id) {
-            const name = document.getElementById('p_name').value.trim();
-            const price = document.getElementById('p_price').value;
-            const category = document.getElementById('p_category').value;
-            const page = document.getElementById('p_page').value;
-            const year = document.getElementById('p_year').value;
-            const tags = document.getElementById('p_tags').value.split(',').map(t => t.trim()).filter(Boolean);
-            if (!name) return alert('请填写产品名称');
-            const idx = products.findIndex(x => x.id === id);
-            if (idx === -1) return;
-            products[idx] = { ...products[idx], name, price, category, page, year, tags };
-            saveAll(); renderProducts(); renderAdminProductList();
-            document.querySelectorAll('.admin-add-btn').forEach(b => { b.textContent = '收录至线上图册'; b.onclick = addProduct; });
+        window.cancelEdit = function() {
+            editingId = null;
+            renderAdminList();
         };
-
-        function renderAdminProductList() {
-            const container = document.getElementById('adminList'); if(!container) return;
-            container.innerHTML = products.map(p => `
-                <div class="flex items-center justify-between p-3 bg-neutral-50 rounded border border-neutral-100 text-xs font-light">
-                    <div class="flex items-center gap-3">
-                        <img src="${p.images[0]}" class="w-8 h-8 object-contain rounded bg-white border">
-                        <div>
-                            <p class="font-normal text-neutral-800">${p.name}</p>
-                            <p class="text-neutral-400 text-[10px]">${p.category} · ¥${Number(p.price).toLocaleString()}</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-2"><button onclick="editProduct(${p.id})" class="text-neutral-400 hover:text-neutral-800 transition-colors p-1"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button><button onclick="deleteProduct(${p.id})" class="text-neutral-400 hover:text-red-500 transition-colors p-1"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button></div>
-                </div>
-            `).join(''); lucide.createIcons();
-        }
-
-        window.previewWidget = function() {
-            const code = document.getElementById('w_code').value; const prev = document.getElementById('widgetPreview');
-            prev.innerHTML = code; prev.classList.remove('hidden');
+        window.saveEdit = function(id) {
+            const p = products.find(x => x.id === id); if (!p) return;
+            p.name = document.getElementById('edit_name').value.trim();
+            p.price = document.getElementById('edit_price').value;
+            p.category = document.getElementById('edit_cat').value;
+            p.page = document.getElementById('edit_page').value;
+            p.tags = document.getElementById('edit_tags').value;
+            const imgs = Array.from(document.querySelectorAll('.edit-img-input')).map(i=>i.value).filter(v=>v);
+            if (imgs.length) p.images = imgs;
+            editingId = null;
+            saveAll(); renderAdminList(); renderProducts();
         };
-
-        window.addWidget = function() {
-            const name = document.getElementById('w_name').value.trim(); const position = document.getElementById('w_position').value; const code = document.getElementById('w_code').value;
-            if(!name || !code) return alert('基础校验未配齐');
-            widgets.push({ id: Date.now(), name, position, code });
-            document.getElementById('w_name').value = ''; document.getElementById('w_code').value = '';
-            document.getElementById('widgetPreview').classList.add('hidden');
-            saveAll(); renderWidgets(); renderAdminWidgetList();
+        window.addEditImageInput = function() {
+            const d = document.createElement('div'); d.className='flex gap-2';
+            d.innerHTML='<input type="text" placeholder="视角 URL" class="w-full border-b bg-transparent py-1 text-xs outline-none edit-img-input"><button onclick="this.parentElement.remove()" class="text-red-400 text-xs">✕</button>';
+            document.getElementById('edit_images').appendChild(d);
         };
-
-        window.deleteWidget = function(id) {
-            if(confirm('确认裁撤本款首页拓展架构模块？')) { widgets = widgets.filter(w => w.id !== id); saveAll(); renderWidgets(); renderAdminWidgetList(); }
-        };
-
-        function renderWidgets() {
-            const container = document.getElementById('widgetContainer'); if(!container) return;
-            container.innerHTML = widgets.map(w => `<div class="mb-8 rounded-sm overflow-hidden">${w.code}</div>`).join('');
-        }
-
-        function renderAdminWidgetList() {
-            const container = document.getElementById('adminWidgetList'); if(!container) return;
-            if(!widgets.length) { container.innerHTML = '<p class="text-center text-xs text-neutral-300 py-4 font-light">空转状态，未挂载组件</p>'; return; }
-            container.innerHTML = widgets.map(w => `
-                <div class="flex items-center justify-between p-3 bg-neutral-50 border border-neutral-100 rounded text-xs font-light">
-                    <div>
-                        <p class="text-neutral-800 font-normal">${w.name}</p>
-                        <p class="text-neutral-400 text-[10px]">HOOK: ${w.position}</p>
-                    </div>
-                    <button onclick="deleteWidget(${w.id})" class="text-neutral-400 hover:text-red-500 transition-colors p-1"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button>
-                </div>
-            `).join(''); lucide.createIcons();
-        }
-
-        window.exportToExcel = function() {
-            let csv = "\uFEFFid,name,price,category,page,images,tags\n";
-            products.forEach(p => { const imgs = p.images ? p.images.join(';') : ''; csv += `${p.id},"${p.name.replace(/"/g, '""')}",${p.price},"${p.category}","${p.page}","${imgs}","${p.tags||''}"\n`; });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob); link.setAttribute("download", `SHANYAO_Asset_${new Date().toISOString().split('T')[0]}.csv`);
-            document.body.appendChild(link); link.click(); document.body.removeChild(link);
-        };
-
-        window.importFromExcel = function(event) {
-            const file = event.target.files[0]; if(!file) return; const reader = new FileReader();
-            reader.onload = function(e) {
-                const text = e.target.result; const lines = text.split('\n'); const newProducts = [];
-                for(let i = 1; i < lines.length; i++) {
-                    if(!lines[i].trim()) continue; const parts = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    if(parts.length >= 6) {
-                        const id = parts[0].trim() || Date.now() + i; const name = parts[1].replace(/^"|"$/g, '').trim(); const price = Number(parts[2]) || 0;
-                        const category = parts[3].replace(/^"|"$/g, '').trim(); const page = parts[4].replace(/^"|"$/g, '').trim();
-                        const images = parts[5].replace(/^"|"$/g, '').trim().split(';'); const tags = parts[6] ? parts[6].replace(/^"|"$/g, '').trim() : 'NEW';
-                        newProducts.push({ id: Number(id), name, price, category, page, images, tags });
-                    }
+        function renderAdminList() {
+            document.getElementById('adminList').innerHTML = products.map(p => {
+                if (editingId === p.id) {
+                    return '<div class="p-4 bg-yellow-50/50 border border-yellow-200/50 rounded-lg space-y-3 fade-up">' +
+                    '<div class="flex justify-between items-center mb-2"><span class="text-[10px] font-bold text-yellow-700 uppercase tracking-widest">编辑模式</span><div class="flex gap-2"><button onclick="cancelEdit()" class="text-xs px-3 py-1 border rounded hover:bg-black/5">取消</button><button onclick="saveEdit('+p.id+')" class="text-xs px-3 py-1 bg-black text-white rounded">保存</button></div></div>' +
+                    '<input id="edit_name" value="'+p.name+'" class="w-full border-b py-2 text-sm outline-none bg-transparent" placeholder="名称">' +
+                    '<div class="grid grid-cols-2 gap-3">' +
+                    '<select id="edit_cat" class="border-b py-2 outline-none bg-transparent text-sm">' + categories.map(c => '<option value="'+c+'" '+(c===p.category?'selected':'')+'>'+c+'</option>').join('') + '</select>' +
+                    '<input id="edit_price" value="'+p.price+'" class="border-b bg-transparent py-2 outline-none text-sm" placeholder="价格">' +
+                    '</div>' +
+                    '<div class="grid grid-cols-2 gap-3">' +
+                    '<select id="edit_page" class="border-b py-2 outline-none bg-transparent text-sm"><option value="首页" '+(p.page!=='灵感'?'selected':'')+'>首页</option><option value="灵感" '+(p.page==='灵感'?'selected':'')+'>灵感</option></select>' +
+                    '<input id="edit_tags" value="'+(p.tags||'')+'" class="border-b bg-transparent py-2 outline-none text-sm" placeholder="标签(NEW/HOT)">' +
+                    '</div>' +
+                    '<div id="edit_images" class="space-y-2">' + p.images.map((img,i) => '<div class="flex gap-2"><input value="'+img+'" class="w-full border-b bg-transparent py-1 text-xs outline-none edit-img-input"><button onclick="this.parentElement.remove()" class="text-red-400 text-xs flex-shrink-0">✕</button></div>').join('') + '</div>' +
+                    '<button onclick="addEditImageInput()" class="text-[10px] font-bold opacity-40 hover:opacity-100 flex items-center gap-1"><i data-lucide="plus" class="w-3 h-3"></i> 添加图片</button>' +
+                    '</div>';
                 }
-                if(newProducts.length) { if(confirm(`解析成功，安全注入覆盖 ${newProducts.length} 门在册家具资产？`)) { products = newProducts; saveAll(); renderProducts(); } }
-            }; reader.readAsText(file, 'utf-8');
-        };
+                return '<div class="flex items-center justify-between p-3 bg-black/[0.03] rounded-lg group">' +
+                '<div class="flex items-center gap-3 flex-1 min-w-0">' +
+                '<img src="'+p.images[0]+'" class="w-12 h-12 object-cover rounded-md flex-shrink-0">' +
+                '<div class="text-xs min-w-0"><p class="font-bold truncate">'+p.name+'</p><p class="opacity-40 uppercase tracking-tighter">'+p.category+' \xb7 '+(p.page||'首页')+' \xb7 ¥'+Number(p.price).toLocaleString()+'</p></div></div>' +
+                '<div class="flex gap-1 flex-shrink-0">' +
+                '<button onclick="editProduct('+p.id+')" class="p-2 hover:bg-blue-50 rounded text-blue-400 opacity-0 group-hover:opacity-100 transition-all" title="编辑"><i data-lucide="pencil" class="w-4 h-4"></i></button>' +
+                '<button onclick="deleteProduct('+p.id+')" class="p-2 hover:bg-red-50 rounded text-red-400" title="删除"><i data-lucide="trash-2" class="w-4 h-4"></i></button>' +
+                '</div></div>';
+            }).join('');
+            lucide.createIcons();
+        }
+        window.deleteProduct = function(id) { if(confirm('删除作品？')){products=products.filter(p=>p.id!==id);saveAll();renderAdminList();renderProducts();} };
+        window.addImageInput = function() { const d=document.createElement('div');d.className='flex gap-2 fade-up';d.innerHTML='<input type="text" placeholder="视角 URL" class="w-full border-b bg-transparent py-2 text-xs outline-none img-input">';document.getElementById('imageInputs').appendChild(d); };
+        document.getElementById('searchInput').oninput = (e) => { currentSearch=e.target.value; renderProducts(); };
 
-        window.addEventListener('DOMContentLoaded', () => { fetchProducts(); lucide.createIcons(); });
+        // --- Widgets ---
+        window.switchAdminTab = function(tab) {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('adminWidgetSection').classList.toggle('hidden', tab !== 'widgets');
+            document.getElementById('adminProductSection').classList.toggle('hidden', tab !== 'products');
+            // Also hide the category and new product sections when on widgets tab
+            document.getElementById('adminProductSection').previousElementSibling?.classList?.toggle('hidden', tab === 'widgets');
+            if (tab === 'widgets') {
+                // Hide product-related admin sections
+                const sections = document.querySelectorAll('#adminSidebar .flex-1 section');
+                sections.forEach((s, i) => {
+                    if (i < 2) s.style.display = tab === 'widgets' ? 'none' : '';
+                });
+                renderAdminWidgetList();
+            } else {
+                const sections = document.querySelectorAll('#adminSidebar .flex-1 section');
+                sections.forEach(s => s.style.display = '');
+            }
+        };
+        window.previewWidget = function() {
+            const code = document.getElementById('w_code').value.trim();
+            const preview = document.getElementById('widgetPreview');
+            if (!code) { preview.classList.add('hidden'); return; }
+            // Use iframe for safe preview
+            preview.classList.remove('hidden');
+            preview.innerHTML = '<iframe id="widgetPreviewFrame" style="width:100%;border:none;min-height:100px"></iframe>';
+            const iframe = document.getElementById('widgetPreviewFrame');
+            iframe.srcdoc = '<!DOCTYPE html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"><style>body{font-family:Inter,sans-serif;margin:0;padding:8px;}</style></head><body>' + code + '</body></html>';
+            // Auto-resize iframe
+            iframe.onload = () => { iframe.style.height = iframe.contentDocument.body.scrollHeight + 16 + 'px'; };
+        };
+        window.addWidget = function() {
+            const name = document.getElementById('w_name').value.trim();
+            const code = document.getElementById('w_code').value.trim();
+            const position = document.getElementById('w_position').value;
+            if (!name || !code) return alert('请填写名称和代码');
+            widgets.push({ id: Date.now(), name, code, position, enabled: true, createdAt: new Date().toISOString() });
+            document.getElementById('w_name').value = '';
+            document.getElementById('w_code').value = '';
+            document.getElementById('widgetPreview').classList.add('hidden');
+            saveAll();
+            renderWidgets();
+            renderAdminWidgetList();
+        };
+        window.deleteWidget = function(id) {
+            if (!confirm('删除此小工具？')) return;
+            widgets = widgets.filter(w => w.id !== id);
+            saveAll();
+            renderWidgets();
+            renderAdminWidgetList();
+        };
+        window.toggleWidget = function(id) {
+            const w = widgets.find(x => x.id === id);
+            if (w) w.enabled = !w.enabled;
+            saveAll();
+            renderWidgets();
+            renderAdminWidgetList();
+        };
+        window.editWidget = function(id) {
+            const w = widgets.find(x => x.id === id);
+            if (!w) return;
+            document.getElementById('w_name').value = w.name;
+            document.getElementById('w_code').value = w.code;
+            document.getElementById('w_position').value = w.position;
+            // Remove old and let user re-add
+            widgets = widgets.filter(x => x.id !== id);
+            saveAll();
+            renderWidgets();
+            renderAdminWidgetList();
+        };
+        function renderWidgets() {
+            const container = document.getElementById('widgetContainer');
+            if (!container) return;
+            const enabled = widgets.filter(w => w.enabled);
+            if (!enabled.length) { container.innerHTML = ''; return; }
+            container.innerHTML = enabled.map(w =>
+                '<div class="widget-card" data-widget-id="'+w.id+'">' + w.code + '</div>'
+            ).join('');
+        }
+        function renderAdminWidgetList() {
+            const list = document.getElementById('adminWidgetList');
+            if (!list) return;
+            if (!widgets.length) { list.innerHTML = '<p class="text-xs opacity-30 italic">暂无小工具</p>'; return; }
+            list.innerHTML = widgets.map(w =>
+                '<div class="flex items-center justify-between p-3 bg-black/[0.03] rounded-lg group">' +
+                '<div class="flex items-center gap-3 flex-1 min-w-0">' +
+                '<div class="text-xs min-w-0"><p class="font-bold truncate">' + w.name + '</p>' +
+                '<p class="opacity-40 text-[10px]">' + ({top:'顶部横幅',between:'产品之间',bottom:'底部区域'}[w.position]||w.position) + ' · ' + (w.enabled ? '✅ 启用' : '⏸ 停用') + '</p></div></div>' +
+                '<div class="flex gap-1 flex-shrink-0">' +
+                '<button onclick="toggleWidget('+w.id+')" class="p-2 hover:bg-green-50 rounded text-green-500" title="'+(w.enabled?'停用':'启用')+'"><i data-lucide="'+(w.enabled?'eye':'eye-off')+'" class="w-4 h-4"></i></button>' +
+                '<button onclick="editWidget('+w.id+')" class="p-2 hover:bg-blue-50 rounded text-blue-400 opacity-0 group-hover:opacity-100 transition-all" title="编辑"><i data-lucide="pencil" class="w-4 h-4"></i></button>' +
+                '<button onclick="deleteWidget('+w.id+')" class="p-2 hover:bg-red-50 rounded text-red-400" title="删除"><i data-lucide="trash-2" class="w-4 h-4"></i></button>' +
+                '</div></div>'
+            ).join('');
+            lucide.createIcons();
+        }
+
+        // --- Init ---
+        window.onload = () => { fetchProducts(); lucide.createIcons(); };
     </script>
+
+    <!-- 手机端底部导航 -->
+    <nav class="mobile-nav">
+        <a href="#" onclick="goHome(event)" class="active"><i data-lucide="home"></i><span>首页</span></a>
+        <a href="inspiration.html"><i data-lucide="sparkles"></i><span>灵感</span></a>
+        <a href="#" onclick="handleAdminAccess()"><i data-lucide="settings"></i><span>管理</span></a>
+    </nav>
+
 </body>
 </html>
