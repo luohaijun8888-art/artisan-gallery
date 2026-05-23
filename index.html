@@ -158,6 +158,11 @@
             </div>
         </header>
 
+        <!-- 年份筛选轴 -->
+        <div class="relative mb-6 fade-up" style="animation-delay:0.05s">
+            <div id="yearContainer" class="flex overflow-x-auto gap-6 no-scrollbar pb-1 touch-pan-x text-xs tracking-[0.12em] text-neutral-400"></div>
+        </div>
+
         <!-- 诗意分类轴 -->
         <div class="relative mb-12 md:mb-16 fade-up" style="animation-delay:0.1s">
             <div id="categoryContainer" class="flex overflow-x-auto gap-8 no-scrollbar pb-2 touch-pan-x text-xs uppercase tracking-[0.15em] text-neutral-400"></div>
@@ -290,7 +295,10 @@
                         <div class="grid grid-cols-2 gap-4">
                             <select id="p_category" class="border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent text-neutral-500"></select>
                             <input type="number" id="p_price" placeholder="高定定价 (¥)" class="border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent">
+                            <input type="text" id="p_year" placeholder="年份" class="border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent">
+                            <input type="text" id="p_tags" placeholder="标签（逗号分隔）" class="w-full border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent">
                         </div>
+                        <input type="text" id="p_year" placeholder="年份 (如 2025, 留空=不分类)" class="w-full border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent text-neutral-500">
                         <select id="p_page" class="w-full border-b border-neutral-200 py-2.5 outline-none text-xs bg-transparent text-neutral-500">
                             <option value="首页">📄 投放至主页大厅</option>
                             <option value="灵感">💡 归档至灵感图集</option>
@@ -299,7 +307,7 @@
                             <input type="text" placeholder="主图主轴超链 URL" class="w-full border-b border-neutral-200 py-2 text-[11px] outline-none bg-transparent img-input">
                         </div>
                         <button onclick="addImageInput()" class="text-[10px] font-medium text-neutral-400 hover:text-black flex items-center gap-1.5 pt-1 transition-colors"><i data-lucide="plus" class="w-3 h-3"></i> 拓展多维透视立体视角</button>
-                        <button onclick="addProduct()" class="w-full bg-neutral-950 text-white py-3.5 mt-4 hover:bg-neutral-800 transition-all font-medium tracking-[0.15em] uppercase text-[10px] rounded-sm">收录至线上图册</button>
+                        <button onclick="addProduct()" class="admin-add-btn w-full bg-neutral-950 text-white py-3.5 mt-4 hover:bg-neutral-800 transition-all font-medium tracking-[0.15em] uppercase text-[10px] rounded-sm">收录至线上图册</button>
                     </section>
 
                     <section class="space-y-3">
@@ -355,6 +363,7 @@
         let categories = ["餐台", "茶几", "餐椅", "床", "书架"];
         let products = [];
         let widgets = [];
+        let currentYear = 'all';
         let currentCategory = 'all';
         let currentSearch = '';
 
@@ -396,6 +405,7 @@
                 products = JSON.parse(localStorage.getItem('furniture_gallery_db')) || [];
                 widgets = JSON.parse(localStorage.getItem('artisan_widgets')) || [];
             }
+            renderYearFilter();
             renderCategories();
             renderProducts();
             renderWidgets();
@@ -465,6 +475,7 @@
         document.getElementById('adminPasswordInput').onkeypress = (e) => { if (e.key === 'Enter') verifyAdmin(); };
 
         window.goHome = function(e) { if(e) e.preventDefault(); closeDetail(); window.scrollTo({top:0, behavior:'smooth'}); };
+        window.setYear = function(yr) { currentYear = yr; renderYearFilter(); renderProducts(); };
         window.setCategory = function(cat) { currentCategory = cat; renderCategories(); renderProducts(); };
         window.handleSearch = function(val) { currentSearch = val.trim(); renderProducts(); };
 
@@ -484,7 +495,7 @@
 
         function renderProducts() {
             const grid = document.getElementById('productGrid');
-            const filtered = products.filter(p => (currentCategory==='all' || p.category===currentCategory) && p.name.toLowerCase().includes(currentSearch.toLowerCase()) && p.page!=='灵感');
+            const filtered = products.filter(p => (currentCategory==='all' || p.category===currentCategory) && (currentYear==='all' || (p.year||'')===currentYear) && p.name.toLowerCase().includes(currentSearch.toLowerCase()) && p.page!=='灵感');
             if(!filtered.length) { grid.innerHTML = '<div class="col-span-full py-24 text-center opacity-20 text-xs tracking-widest font-light italic">未探寻到相关艺术作品</div>'; return; }
             
             grid.innerHTML = filtered.map((p,idx) => `
@@ -524,6 +535,14 @@
             document.getElementById('detailTopTitle').textContent = `COLLECTION / ${p.category}`;
             window.scrollTo(0,0); renderDetail();
         };
+
+        function renderYearFilter() {
+            const c = document.getElementById('yearContainer'); if(!c) return;
+            const years = [...new Set(products.map(p => p.year).filter(Boolean))].sort().reverse();
+            let h = '<button onclick="setYear('all')" class="category-pill ' + (currentYear==='all'?'active':'') + ' font-light">ALL / 全部</button>';
+            h += years.map(y => '<button onclick="setYear('' + y + '')" class="category-pill ' + (currentYear===y?'active':'') + ' font-light">' + y + '</button>').join('');
+            c.innerHTML = h;
+        }
 
         window.closeDetail = function() {
             document.getElementById('detailPage').classList.add('hidden');
@@ -679,7 +698,7 @@
             
             products.unshift({
                 id: Date.now(), name, price: Number(price), category: document.getElementById('p_category').value,
-                page: document.getElementById('p_page').value, images, tags: 'NEW', description: '', variants: [], detailImages: []
+                page: document.getElementById('p_page').value, images, tags: 'NEW', description: '', variants: [], detailImages: [], year: document.getElementById('p_year') ? document.getElementById('p_year').value : ''
             });
             document.getElementById('p_name').value = ''; document.getElementById('p_price').value = '';
             document.getElementById('imageInputs').innerHTML = '<input type="text" placeholder="主图主轴超链 URL" class="w-full border-b border-neutral-200 py-2 text-[11px] outline-none bg-transparent img-input">';
@@ -688,6 +707,35 @@
 
         window.deleteProduct = function(id) {
             if(confirm('确认从数字化图册资产中安全除名本款产品？')) { products = products.filter(p => p.id !== id); saveAll(); renderProducts(); }
+        };
+
+        window.editProduct = function(id) {
+            const p = products.find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('p_name').value = p.name || '';
+            document.getElementById('p_price').value = p.price || '';
+            document.getElementById('p_category').value = p.category || '';
+            document.getElementById('p_page').value = p.page || '首页';
+            document.getElementById('p_year').value = p.year || '';
+            document.getElementById('p_tags').value = (p.tags || []).join(', ');
+            const btn = document.querySelector('button[onclick]');
+            document.querySelectorAll('.admin-add-btn').forEach(b => { b.textContent = '✏️ 更新产品资料'; b.dataset.editId = id; b.onclick = function() { updateProduct(id); }; });
+            document.getElementById('adminSidebar').scrollTop = 0;
+        };
+
+        window.updateProduct = function(id) {
+            const name = document.getElementById('p_name').value.trim();
+            const price = document.getElementById('p_price').value;
+            const category = document.getElementById('p_category').value;
+            const page = document.getElementById('p_page').value;
+            const year = document.getElementById('p_year').value;
+            const tags = document.getElementById('p_tags').value.split(',').map(t => t.trim()).filter(Boolean);
+            if (!name) return alert('请填写产品名称');
+            const idx = products.findIndex(x => x.id === id);
+            if (idx === -1) return;
+            products[idx] = { ...products[idx], name, price, category, page, year, tags };
+            saveAll(); renderProducts(); renderAdminProductList();
+            document.querySelectorAll('.admin-add-btn').forEach(b => { b.textContent = '收录至线上图册'; b.onclick = addProduct; });
         };
 
         function renderAdminProductList() {
@@ -701,7 +749,7 @@
                             <p class="text-neutral-400 text-[10px]">${p.category} · ¥${Number(p.price).toLocaleString()}</p>
                         </div>
                     </div>
-                    <button onclick="deleteProduct(${p.id})" class="text-neutral-400 hover:text-red-500 transition-colors p-1"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button>
+                    <div class="flex gap-2"><button onclick="editProduct(${p.id})" class="text-neutral-400 hover:text-neutral-800 transition-colors p-1"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button><button onclick="deleteProduct(${p.id})" class="text-neutral-400 hover:text-red-500 transition-colors p-1"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button></div>
                 </div>
             `).join(''); lucide.createIcons();
         }
