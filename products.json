@@ -11,6 +11,20 @@
   ],
   "products": [
     {
+      "id": 1779500540154,
+      "name": "7",
+      "price": 7,
+      "category": "餐台",
+      "page": "灵感",
+      "images": [
+        "7"
+      ],
+      "tags": "NEW",
+      "description": "",
+      "variants": [],
+      "detailImages": []
+    },
+    {
       "id": 1779444238158,
       "name": "6",
       "price": "6",
@@ -1069,5 +1083,6 @@
       ],
       "detailImages": []
     }
-  ]
+  ],
+  "widgets": []
 }
