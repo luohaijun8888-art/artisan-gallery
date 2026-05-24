@@ -244,7 +244,7 @@
                         
                         <!-- 缩小 30% 并完整展示的产品实景 -->
                         <div class="w-[70%] h-[70%] flex items-center justify-center">
-                            <img src="${p.images[0] || p.img}" class="max-w-full max-h-full object-contain drop-shadow-2xl" loading="lazy" onload="console.log('Image loaded:', this.src)" onerror="console.error('Image failed:', this.src); this.style.border='2px solid red'; this.parentElement.innerHTML='<div style=\'color:red;padding:20px;text-align:center\'>图片加载失败<br>'+this.src.split('/').pop()+'</div>'">
+                            <img src="${p.images[0] || p.img}" class="max-w-full max-h-full object-contain drop-shadow-2xl" onload="console.log('Image loaded:', this.src)" onerror="console.error('Image failed:', this.src); this.style.border='2px solid red'; this.parentElement.innerHTML='<div style=\'color:red;padding:20px;text-align:center\'>图片加载失败<br>'+this.src.split('/').pop()+'</div>'">
                         </div>
 
                         <!-- 类别角标 -->
@@ -302,7 +302,7 @@
             
             waterfall.innerHTML = detailImgs.map(img => `
                 <div class="bg-[#1C1B20] p-6 rounded-xl border border-white/5 shadow-xl mb-4 flex items-center justify-center">
-                    <img src="${img}" class="w-[85%] h-auto object-contain drop-shadow-md" loading="lazy">
+                    <img src="${img}" class="w-[85%] h-auto object-contain drop-shadow-md">
                 </div>
             `).join('');
             
