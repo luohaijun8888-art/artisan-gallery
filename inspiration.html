@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SHANYAO | 3D 艺术画廊 · 旗舰环幕</title>
+    <title>SHANYAO | 3D 艺术画廊 · 全图环幕</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Noto+Serif+SC:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -56,7 +56,7 @@
             opacity: 0.65;
         }
 
-        /* 卡片样式：全幅图片覆盖 */
+        /* 卡片样式：保证图片完整显示，不裁剪 */
         .card {
             position: absolute; 
             top: 50%;
@@ -117,21 +117,24 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
+        /* 核心修改：图片完整显示，使用 contain 保持全图可见，背景填充深色衬底 */
         .card-img-full {
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            background: #0a090c;
             transition: transform 0.4s ease-out;
             z-index: 0;
             pointer-events: none;
             user-drag: none;
             -webkit-user-drag: none;
+            padding: 8px;
         }
         
         .card:hover .card-img-full {
-            transform: scale(1.03);
+            transform: scale(1.01);
         }
         
         .card-content-overlay {
@@ -141,7 +144,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.45) 35%, rgba(0,0,0,0.85) 100%);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0.8) 100%);
             border-radius: 28px;
             pointer-events: none;
         }
@@ -188,6 +191,7 @@
             .card-category { top: 14px; right: 14px; padding: 4px 10px; font-size: 8px; }
             .card-title-bottom h3 { font-size: 0.85rem; letter-spacing: 0.15em; }
             .card-title-bottom { padding: 24px 15px 18px 15px; }
+            .card-img-full { padding: 4px; }
         }
         
         #carousel {
@@ -198,43 +202,6 @@
             align-items: center;
             justify-content: center;
         }
-        
-        /* 左右箭头 */
-        .nav-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 56px;
-            height: 56px;
-            background: rgba(20, 20, 28, 0.75);
-            backdrop-filter: blur(12px);
-            border-radius: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 60;
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.35);
-            pointer-events: auto;
-        }
-        .nav-arrow:hover {
-            background: rgba(204, 153, 51, 0.85);
-            border-color: rgba(255,215,0,0.6);
-            transform: translateY(-50%) scale(1.08);
-            box-shadow: 0 0 18px rgba(204,153,51,0.5);
-        }
-        .nav-arrow:active { transform: translateY(-50%) scale(0.96); }
-        .nav-arrow.left { left: 28px; }
-        .nav-arrow.right { right: 28px; }
-        @media (max-width: 768px) {
-            .nav-arrow { width: 44px; height: 44px; }
-            .nav-arrow.left { left: 12px; }
-            .nav-arrow.right { right: 12px; }
-        }
-        .nav-arrow svg { width: 28px; height: 28px; stroke: #f0f0f0; stroke-width: 1.8; }
-        .nav-arrow:hover svg { stroke: #1a1a1a; }
         
         /* 详情页图片样式：宽度填满，高度自适应比例 */
         #detailPage .detail-image-grid {
@@ -282,7 +249,7 @@
             .detail-hero-wrapper { padding: 1rem; }
         }
         
-        /* 返回首页按钮 - 新位置：中下区域 (右下角移至 中下) */
+        /* 返回首页按钮 - 中下位置 */
         .back-home-btn {
             position: fixed;
             bottom: 28px;
@@ -325,7 +292,7 @@
 
     <div class="backdrop-dim" id="backdropDim" onclick="closeDetail()"></div>
 
-    <!-- 返回首页按钮：已移至中下位置 -->
+    <!-- 返回首页按钮：中下位置，无左右箭头 -->
     <a href="index.html" class="back-home-btn" id="backHomeBtn">
         <i data-lucide="home" class="w-3.5 h-3.5"></i>
         <span>返回首页</span>
@@ -334,17 +301,6 @@
     <div class="absolute top-8 left-1/2 -translate-x-1/2 z-20 text-center pointer-events-none">
         <h2 class="text-[10px] uppercase tracking-[0.4em] text-[#CC9933] font-semibold mb-2 opacity-80">AESTHETIC SCENE</h2>
         <h1 class="text-xl md:text-2xl font-light tracking-[0.25em] text-white/95">SHANYAO GALLERY</h1>
-    </div>
-
-    <div class="nav-arrow left" id="prevArrow">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-        </svg>
-    </div>
-    <div class="nav-arrow right" id="nextArrow">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
     </div>
 
     <div class="scene" id="scene">
@@ -582,39 +538,20 @@
         
         function bindDragEvents() {
             window.addEventListener('mousedown', (e) => {
-                if (e.target.closest('.nav-arrow') || e.target.closest('#backHomeBtn')) return;
+                if (e.target.closest('#backHomeBtn')) return;
                 onPointerStart(e.clientX);
                 e.preventDefault();
             });
             window.addEventListener('mousemove', (e) => { if (isDraggingActive) { e.preventDefault(); onPointerMove(e.clientX); } });
             window.addEventListener('mouseup', () => { if (isDraggingActive) onPointerEnd(); });
             window.addEventListener('touchstart', (e) => {
-                if (e.target.closest('.nav-arrow') || e.target.closest('#backHomeBtn')) return;
+                if (e.target.closest('#backHomeBtn')) return;
                 if (e.touches.length) { onPointerStart(e.touches[0].clientX); e.preventDefault(); }
             }, { passive: false });
             window.addEventListener('touchmove', (e) => {
                 if (isDraggingActive && e.touches.length) { e.preventDefault(); onPointerMove(e.touches[0].clientX); }
             }, { passive: false });
             window.addEventListener('touchend', () => { if (isDraggingActive) onPointerEnd(); });
-        }
-        
-        function initArrowControls() {
-            const prevBtn = document.getElementById('prevArrow');
-            const nextBtn = document.getElementById('nextArrow');
-            prevBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (isDetailOpen) return;
-                targetOffset -= 1;
-                autoRotateActive = false;
-                setTimeout(() => { if (!isDraggingActive) autoRotateActive = true; }, 500);
-            });
-            nextBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (isDetailOpen) return;
-                targetOffset += 1;
-                autoRotateActive = false;
-                setTimeout(() => { if (!isDraggingActive) autoRotateActive = true; }, 500);
-            });
         }
         
         function init() {
@@ -625,7 +562,6 @@
             bindDragEvents();
             animate();
             startAutoRotate();
-            initArrowControls();
             lucide.createIcons();
         }
         
