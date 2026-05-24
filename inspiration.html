@@ -193,20 +193,28 @@
         }
 
         async function fetchProducts() {
+            console.log('fetchProducts starting...');
             try {
                 const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
                 if (EMBEDDED_TOKEN) headers['Authorization'] = 'Bearer ' + EMBEDDED_TOKEN;
                 const res = await fetch(GITHUB_API, { headers, cache: 'no-store' });
+                console.log('GitHub API response:', res.status);
                 if (!res.ok) throw new Error('云端获取失败');
                 const data = await res.json();
                 const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
                 allProducts = content.products || [];
+                console.log('Loaded products:', allProducts.length);
             } catch(e) {
+                console.error('fetchProducts error:', e);
                 const cached = getSafeLocalStorage('furniture_gallery_db');
                 allProducts = cached ? JSON.parse(cached) : [];
             }
             
             inspirationProducts = allProducts.filter(p => (p.page || '首页') === '灵感');
+            console.log('Inspiration products:', inspirationProducts.length);
+            if (inspirationProducts.length > 0) {
+                console.log('First product:', inspirationProducts[0].name, 'images:', inspirationProducts[0].images ? inspirationProducts[0].images[0] : 'no images');
+            }
             
             if(inspirationProducts.length === 0) {
                 inspirationProducts = [
@@ -236,7 +244,7 @@
                         
                         <!-- 缩小 30% 并完整展示的产品实景 -->
                         <div class="w-[70%] h-[70%] flex items-center justify-center">
-                            <img src="${p.images[0] || p.img}" class="max-w-full max-h-full object-contain drop-shadow-2xl" loading="lazy">
+                            <img src="${p.images[0] || p.img}" class="max-w-full max-h-full object-contain drop-shadow-2xl" loading="lazy" onload="console.log('Image loaded:', this.src)" onerror="console.error('Image failed:', this.src); this.style.border='2px solid red'; this.parentElement.innerHTML='<div style=\'color:red;padding:20px;text-align:center\'>图片加载失败<br>'+this.src.split('/').pop()+'</div>'">
                         </div>
 
                         <!-- 类别角标 -->
