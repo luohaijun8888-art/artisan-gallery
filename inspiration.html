@@ -525,7 +525,7 @@
  isSwiping = true;
  }
  const sensitivity = window.innerWidth < 768 ? 0.006 : 0.0045;
- targetOffset = dragStartOffset - (clientX - startX) * sensitivity;
+ targetOffset -= deltaX * sensitivity;
  lastX = clientX;
  }
 
@@ -534,9 +534,8 @@
  isDragging = false;
  autoRotateActive = true;
  if (numCards > 0) {
- // 松手时柔和吸附最近卡片，避免突变
+ // 松手时柔和吸附最近卡片，使用当前 targetOffset 四舍五入
  targetOffset = Math.round(targetOffset);
- dragStartOffset = targetOffset;
  }
  setTimeout(() => { isSwiping = false; }, 80);
  }
