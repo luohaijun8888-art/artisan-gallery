@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SHANYAO | 3D 艺术画廊 · 全图环幕</title>
+    <title>SHANYAO | 3D 艺术画廊 · 纯粹视界</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Noto+Serif+SC:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -56,7 +56,7 @@
             opacity: 0.65;
         }
 
-        /* 卡片样式：保证图片完整显示，不裁剪 */
+        /* 卡片样式：图片完整显示 */
         .card {
             position: absolute; 
             top: 50%;
@@ -117,7 +117,7 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* 核心修改：图片完整显示，使用 contain 保持全图可见，背景填充深色衬底 */
+        /* 图片完整显示 contain + 深色衬底 */
         .card-img-full {
             position: absolute;
             inset: 0;
@@ -203,8 +203,25 @@
             justify-content: center;
         }
         
-        /* 详情页图片样式：宽度填满，高度自适应比例 */
-        #detailPage .detail-image-grid {
+        /* 详情页 - 精简版：只保留画廊标题、主图和延展图卷，移除价格/设计哲学等冗余区块 */
+        .detail-hero-wrapper {
+            width: 100%;
+            background: #18171C;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .detail-hero-img {
+            width: 100%;
+            height: auto;
+            max-height: 55vh;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .detail-image-grid {
             width: 100%;
         }
         .detail-image-item {
@@ -226,23 +243,6 @@
         .detail-image-item:hover {
             border-color: rgba(204,153,51,0.3);
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-        
-        .detail-hero-wrapper {
-            width: 100%;
-            background: #18171C;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-        .detail-hero-img {
-            width: 100%;
-            height: auto;
-            max-height: 55vh;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto;
         }
         
         @media (max-width: 768px) {
@@ -280,10 +280,6 @@
             transform: translateX(-50%) scale(1.03);
             box-shadow: 0 0 15px rgba(204,153,51,0.4);
         }
-        .back-home-btn i, .back-home-btn svg {
-            width: 14px;
-            height: 14px;
-        }
         
         html, body { overflow: hidden; position: fixed; width: 100%; height: 100%; }
     </style>
@@ -292,7 +288,7 @@
 
     <div class="backdrop-dim" id="backdropDim" onclick="closeDetail()"></div>
 
-    <!-- 返回首页按钮：中下位置，无左右箭头 -->
+    <!-- 返回首页按钮：中下位置 -->
     <a href="index.html" class="back-home-btn" id="backHomeBtn">
         <i data-lucide="home" class="w-3.5 h-3.5"></i>
         <span>返回首页</span>
@@ -308,7 +304,7 @@
         <div id="carousel"></div>
     </div>
 
-    <!-- 详情页 - 图片宽度填满，高度按比例自动缩放 -->
+    <!-- 详情页 - 极简：仅保留主图、标题与空间延展图卷，移除价格、设计哲学等冗余内容 -->
     <div id="detailPage" class="fixed inset-y-0 right-0 w-full md:w-[560px] bg-[#151419] z-[150] shadow-2xl translate-x-full transition-transform duration-700 cubic-bezier(0.15, 0.85, 0.35, 1) overflow-y-auto border-l border-white/[0.05] no-scrollbar">
         <div class="sticky top-0 z-50 glass-header border-b border-white/[0.05] flex items-center justify-between h-16 px-6">
             <button onclick="closeDetail()" class="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors">
@@ -320,26 +316,23 @@
         </div>
 
         <div class="pb-24">
+            <!-- 主图区域 -->
             <div class="detail-hero-wrapper">
                 <img id="detailHeroImg" src="" alt="Hero Image" class="detail-hero-img">
             </div>
 
-            <div class="px-6 pt-6 space-y-6">
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-light tracking-wider text-white mb-2 font-serif" id="detailTitle"></h1>
-                    <p class="text-xl font-light text-[#CC9933] tracking-wide" id="detailPrice"></p>
+            <!-- 仅保留作品标题，其余描述、价格全部移除 -->
+            <div class="px-6 pt-4 pb-2">
+                <h1 class="text-xl md:text-2xl font-light tracking-wider text-white text-center font-serif" id="detailTitle"></h1>
+            </div>
+            
+            <!-- 空间延展图卷 -->
+            <div class="px-6 pt-8 space-y-6">
+                <div class="text-center">
+                    <p class="text-[9px] uppercase tracking-[0.3em] text-[#CC9933] font-semibold mb-1">SCENARIO DETAILS</p>
+                    <h3 class="text-xs font-light tracking-widest text-neutral-500">— 空间延展图卷 —</h3>
                 </div>
-                <div class="border-t border-white/[0.05] pt-6 space-y-4">
-                    <p class="text-[11px] uppercase tracking-[0.2em] text-neutral-500 font-semibold">设计哲学 / PHILOSOPHY</p>
-                    <p class="text-sm text-neutral-300 leading-relaxed font-light" id="detailDesc"></p>
-                </div>
-                <div class="pt-6 space-y-6">
-                    <div class="text-center">
-                        <p class="text-[9px] uppercase tracking-[0.3em] text-[#CC9933] font-semibold mb-1">SCENARIO DETAILS</p>
-                        <h3 class="text-xs font-light tracking-widest text-neutral-500">— 空间延展图卷 —</h3>
-                    </div>
-                    <div id="detailWaterfall" class="detail-image-grid space-y-5"></div>
-                </div>
+                <div id="detailWaterfall" class="detail-image-grid space-y-5"></div>
             </div>
         </div>
     </div>
@@ -383,11 +376,11 @@
             inspirationProducts = allProducts.filter(p => (p.page || '首页') === '灵感');
             if (inspirationProducts.length === 0) {
                 inspirationProducts = [
-                    { name: "华尔兹极奢岩石柜", price: "18900", images: ["https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=1600&q=85"], category: "书架", description: "极致利落骨骼与冷岩肌理交融，捕捉流光艺术投影。" },
-                    { name: "奥德赛东方罗汉榻", price: "24500", images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=85"], category: "床", description: "古典骨架融合现代极简泡棉工艺，勾勒悠远清雅。" },
-                    { name: "圆舞曲黑檀木茶几", price: "14800", images: ["https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=1600&q=85"], category: "茶几", description: "精选百年高密度黑檀木纯手工旋切，留驻大地诗篇。" },
-                    { name: "北欧极简中古休闲椅", price: "8600", images: ["https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=1600&q=85"], category: "餐椅", description: "经典流线剪影，精纺马海毛座面，雕琢岁月温度。" },
-                    { name: "空灵之境艺术屏风", price: "32200", images: ["https://images.unsplash.com/photo-1551298370-9d3d53740c72?auto=format&fit=crop&w=1600&q=85"], category: "屏风", description: "半透云纱与手工木构的禅意共鸣，光影流动。" }
+                    { name: "华尔兹极奢岩石柜", price: "18900", images: ["https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=1600&q=85"], category: "书架", description: "极致利落骨骼与冷岩肌理交融" },
+                    { name: "奥德赛东方罗汉榻", price: "24500", images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=85"], category: "床", description: "古典骨架融合现代极简泡棉工艺" },
+                    { name: "圆舞曲黑檀木茶几", price: "14800", images: ["https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=1600&q=85"], category: "茶几", description: "精选百年高密度黑檀木纯手工旋切" },
+                    { name: "北欧极简中古休闲椅", price: "8600", images: ["https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=1600&q=85"], category: "餐椅", description: "经典流线剪影，精纺马海毛座面" },
+                    { name: "空灵之境艺术屏风", price: "32200", images: ["https://images.unsplash.com/photo-1551298370-9d3d53740c72?auto=format&fit=crop&w=1600&q=85"], category: "屏风", description: "半透云纱与手工木构的禅意共鸣" }
                 ];
             }
             numCards = inspirationProducts.length;
@@ -429,17 +422,13 @@
             lucide.createIcons();
         }
 
+        // 详情页：移除价格、设计哲学等一切冗余，只保留标题、主图和延展图卷
         function openDetailPage(p) {
             if (isDetailOpen) return;
             document.getElementById('detailTitle').textContent = p.name;
-            const priceNum = Number(p.price);
-            const priceDisplay = isNaN(priceNum) ? p.price : '¥ ' + priceNum.toLocaleString();
-            document.getElementById('detailPrice').textContent = priceDisplay;
             document.getElementById('detailCategory').textContent = `COLLECTION / ${p.category || p.tag || 'LIMITED EDITION'}`;
             const heroImgUrl = (p.images && p.images[0]) ? p.images[0] : (p.img || "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=80");
             document.getElementById('detailHeroImg').src = heroImgUrl;
-            const defaultDesc = (p.description || p.desc || "").trim() !== "" ? (p.description || p.desc) : "雕塑般的轮廓与温润材质交织，呈现当代东方极简主义。";
-            document.getElementById('detailDesc').textContent = defaultDesc + " 该作品深度融合空间叙事，廓形凝练而典雅，完美诠释SHANYAO对艺术生活的不懈探索。";
             
             const waterfall = document.getElementById('detailWaterfall');
             const detailImgs = (p.detailImages && p.detailImages.length) ? p.detailImages : (p.images ? p.images : [heroImgUrl]);
@@ -463,12 +452,14 @@
             isDetailOpen = false;
         };
 
-        // 动画引擎
+        // 动画引擎：卡片间距缩小 2/3 (原始 baseTranslateX 大幅减小)
         function animate() {
             if (numCards > 0) {
-                currentOffset += (targetOffset - currentOffset) * 0.1;
+                currentOffset += (targetOffset - currentOffset) * 0.12;
                 const isMobile = window.innerWidth < 768;
-                const baseTranslateX = isMobile ? window.innerWidth * 0.78 : window.innerWidth * 0.52;
+                // 关键：卡片间距缩小为原来的 1/3 左右，原始约为 0.78/0.52，现在缩小约 2/3 → 乘以 0.35 系数
+                const spacingFactor = 0.35;
+                const baseTranslateX = isMobile ? window.innerWidth * 0.78 * spacingFactor : window.innerWidth * 0.52 * spacingFactor;
                 const N = numCards;
                 const cards = document.querySelectorAll('.card');
                 for (let i = 0; i < cards.length; i++) {
@@ -477,20 +468,20 @@
                     diff = ((diff + N/2) % N + N) % N - N/2;
                     const absDiff = Math.abs(diff);
                     const x = diff * baseTranslateX;
-                    const z = -absDiff * 110;
-                    const scale = Math.max(0.48, 1 - absDiff * 0.1);
-                    const opacityVal = Math.max(0, 1 - absDiff * 0.52);
-                    const brightnessVal = Math.max(0.4, 1 - absDiff * 0.24);
+                    const z = -absDiff * 80;      // 景深也适当减小更紧凑
+                    const scale = Math.max(0.55, 1 - absDiff * 0.08);
+                    const opacityVal = Math.max(0.2, 1 - absDiff * 0.45);
+                    const brightnessVal = Math.max(0.5, 1 - absDiff * 0.2);
                     card.style.transform = `translate(-50%, -50%) translateX(${x}px) translateZ(${z}px) scale(${scale})`;
-                    card.style.zIndex = Math.round(100 - absDiff * 7);
+                    card.style.zIndex = Math.round(100 - absDiff * 6);
                     card.style.filter = `brightness(${brightnessVal})`;
-                    card.style.opacity = absDiff > 2.6 ? 0 : opacityVal;
+                    card.style.opacity = absDiff > 2.4 ? 0 : opacityVal;
                 }
             }
             requestAnimationFrame(animate);
         }
         
-        let autoRotateSpeed = 0.0015;
+        let autoRotateSpeed = 0.0012;
         let autoRotateActive = true;
         function startAutoRotate() {
             function autoTick() {
@@ -523,7 +514,8 @@
             if (!isDraggingActive) return;
             const deltaX = clientX - dragStartX;
             if (Math.abs(deltaX) > 5) isSwiping = true;
-            const sensitivity = window.innerWidth < 768 ? 0.006 : 0.0045;
+            // 灵敏度微调，因为间距缩小，拖动响应保持舒适
+            const sensitivity = window.innerWidth < 768 ? 0.0045 : 0.0032;
             targetOffset = dragStartOffsetValue - deltaX * sensitivity;
         }
         
