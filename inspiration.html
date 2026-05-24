@@ -9,28 +9,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Noto+Serif+SC:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --accent: #CC9933;       /* 古董哑光金 */
-            --bg-radial: radial-gradient(circle, #252429 0%, #111013 100%);
-            --card-base: #1C1B20;
+            --accent: #CC9933;       
+            --bg-radial: radial-gradient(circle at center, #26252a 0%, #0d0c0f 100%);
+            --card-base: #18171C;
         }
         body { 
             background: var(--bg-radial); 
             overflow: hidden; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
+            margin: 0;
+            padding: 0;
             height: 100vh; 
             font-family: 'Inter', 'Noto Serif SC', serif;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 3D 视界透视 */
         .scene { 
             position: relative; 
             width: 100vw; 
             height: 100vh; 
-            perspective: 2000px; 
+            perspective: 1200px; 
             display: flex;
             align-items: center;
             justify-content: center;
@@ -41,69 +39,55 @@
             position: absolute;
             width: 800px;
             height: 800px;
-            background: radial-gradient(circle, rgba(204, 153, 51, 0.08) 0%, rgba(0,0,0,0) 70%);
+            background: radial-gradient(circle, rgba(204, 153, 51, 0.06) 0%, rgba(0,0,0,0) 70%);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none;
             z-index: 1;
-            border-radius: 50%;
         }
 
-        /* 3D 轮播载体轨道 */
-        .carousel { 
-            position: absolute; 
-            width: 420px; 
-            height: 560px; 
-            transform-style: preserve-3d; 
-            z-index: 5;
-        }
-
-        @media (max-width: 640px) {
-            .carousel {
-                width: 340px;
-                height: 460px;
-            }
-        }
-
-        /* 艺术画卷卡片本体 */
+        /* 核心卡片容器：确保占据 80% 高度 */
         .card {
             position: absolute; 
-            width: 100%; 
-            height: 100%;
+            top: 50%;
+            left: 50%;
+            /* 以中心为基准，80vh高度，宽高比根据设备自适应 */
+            width: 55vh; 
+            height: 80vh;
+            max-width: 85vw;
+            margin-left: -27.5vh;
+            margin-top: -40vh;
             background-color: var(--card-base); 
-            border-radius: 16px;
+            border-radius: 20px;
             overflow: hidden;
             display: flex; 
             flex-direction: column;
             color: #fff; 
             border: 1px solid rgba(255,255,255,0.06);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            transition: transform 0.8s cubic-bezier(0.15, 0.85, 0.35, 1), 
-                        opacity 0.8s cubic-bezier(0.15, 0.85, 0.35, 1),
-                        box-shadow 0.6s ease;
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.9);
+            /* 移除过渡动画，通过 JS 实时接管渲染以获得极致丝滑 */
             cursor: pointer;
+            transform-origin: center center;
         }
 
-        /* 高奢极简磨砂底标 - 名字占比小 */
-        .glass-bottom {
-            background: rgba(28, 27, 32, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255,255,255,0.06);
-            position: absolute;
-            bottom: 0;
-            width: 100%;
+        @media (max-width: 768px) {
+            .card {
+                width: 75vw;
+                height: 70vh;
+                margin-left: -37.5vw;
+                margin-top: -35vh;
+            }
         }
 
         /* 沉浸聚焦：背景自动变暗遮罩 */
         .backdrop-dim {
             position: fixed;
             inset: 0;
-            background: rgba(10, 9, 12, 0.8);
+            background: rgba(10, 9, 12, 0.9);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.5s ease;
             z-index: 10;
         }
         .backdrop-dim.active {
@@ -126,21 +110,26 @@
     <!-- 焦点调暗背景 -->
     <div class="backdrop-dim" id="backdropDim" onclick="closeDetail()"></div>
 
-    <!-- 顶奢极简返回首页按钮 -->
-    <a href="index.html" class="absolute top-6 left-6 md:top-8 md:left-8 z-[70] flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-all bg-white/[0.03] hover:bg-white/[0.08] backdrop-blur-md px-4 py-2.5 rounded-full border border-white/[0.06] shadow-lg">
+    <!-- 顶奢极简返回首页按钮 (按要求移至右侧) -->
+    <a href="index.html" class="absolute top-6 right-6 md:top-8 md:right-8 z-[70] flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-all bg-white/[0.03] hover:bg-white/[0.08] backdrop-blur-md px-4 py-2.5 rounded-full border border-white/[0.06] shadow-lg">
         <i data-lucide="home" class="w-3.5 h-3.5 text-[#CC9933]"></i>
         <span>返回首页</span>
     </a>
 
+    <!-- 顶部极简 brand -->
+    <div class="absolute top-10 left-1/2 -translate-x-1/2 z-20 text-center pointer-events-none">
+        <h2 class="text-[10px] uppercase tracking-[0.4em] text-[#CC9933] font-semibold mb-2">AESTHETIC SCENE</h2>
+        <h1 class="text-xl md:text-2xl font-light tracking-[0.25em] text-white/90">SHANYAO GALLERY</h1>
+    </div>
+
     <div class="scene" id="scene">
         <!-- 背景聚光灯 -->
         <div class="stage-spotlight"></div>
-        
         <!-- 3D 轮播组件 -->
-        <div class="carousel" id="carousel"></div>
+        <div id="carousel"></div>
     </div>
 
-    <!-- 长条详情页 (Sleek Long Detail Page) -->
+    <!-- 长条详情页 -->
     <div id="detailPage" class="fixed inset-y-0 right-0 w-full md:w-[540px] bg-[#151419] z-[150] shadow-2xl translate-x-full transition-transform duration-700 cubic-bezier(0.15, 0.85, 0.35, 1) overflow-y-auto border-l border-white/[0.05] no-scrollbar">
         <!-- 粘性毛玻璃导航栏 -->
         <div class="sticky top-0 z-50 glass-header border-b border-white/[0.05] flex items-center justify-between h-16 px-6">
@@ -152,189 +141,145 @@
             <div class="w-12"></div>
         </div>
 
-        <!-- 详情内容区 -->
         <div class="pb-24">
-            <!-- 巨幕主图 -->
-            <div class="w-full aspect-[4/5] overflow-hidden bg-neutral-900 relative">
-                <img id="detailHeroImg" src="" alt="Hero Image" class="w-full h-full object-cover">
+            <div class="w-full aspect-[4/5] overflow-hidden bg-[#18171C] relative flex items-center justify-center">
+                <!-- 详情主图也等比例显示，不裁剪 -->
+                <img id="detailHeroImg" src="" alt="Hero Image" class="w-[85%] h-[85%] object-contain drop-shadow-2xl">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#151419] via-transparent to-transparent"></div>
             </div>
 
-            <!-- 文字叙事与奢华参数 -->
             <div class="px-8 pt-6 space-y-6">
                 <div>
                     <h1 class="text-2xl md:text-3xl font-light tracking-wider text-white mb-2 font-serif" id="detailTitle"></h1>
                     <p class="text-xl font-light text-[#CC9933] tracking-wide" id="detailPrice"></p>
                 </div>
-
                 <div class="border-t border-white/[0.05] pt-6 space-y-4">
                     <p class="text-[11px] uppercase tracking-[0.2em] text-neutral-500 font-semibold">设计哲学 / PHILOSOPHY</p>
                     <p class="text-sm text-neutral-300 leading-relaxed font-light" id="detailDesc"></p>
                 </div>
-
-                <!-- 尊享特权背书 -->
-                <div class="bg-white/[0.01] border border-white/[0.03] p-5 rounded-lg space-y-4 text-xs text-neutral-400 font-light leading-relaxed">
-                    <div class="flex gap-3">
-                        <span class="text-[#CC9933]">✦</span>
-                        <div>
-                            <p class="font-normal text-white mb-0.5">物料质感基因</p>
-                            <p class="text-[11px] text-neutral-500">精选特级木材与天然矿物涂料，辅以东方榫卯结构与高密度天然油脂防护。</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-3">
-                        <span class="text-[#CC9933]">✦</span>
-                        <div>
-                            <p class="font-normal text-white mb-0.5">专线尊享物流</p>
-                            <p class="text-[11px] text-neutral-500">高强度气相防震包装定制，尊享全国全境专人安装及全保价无忧托运服务。</p>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- 空间场景长图解说 -->
                 <div class="pt-8 space-y-6">
                     <div class="text-center">
                         <p class="text-[9px] uppercase tracking-[0.3em] text-[#CC9933] font-semibold mb-1">SCENARIO DETAILS</p>
                         <h3 class="text-xs font-light tracking-widest text-neutral-500">— 空间延展图卷 —</h3>
                     </div>
-                    <div class="space-y-4" id="detailWaterfall">
-                        <!-- 动态生成的空间细节长图 -->
-                    </div>
+                    <div class="space-y-4" id="detailWaterfall"></div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- 顶部极简品牌指引 -->
-    <div class="absolute top-10 left-50% translate-x-[-50%] z-20 text-center pointer-events-none">
-        <h2 class="text-[10px] uppercase tracking-[0.4em] text-[#CC9933] font-semibold mb-2">AESTHETIC SCENE</h2>
-        <h1 class="text-xl md:text-2xl font-light tracking-[0.25em] text-white/90">SHANYAO GALLERY</h1>
     </div>
 
     <script>
         const carousel = document.getElementById('carousel');
         const backdropDim = document.getElementById('backdropDim');
         
-        // 动态半径：根据产品数量自动调整，保持间隔不变
-        function calculateRadius() {
-            const baseRadius = window.innerWidth < 640 ? 480 : 680;
-            // 间隔加大2倍：基础半径乘以2
-            // 产品数量增加时，自动增大半径以保持间隔
-            const scaleFactor = Math.max(1, numCards / 6);
-            return baseRadius * scaleFactor;
-        }
-        
-        let radius = calculateRadius();
-        
-        let targetRotation = 0;
-        let currentRotation = 0;
+        let targetOffset = 0;
+        let currentOffset = 0;
         let isDetailOpen = false;
 
-        // GitHub 核心数据管道绑定与缓存提取
+        // GitHub 核心数据主线
         const GITHUB_REPO = "luohaijun8888-art/artisan-gallery";
         const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/products.json";
         const _tk = ['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];
         const EMBEDDED_TOKEN = _tk.join('');
         
-        let categories = ["餐台", "茶几", "餐椅", "床", "书架"];
         let allProducts = [];
         let inspirationProducts = [];
         let numCards = 0;
 
-        // --- 核心：拉取您在灵感页（Inspiration.html）中添加的真实图片和内容 ---
+        function getSafeLocalStorage(key) {
+            try { return localStorage.getItem(key); } 
+            catch (e) { return null; }
+        }
+
         async function fetchProducts() {
             try {
                 const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
                 if (EMBEDDED_TOKEN) headers['Authorization'] = 'Bearer ' + EMBEDDED_TOKEN;
                 const res = await fetch(GITHUB_API, { headers, cache: 'no-store' });
-                if (!res.ok) throw new Error('拉取失败');
+                if (!res.ok) throw new Error('云端获取失败');
                 const data = await res.json();
                 const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
                 allProducts = content.products || [];
             } catch(e) {
-                // 若由于网络限流等原因无法获取云端接口，自动安全降级至 localStorage 读取
-                allProducts = JSON.parse(localStorage.getItem('furniture_gallery_db')) || [];
+                const cached = getSafeLocalStorage('furniture_gallery_db');
+                allProducts = cached ? JSON.parse(cached) : [];
             }
             
-            // 过滤 page === '灵感' 的物料数据
             inspirationProducts = allProducts.filter(p => (p.page || '首页') === '灵感');
             
-            // 兜底机制：万一库中还没有上传任何灵感画卡，渲染三款高定图卡支撑空间
             if(inspirationProducts.length === 0) {
                 inspirationProducts = [
-                    { 
-                        name: "华尔兹极奢岩石柜", 
-                        price: "18,900", 
-                        images: ["https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=800&q=80"], 
-                        category: "书架", 
-                        description: "极致利落骨骼与冷岩肌理交融，在晨昏间捕捉流光艺术投影。" 
-                    },
-                    { 
-                        name: "奥德赛东方罗汉榻", 
-                        price: "24,500", 
-                        images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80"], 
-                        category: "床", 
-                        description: "古典骨架融合现代极简泡棉工艺，勾勒悠远清雅的起居禅意境象。" 
-                    },
-                    { 
-                        name: "圆舞曲黑檀木茶几", 
-                        price: "14,800", 
-                        images: ["https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=800&q=80"], 
-                        category: "茶几", 
-                        description: "精选百年高密度黑檀木纯手工旋切，轮纹深邃，留驻大地诗篇。" 
-                    }
+                    { name: "华尔兹极奢岩石柜", price: "18,900", images: ["https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=1200&q=80"], category: "书架", description: "极致利落骨骼与冷岩肌理交融，捕捉流光艺术投影。" },
+                    { name: "奥德赛东方罗汉榻", price: "24,500", images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1200&q=80"], category: "床", description: "古典骨架融合现代极简泡棉工艺，勾勒悠远清雅。" },
+                    { name: "圆舞曲黑檀木茶几", price: "14,800", images: ["https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=1200&q=80"], category: "茶几", description: "精选百年高密度黑檀木纯手工旋切，留驻大地诗篇。" },
+                    { name: "北欧极简中古休闲椅", price: "8,600", images: ["https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=1200&q=80"], category: "餐椅", description: "经典流线剪影，精纺马海毛座面，雕琢岁月温度。" }
                 ];
             }
 
             numCards = inspirationProducts.length;
-            // 产品数量变化后，重新计算半径
-            radius = calculateRadius();
             renderDynamicCards();
         }
 
-        // 动态生成和绑定卡片
+        // 渲染全新 Cover Flow 巨型卡片
         function renderDynamicCards() {
             carousel.innerHTML = '';
-            
             inspirationProducts.forEach((p, i) => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.dataset.index = i;
                 
-                // 名字占比缩小 2/3 (py-2.5 px-3，极其精细)
+                // 【核心要求1实现】缩小30%，需显示整张图片。
+                // 外层容器 bg-[#1C1B20] 会占据80vh高度，而内部的图片容器设置为 w-[70%] h-[70%] 配合 object-contain，实现了完美的画廊装裱感
                 card.innerHTML = `
-                    <div class="relative w-full h-full">
-                        <img src="${p.images[0] || p.img}" class="w-full h-full object-cover select-none pointer-events-none" loading="lazy">
+                    <div class="relative w-full h-full flex flex-col justify-center items-center pointer-events-none select-none">
                         
-                        <!-- 形态类别 -->
-                        <div class="absolute top-4 right-4 glass-card px-2.5 py-1 rounded text-[8px] uppercase tracking-[0.2em] font-medium text-[#CC9933]">
-                            ${p.category || p.tag}
+                        <!-- 缩小 30% 并完整展示的产品实景 -->
+                        <div class="w-[70%] h-[70%] flex items-center justify-center">
+                            <img src="${p.images[0] || p.img}" class="max-w-full max-h-full object-contain drop-shadow-2xl" loading="lazy">
                         </div>
 
-                        <!-- 极其扁平高定底标 -->
-                        <div class="absolute bottom-0 inset-x-0 glass-bottom py-2.5 px-3 text-center text-white">
-                            <h3 class="text-[10px] md:text-xs font-light tracking-[0.15em] text-white/90 truncate leading-snug">${p.name}</h3>
+                        <!-- 类别角标 -->
+                        <div class="absolute top-6 right-6 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded text-[9px] uppercase tracking-[0.2em] font-medium text-[#CC9933] border border-white/5 z-10">
+                            ${p.category || p.tag || 'GENE'}
+                        </div>
+
+                        <!-- 极简渐变底标 -->
+                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#0d0c0f] to-transparent pt-20 pb-8 px-6 text-center text-white z-10">
+                            <h3 class="text-sm md:text-base font-light tracking-[0.15em] text-white/95 truncate">${p.name}</h3>
                         </div>
                     </div>
                 `;
 
-                // 点击事件判定 (区分滑动与轻击)
+                // 【核心要求2实现】彻底修复点击逻辑：判断 isSwiping 布尔锁
                 card.addEventListener('click', (e) => {
-                    // 如果在按下后产生了显著的位移，说明是滑动，不执行点击弹出
-                    if (totalDragDist > 8) {
-                        return;
+                    if (isSwiping) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return; // 如果发生过拖动，绝不误触！
                     }
+
+                    // 计算当前卡片距离屏幕正中央（焦点位置）相差几张卡的距离
+                    let diff = i - Math.round(currentOffset);
+                    const N = numCards;
                     
-                    const angleStep = 360 / numCards;
-                    targetRotation = -(i * angleStep);
-                    
-                    openDetailPage(p);
+                    // 无缝循环纠正
+                    diff = ((diff + N/2) % N + N) % N - N/2;
+
+                    if (Math.abs(diff) === 0) {
+                        // 距离为 0 代表这是正前方的焦点大图，直接打开详情
+                        openDetailPage(p);
+                    } else {
+                        // 否则就是边上的图，平滑转动将它移动到中央
+                        targetOffset += diff;
+                    }
                     e.stopPropagation();
                 });
                 carousel.appendChild(card);
             });
         }
 
-        // 打开长详情页
+        // 打开详情页
         function openDetailPage(p) {
             document.getElementById('detailTitle').textContent = p.name;
             document.getElementById('detailPrice').textContent = '¥ ' + Number(p.price).toLocaleString();
@@ -344,12 +289,13 @@
             document.getElementById('detailHeroImg').src = heroImgUrl;
             document.getElementById('detailDesc').textContent = (p.description || p.desc || "") + "。该作品融合了空间深度的多维表达，通过利落的物理线条与温润的手作触感相呼应，使其在任何角度下都流露出静止的诗意与艺术张力。";
             
-            // 空间图卷瀑布流
             const waterfall = document.getElementById('detailWaterfall');
             const detailImgs = p.detailImages && p.detailImages.length ? p.detailImages : (p.images ? p.images : [heroImgUrl]);
             
             waterfall.innerHTML = detailImgs.map(img => `
-                <img src="${img}" class="w-full h-auto rounded-lg object-cover shadow-lg mb-4" loading="lazy">
+                <div class="bg-[#1C1B20] p-6 rounded-xl border border-white/5 shadow-xl mb-4 flex items-center justify-center">
+                    <img src="${img}" class="w-[85%] h-auto object-contain drop-shadow-md" loading="lazy">
+                </div>
             `).join('');
             
             document.getElementById('detailPage').classList.remove('translate-x-full');
@@ -358,92 +304,108 @@
             isDetailOpen = true;
         }
 
-        // 关闭长详情页
-        window.closeDetail = function() {
+        function closeDetail() {
             document.getElementById('detailPage').classList.remove('translate-x-0');
             document.getElementById('detailPage').classList.add('translate-x-full');
             backdropDim.classList.remove('active');
             isDetailOpen = false;
         }
 
-        // 2. 核心 60FPS 运动插值渲染器（Lerp & Z-Sort）
+        // 60FPS 顺滑渲染引擎：基于线性排布的 Cover Flow 算法
         function animate() {
             if (numCards > 0) {
-                // 平滑插值 (Lerp)：使惯性滑动如水般丝滑
-                currentRotation += (targetRotation - currentRotation) * 0.085;
+                // 平滑追随
+                currentOffset += (targetOffset - currentOffset) * 0.1;
                 
+                // 动态卡片间距（移动端窄一点，PC端宽一点）
+                const baseTranslateX = window.innerWidth < 768 ? window.innerWidth * 0.6 : window.innerWidth * 0.35;
+                const N = numCards;
+
                 const cards = document.querySelectorAll('.card');
                 cards.forEach((card, i) => {
-                    const angle = (i / numCards) * 360 + currentRotation;
-                    const rad = (angle * Math.PI) / 180;
+                    // 获取当前卡片相对于屏幕中心的坐标差异（支持无缝无限环绕）
+                    let diff = i - currentOffset;
+                    diff = ((diff + N/2) % N + N) % N - N/2;
                     
-                    const z = Math.cos(rad) * radius;
-                    const x = Math.sin(rad) * radius;
+                    const absDiff = Math.abs(diff);
+
+                    // X轴位移：添加图片只会增加虚拟队列，相邻卡片间距永远固定为 baseTranslateX 
+                    const x = diff * baseTranslateX;
                     
-                    // 透视阶梯过渡
-                    const scale = (z + radius) / (radius * 2) * 0.45 + 0.55;
-                    // 恢复透明度：所有卡片完全不透明
-                    const opacity = 1;
+                    // Z轴后退与缩放：让两旁的卡片按比例减小并靠后
+                    const z = -absDiff * 150;
+                    const scale = Math.max(0.5, 1 - absDiff * 0.12);
                     
-                    card.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${-angle}deg) scale(${scale})`;
-                    card.style.zIndex = Math.round(z + radius);
-                    card.style.opacity = opacity;
+                    // 光影：焦点卡片亮，两边暗淡
+                    const opacity = Math.max(0, 1 - absDiff * 0.6);
+                    const brightness = Math.max(0.3, 1 - absDiff * 0.3);
+                    
+                    // 执行物理变形渲染
+                    card.style.transform = `translate(-50%, -50%) translateX(${x}px) translateZ(${z}px) scale(${scale})`;
+                    card.style.zIndex = Math.round(100 - absDiff * 10);
+                    card.style.filter = `brightness(${brightness})`;
+                    card.style.opacity = absDiff > 2.5 ? 0 : opacity; // 过远的隐藏节约性能
                 });
             }
             requestAnimationFrame(animate);
         }
 
-        // 4. 自动缓慢旋转 - 持续缓慢转动画廊
-        let autoRotateSpeed = 0.08; // 每帧增加的旋转角度（越小越慢）
-        let lastAutoTime = performance.now();
-        
-        function tickAutoRotate(now) {
-            const dt = now - lastAutoTime;
-            lastAutoTime = now;
-            // 当详情页打开或用户正在拖拽时暂停自动旋转
+        // 持续缓慢自动游览画卷
+        let autoRotateSpeed = 0.003; // 单位为每次渲染增加的 offset 偏移量
+        function tickAutoRotate() {
             if (!isDetailOpen && !isDragging) {
-                targetRotation += autoRotateSpeed * (dt / 16.67); // 归一化到60fps
+                targetOffset += autoRotateSpeed;
             }
             requestAnimationFrame(tickAutoRotate);
         }
         requestAnimationFrame(tickAutoRotate);
 
-        // 3. 兼容鼠标与移动端单指轻扫手势，带精准位移计算
+        // 完美防误触手势控制总线
         let isDragging = false;
+        let isSwiping = false; // 拖动防误触锁
         let lastX = 0;
-        let totalDragDist = 0; 
+        let startX = 0;
 
         function startDrag(clientX) {
-            if (!isDetailOpen) {
-                isDragging = true;
-                lastX = clientX;
-                totalDragDist = 0; 
-            }
+            if (isDetailOpen) return;
+            isDragging = true;
+            isSwiping = false;
+            lastX = clientX;
+            startX = clientX;
         }
 
         function moveDrag(clientX) {
             if (!isDragging) return;
             const deltaX = clientX - lastX;
-            targetRotation += deltaX * 0.22; 
-            totalDragDist += Math.abs(deltaX); 
+            
+            // 只要手指/鼠标滑动超过 10 像素，就彻底锁死点击判定
+            if (Math.abs(clientX - startX) > 10) {
+                isSwiping = true;
+            }
+
+            // 根据滑动阻尼转动转盘
+            const sensitivity = window.innerWidth < 768 ? 0.005 : 0.003;
+            targetOffset -= deltaX * sensitivity; 
             lastX = clientX;
         }
 
         function endDrag() {
+            if (!isDragging) return;
             isDragging = false;
+            // 松手时，自动吸附、平滑回弹至最靠近的一张卡片，保证画廊中心对齐感
+            targetOffset = Math.round(targetOffset);
         }
 
-        // 鼠标事件绑定
+        // 事件监听：鼠标
         window.addEventListener('mousedown', e => startDrag(e.clientX));
         window.addEventListener('mousemove', e => moveDrag(e.clientX));
         window.addEventListener('mouseup', endDrag);
-
-        // 移动端手势事件绑定
+        // 事件监听：触屏
         window.addEventListener('touchstart', e => startDrag(e.touches[0].clientX));
         window.addEventListener('touchmove', e => moveDrag(e.touches[0].clientX));
         window.addEventListener('touchend', endDrag);
 
-        // 初始化
+        // 启动画廊
         fetchProducts();
         animate();
         lucide.createIcons();
