@@ -1,588 +1,635 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
- <title>SHANYAO | 3D 艺术画廊 · 旗舰顺滑</title>
- <script src="https://cdn.tailwindcss.com"></script>
- <script src="https://unpkg.com/lucide@latest"></script>
- <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Noto+Serif+SC:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
- <style>
- * {
- margin: 0;
- padding: 0;
- box-sizing: border-box;
- }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SHANYAO | 3D 艺术画廊 · 旗舰环幕</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Noto+Serif+SC:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
 
- :root {
- --accent: #CC9933;
- --bg-radial: radial-gradient(circle at center, #26252a 0%, #0d0c0f 100%);
- --card-base: #0f0e12;
- }
+        :root {
+            --accent: #CC9933;       
+            --bg-radial: radial-gradient(circle at center, #26252a 0%, #0d0c0f 100%);
+            --card-base: #0f0e12;
+        }
 
- body {
- background: var(--bg-radial);
- overflow: hidden;
- margin: 0;
- padding: 0;
- height: 100vh;
- font-family: 'Inter', 'Noto Serif SC', serif;
- user-select: none;
- -webkit-tap-highlight-color: transparent;
- }
+        body { 
+            background: var(--bg-radial); 
+            overflow: hidden; 
+            margin: 0;
+            padding: 0;
+            height: 100vh; 
+            font-family: 'Inter', 'Noto Serif SC', serif;
+        }
 
- .scene {
- position: relative;
- width: 100vw;
- height: 100vh;
- perspective: 1800px;
- overflow: hidden;
- display: flex;
- align-items: center;
- justify-content: center;
- }
+        .scene { 
+            position: relative; 
+            width: 100vw; 
+            height: 100vh; 
+            perspective: 1800px; 
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
- /* 艺术舞台背景光晕 */
- .stage-spotlight {
- position: absolute;
- width: 1100px;
- height: 1100px;
- background: radial-gradient(circle, rgba(204, 153, 51, 0.12) 0%, rgba(0,0,0,0) 70%);
- top: 50%;
- left: 50%;
- transform: translate(-50%, -50%);
- pointer-events: none;
- z-index: 1;
- border-radius: 50%;
- opacity: 0.65;
- }
+        .stage-spotlight {
+            position: absolute;
+            width: 1100px;
+            height: 1100px;
+            background: radial-gradient(circle, rgba(204, 153, 51, 0.12) 0%, rgba(0,0,0,0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1;
+            border-radius: 50%;
+            opacity: 0.65;
+        }
 
- /* 核心卡片容器：优雅尺寸，完全填充图片 */
- .card {
- position: absolute;
- top: 50%;
- left: 50%;
- width: 56vh;
- height: 70vh;
- max-width: 82vw;
- max-height: 68vh;
- background-color: var(--card-base);
- border-radius: 28px;
- overflow: hidden;
- color: #fff;
- border: 1px solid rgba(255,255,255,0.1);
- box-shadow: 0 45px 85px -25px rgba(0, 0, 0, 0.8), 0 0 0 0.5px rgba(255,255,255,0.05);
- cursor: pointer;
- transform-origin: center center;
- backface-visibility: hidden;
- will-change: transform;
- transition: box-shadow 0.25s ease, filter 0.2s;
- }
+        /* 卡片样式：全幅图片覆盖 */
+        .card {
+            position: absolute; 
+            top: 50%;
+            left: 50%;
+            width: 56vh; 
+            height: 70vh;
+            max-width: 82vw;
+            max-height: 68vh;
+            background-color: var(--card-base); 
+            border-radius: 28px;
+            overflow: hidden;
+            color: #fff; 
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 45px 85px -25px rgba(0, 0, 0, 0.8), 0 0 0 0.5px rgba(255,255,255,0.05);
+            cursor: grab;
+            transform-origin: center center;
+            backface-visibility: hidden;
+            will-change: transform;
+            transition: box-shadow 0.25s ease;
+        }
+        
+        .card:active { cursor: grabbing; }
+        .card:hover {
+            box-shadow: 0 55px 100px -20px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(204,153,51,0.3);
+        }
 
- .card:hover {
- box-shadow: 0 55px 100px -20px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(204,153,51,0.3);
- filter: brightness(1.02);
- }
+        @media (max-width: 768px) {
+            .card {
+                width: 72vw;
+                height: 58vh;
+                max-width: 85vw;
+                max-height: 60vh;
+                border-radius: 24px;
+            }
+        }
 
- @media (max-width: 768px) {
- .card {
- width: 72vw;
- height: 58vh;
- max-width: 85vw;
- max-height: 60vh;
- border-radius: 24px;
- }
- }
+        .backdrop-dim {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 4, 8, 0.96);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.45s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            z-index: 10;
+            backdrop-filter: blur(8px);
+        }
+        .backdrop-dim.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
 
- .backdrop-dim {
- position: fixed;
- inset: 0;
- background: rgba(5, 4, 8, 0.96);
- opacity: 0;
- pointer-events: none;
- transition: opacity 0.45s cubic-bezier(0.2, 0.9, 0.4, 1.1);
- z-index: 10;
- backdrop-filter: blur(8px);
- }
- .backdrop-dim.active {
- opacity: 1;
- pointer-events: auto;
- }
+        .glass-header {
+            background: rgba(21, 20, 25, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
 
- .glass-header {
- background: rgba(21, 20, 25, 0.85);
- backdrop-filter: blur(20px);
- -webkit-backdrop-filter: blur(20px);
- }
-
- .no-scrollbar::-webkit-scrollbar { display: none; }
- .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
- .card-img-full {
- position: absolute;
- inset: 0;
- width: 100%;
- height: 100%;
- object-fit: cover;
- transition: transform 0.4s ease-out;
- z-index: 0;
- }
-
- .card:hover .card-img-full {
- transform: scale(1.03);
- }
-
- .card-content-overlay {
- position: absolute;
- inset: 0;
- z-index: 2;
- display: flex;
- flex-direction: column;
- justify-content: space-between;
- background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.45) 35%, rgba(0,0,0,0.85) 100%);
- border-radius: 28px;
- pointer-events: none;
- }
-
- .card-category {
- position: absolute;
- top: 20px;
- right: 20px;
- background: rgba(0,0,0,0.6);
- backdrop-filter: blur(12px);
- padding: 6px 14px;
- border-radius: 40px;
- font-size: 9px;
- letter-spacing: 0.2em;
- font-weight: 600;
- color: #CC9933;
- border: 0.5px solid rgba(255,255,255,0.2);
- text-transform: uppercase;
- z-index: 3;
- pointer-events: none;
- }
-
- .card-title-bottom {
- position: absolute;
- bottom: 0;
- left: 0;
- right: 0;
- padding: 32px 18px 24px 18px;
- background: linear-gradient(to top, #000000dd, #00000066 60%, transparent);
- text-align: center;
- backdrop-filter: blur(2px);
- z-index: 3;
- }
-
- .card-title-bottom h3 {
- font-weight: 300;
- letter-spacing: 0.18em;
- font-size: 1rem;
- text-shadow: 0 2px 8px rgba(0,0,0,0.6);
- }
-
- @media (max-width: 768px) {
- .card-category { top: 14px; right: 14px; padding: 4px 10px; font-size: 8px; }
- .card-title-bottom h3 { font-size: 0.85rem; letter-spacing: 0.15em; }
- .card-title-bottom { padding: 24px 15px 18px 15px; }
- }
-
- #carousel {
- position: relative;
- width: 100%;
- height: 100%;
- display: flex;
- align-items: center;
- justify-content: center;
- }
-
- /* 箭头加大 + 奢华质感 */
- .nav-arrow {
- position: absolute;
- top: 50%;
- transform: translateY(-50%);
- width: 56px;
- height: 56px;
- background: rgba(20, 20, 28, 0.75);
- backdrop-filter: blur(12px);
- border-radius: 60px;
- display: flex;
- align-items: center;
- justify-content: center;
- cursor: pointer;
- z-index: 60;
- transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
- border: 1px solid rgba(255,255,255,0.2);
- box-shadow: 0 8px 20px rgba(0,0,0,0.35);
- }
- .nav-arrow:hover {
- background: rgba(204, 153, 51, 0.85);
- border-color: rgba(255,215,0,0.6);
- transform: translateY(-50%) scale(1.08);
- box-shadow: 0 0 18px rgba(204,153,51,0.5);
- }
- .nav-arrow:active {
- transform: translateY(-50%) scale(0.96);
- }
- .nav-arrow.left {
- left: 28px;
- }
- .nav-arrow.right {
- right: 28px;
- }
- @media (max-width: 768px) {
- .nav-arrow {
- width: 44px;
- height: 44px;
- }
- .nav-arrow.left { left: 12px; }
- .nav-arrow.right { right: 12px; }
- }
- .nav-arrow svg {
- width: 28px;
- height: 28px;
- stroke: #f0f0f0;
- stroke-width: 1.8;
- transition: stroke 0.2s;
- }
- .nav-arrow:hover svg {
- stroke: #1a1a1a;
- }
-
- #detailPage {
- scrollbar-width: thin;
- scrollbar-color: #CC9933 #2a2930;
- }
- #detailPage::-webkit-scrollbar {
- width: 4px;
- }
- #detailPage::-webkit-scrollbar-track {
- background: #2a2930;
- }
- #detailPage::-webkit-scrollbar-thumb {
- background: #CC9933;
- border-radius: 10px;
- }
- </style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .card-img-full {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease-out;
+            z-index: 0;
+            pointer-events: none;
+            user-drag: none;
+            -webkit-user-drag: none;
+        }
+        
+        .card:hover .card-img-full {
+            transform: scale(1.03);
+        }
+        
+        .card-content-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.45) 35%, rgba(0,0,0,0.85) 100%);
+            border-radius: 28px;
+            pointer-events: none;
+        }
+        
+        .card-category {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(12px);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            font-weight: 600;
+            color: #CC9933;
+            border: 0.5px solid rgba(255,255,255,0.2);
+            text-transform: uppercase;
+            z-index: 3;
+            pointer-events: none;
+        }
+        
+        .card-title-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 32px 18px 24px 18px;
+            background: linear-gradient(to top, #000000dd, #00000066 60%, transparent);
+            text-align: center;
+            backdrop-filter: blur(2px);
+            z-index: 3;
+            pointer-events: none;
+        }
+        
+        .card-title-bottom h3 {
+            font-weight: 300;
+            letter-spacing: 0.18em;
+            font-size: 1rem;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+        }
+        
+        @media (max-width: 768px) {
+            .card-category { top: 14px; right: 14px; padding: 4px 10px; font-size: 8px; }
+            .card-title-bottom h3 { font-size: 0.85rem; letter-spacing: 0.15em; }
+            .card-title-bottom { padding: 24px 15px 18px 15px; }
+        }
+        
+        #carousel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 左右箭头 */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 56px;
+            height: 56px;
+            background: rgba(20, 20, 28, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 60;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+            pointer-events: auto;
+        }
+        .nav-arrow:hover {
+            background: rgba(204, 153, 51, 0.85);
+            border-color: rgba(255,215,0,0.6);
+            transform: translateY(-50%) scale(1.08);
+            box-shadow: 0 0 18px rgba(204,153,51,0.5);
+        }
+        .nav-arrow:active { transform: translateY(-50%) scale(0.96); }
+        .nav-arrow.left { left: 28px; }
+        .nav-arrow.right { right: 28px; }
+        @media (max-width: 768px) {
+            .nav-arrow { width: 44px; height: 44px; }
+            .nav-arrow.left { left: 12px; }
+            .nav-arrow.right { right: 12px; }
+        }
+        .nav-arrow svg { width: 28px; height: 28px; stroke: #f0f0f0; stroke-width: 1.8; }
+        .nav-arrow:hover svg { stroke: #1a1a1a; }
+        
+        /* 详情页图片样式：宽度填满，高度自适应比例 */
+        #detailPage .detail-image-grid {
+            width: 100%;
+        }
+        .detail-image-item {
+            width: 100%;
+            margin-bottom: 1.5rem;
+            background: #1C1B20;
+            border-radius: 1.25rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .detail-image-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            background: #0f0e12;
+        }
+        .detail-image-item:hover {
+            border-color: rgba(204,153,51,0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        .detail-hero-wrapper {
+            width: 100%;
+            background: #18171C;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .detail-hero-img {
+            width: 100%;
+            height: auto;
+            max-height: 55vh;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 768px) {
+            .detail-hero-wrapper { padding: 1rem; }
+        }
+        
+        /* 返回首页按钮 - 新位置：中下区域 (右下角移至 中下) */
+        .back-home-btn {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 70;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(20, 20, 28, 0.75);
+            backdrop-filter: blur(12px);
+            padding: 10px 20px;
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+            text-decoration: none;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #ccc;
+            font-weight: 500;
+        }
+        .back-home-btn:hover {
+            background: rgba(204, 153, 51, 0.85);
+            color: #111;
+            border-color: rgba(255,215,0,0.6);
+            transform: translateX(-50%) scale(1.03);
+            box-shadow: 0 0 15px rgba(204,153,51,0.4);
+        }
+        .back-home-btn i, .back-home-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        html, body { overflow: hidden; position: fixed; width: 100%; height: 100%; }
+    </style>
 </head>
 <body class="selection:bg-neutral-800">
 
- <div class="backdrop-dim" id="backdropDim" onclick="closeDetail()"></div>
+    <div class="backdrop-dim" id="backdropDim" onclick="closeDetail()"></div>
 
- <a href="index.html" class="absolute top-6 right-6 md:top-8 md:right-8 z-[70] flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-all bg-white/[0.03] hover:bg-white/[0.08] backdrop-blur-md px-4 py-2.5 rounded-full border border-white/[0.06] shadow-lg">
- <i data-lucide="home" class="w-3.5 h-3.5 text-[#CC9933]"></i>
- <span>返回首页</span>
- </a>
+    <!-- 返回首页按钮：已移至中下位置 -->
+    <a href="index.html" class="back-home-btn" id="backHomeBtn">
+        <i data-lucide="home" class="w-3.5 h-3.5"></i>
+        <span>返回首页</span>
+    </a>
 
- <div class="absolute top-8 left-1/2 -translate-x-1/2 z-20 text-center pointer-events-none">
- <h2 class="text-[10px] uppercase tracking-[0.4em] text-[#CC9933] font-semibold mb-2 opacity-80">AESTHETIC SCENE</h2>
- <h1 class="text-xl md:text-2xl font-light tracking-[0.25em] text-white/95">SHANYAO GALLERY</h1>
- </div>
+    <div class="absolute top-8 left-1/2 -translate-x-1/2 z-20 text-center pointer-events-none">
+        <h2 class="text-[10px] uppercase tracking-[0.4em] text-[#CC9933] font-semibold mb-2 opacity-80">AESTHETIC SCENE</h2>
+        <h1 class="text-xl md:text-2xl font-light tracking-[0.25em] text-white/95">SHANYAO GALLERY</h1>
+    </div>
 
+    <div class="nav-arrow left" id="prevArrow">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+    </div>
+    <div class="nav-arrow right" id="nextArrow">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+    </div>
 
+    <div class="scene" id="scene">
+        <div class="stage-spotlight"></div>
+        <div id="carousel"></div>
+    </div>
 
- <div class="scene" id="scene">
- <div class="stage-spotlight"></div>
- <div id="carousel"></div>
- </div>
+    <!-- 详情页 - 图片宽度填满，高度按比例自动缩放 -->
+    <div id="detailPage" class="fixed inset-y-0 right-0 w-full md:w-[560px] bg-[#151419] z-[150] shadow-2xl translate-x-full transition-transform duration-700 cubic-bezier(0.15, 0.85, 0.35, 1) overflow-y-auto border-l border-white/[0.05] no-scrollbar">
+        <div class="sticky top-0 z-50 glass-header border-b border-white/[0.05] flex items-center justify-between h-16 px-6">
+            <button onclick="closeDetail()" class="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors">
+                <i data-lucide="arrow-left" class="w-4 h-4 stroke-[1.5]"></i>
+                <span>返回画廊 / BACK</span>
+            </button>
+            <div class="text-[10px] font-semibold tracking-[0.2em] uppercase text-[#CC9933]" id="detailCategory"></div>
+            <div class="w-12"></div>
+        </div>
 
- <div id="detailPage" class="fixed inset-y-0 right-0 w-full md:w-[540px] bg-[#151419] z-[150] shadow-2xl translate-x-full transition-transform duration-700 cubic-bezier(0.15, 0.85, 0.35, 1) overflow-y-auto border-l border-white/[0.05] no-scrollbar">
- <div class="sticky top-0 z-50 glass-header border-b border-white/[0.05] flex items-center justify-between h-16 px-6">
- <button onclick="closeDetail()" class="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors">
- <i data-lucide="arrow-left" class="w-4 h-4 stroke-[1.5]"></i>
- <span>返回画廊 / BACK</span>
- </button>
- <div class="text-[10px] font-semibold tracking-[0.2em] uppercase text-[#CC9933]" id="detailCategory"></div>
- <div class="w-12"></div>
- </div>
+        <div class="pb-24">
+            <div class="detail-hero-wrapper">
+                <img id="detailHeroImg" src="" alt="Hero Image" class="detail-hero-img">
+            </div>
 
- <div class="pb-24">
- <div class="w-full aspect-[4/5] overflow-hidden bg-[#18171C] relative flex items-center justify-center">
- <img id="detailHeroImg" src="" alt="Hero Image" class="w-full h-full object-cover drop-shadow-2xl">
- <div class="absolute inset-0 bg-gradient-to-t from-[#151419] via-transparent to-transparent pointer-events-none"></div>
- </div>
+            <div class="px-6 pt-6 space-y-6">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-light tracking-wider text-white mb-2 font-serif" id="detailTitle"></h1>
+                    <p class="text-xl font-light text-[#CC9933] tracking-wide" id="detailPrice"></p>
+                </div>
+                <div class="border-t border-white/[0.05] pt-6 space-y-4">
+                    <p class="text-[11px] uppercase tracking-[0.2em] text-neutral-500 font-semibold">设计哲学 / PHILOSOPHY</p>
+                    <p class="text-sm text-neutral-300 leading-relaxed font-light" id="detailDesc"></p>
+                </div>
+                <div class="pt-6 space-y-6">
+                    <div class="text-center">
+                        <p class="text-[9px] uppercase tracking-[0.3em] text-[#CC9933] font-semibold mb-1">SCENARIO DETAILS</p>
+                        <h3 class="text-xs font-light tracking-widest text-neutral-500">— 空间延展图卷 —</h3>
+                    </div>
+                    <div id="detailWaterfall" class="detail-image-grid space-y-5"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
- <div class="px-8 pt-6 space-y-6">
- <div>
- <h1 class="text-2xl md:text-3xl font-light tracking-wider text-white mb-2 font-serif" id="detailTitle"></h1>
- <p class="text-xl font-light text-[#CC9933] tracking-wide" id="detailPrice"></p>
- </div>
- <div class="border-t border-white/[0.05] pt-6 space-y-4">
- <p class="text-[11px] uppercase tracking-[0.2em] text-neutral-500 font-semibold">设计哲学 / PHILOSOPHY</p>
- <p class="text-sm text-neutral-300 leading-relaxed font-light" id="detailDesc"></p>
- </div>
- <div class="pt-8 space-y-6">
- <div class="text-center">
- <p class="text-[9px] uppercase tracking-[0.3em] text-[#CC9933] font-semibold mb-1">SCENARIO DETAILS</p>
- <h3 class="text-xs font-light tracking-widest text-neutral-500">— 空间延展图卷 —</h3>
- </div>
- <div class="space-y-4" id="detailWaterfall"></div>
- </div>
- </div>
- </div>
- </div>
+    <script>
+        const carousel = document.getElementById('carousel');
+        const backdropDim = document.getElementById('backdropDim');
+        
+        let targetOffset = 0;
+        let currentOffset = 0;
+        let isDetailOpen = false;
 
- <script>
- const carousel = document.getElementById('carousel');
- const backdropDim = document.getElementById('backdropDim');
+        const GITHUB_REPO = "luohaijun8888-art/artisan-gallery";
+        const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/products.json";
+        const _tk = ['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];
+        const EMBEDDED_TOKEN = _tk.join('');
+        
+        let allProducts = [];
+        let inspirationProducts = [];
+        let numCards = 0;
 
- let targetOffset = 0;
- let currentOffset = 0;
- let isDetailOpen = false;
+        function getSafeLocalStorage(key) {
+            try { return localStorage.getItem(key); } catch (e) { return null; }
+        }
 
- // GitHub 数据配置 (保持一致)
- const GITHUB_REPO = "luohaijun8888-art/artisan-gallery";
- const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/products.json";
- const _tk = ['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];
- const EMBEDDED_TOKEN = _tk.join('');
+        async function fetchProducts() {
+            try {
+                const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+                if (EMBEDDED_TOKEN) headers['Authorization'] = 'Bearer ' + EMBEDDED_TOKEN;
+                const res = await fetch(GITHUB_API, { headers, cache: 'no-store' });
+                if (!res.ok) throw new Error('云端获取失败');
+                const data = await res.json();
+                const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+                allProducts = content.products || [];
+            } catch(e) {
+                console.error(e);
+                const cached = getSafeLocalStorage('furniture_gallery_db');
+                allProducts = cached ? JSON.parse(cached) : [];
+            }
+            
+            inspirationProducts = allProducts.filter(p => (p.page || '首页') === '灵感');
+            if (inspirationProducts.length === 0) {
+                inspirationProducts = [
+                    { name: "华尔兹极奢岩石柜", price: "18900", images: ["https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=1600&q=85"], category: "书架", description: "极致利落骨骼与冷岩肌理交融，捕捉流光艺术投影。" },
+                    { name: "奥德赛东方罗汉榻", price: "24500", images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=85"], category: "床", description: "古典骨架融合现代极简泡棉工艺，勾勒悠远清雅。" },
+                    { name: "圆舞曲黑檀木茶几", price: "14800", images: ["https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=1600&q=85"], category: "茶几", description: "精选百年高密度黑檀木纯手工旋切，留驻大地诗篇。" },
+                    { name: "北欧极简中古休闲椅", price: "8600", images: ["https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=1600&q=85"], category: "餐椅", description: "经典流线剪影，精纺马海毛座面，雕琢岁月温度。" },
+                    { name: "空灵之境艺术屏风", price: "32200", images: ["https://images.unsplash.com/photo-1551298370-9d3d53740c72?auto=format&fit=crop&w=1600&q=85"], category: "屏风", description: "半透云纱与手工木构的禅意共鸣，光影流动。" }
+                ];
+            }
+            numCards = inspirationProducts.length;
+            renderDynamicCards();
+        }
 
- let allProducts = [];
- let inspirationProducts = [];
- let numCards = 0;
+        function renderDynamicCards() {
+            carousel.innerHTML = '';
+            inspirationProducts.forEach((p, idx) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.index = idx;
+                const imgUrl = (p.images && p.images[0]) ? p.images[0] : (p.img || "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1600&q=80");
+                card.innerHTML = `
+                    <img class="card-img-full" src="${imgUrl}" alt="${p.name}" draggable="false" onerror="this.onerror=null; this.src='https://placehold.co/1200x1600/1c1b20/CC9933?text=SHANYAO'">
+                    <div class="card-content-overlay">
+                        <div class="card-category">${p.category || p.tag || 'ATELIER'}</div>
+                        <div class="card-title-bottom"><h3>${p.name}</h3></div>
+                    </div>
+                `;
+                card.addEventListener('click', (e) => {
+                    if (isSwiping || isDraggingActive) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return;
+                    }
+                    let diff = idx - Math.round(currentOffset);
+                    const N = numCards;
+                    diff = ((diff + N/2) % N + N) % N - N/2;
+                    if (Math.abs(diff) === 0) {
+                        openDetailPage(p);
+                    } else {
+                        targetOffset += diff;
+                    }
+                    e.stopPropagation();
+                });
+                carousel.appendChild(card);
+            });
+            lucide.createIcons();
+        }
 
- function getSafeLocalStorage(key) {
- try { return localStorage.getItem(key); }
- catch (e) { return null; }
- }
+        function openDetailPage(p) {
+            if (isDetailOpen) return;
+            document.getElementById('detailTitle').textContent = p.name;
+            const priceNum = Number(p.price);
+            const priceDisplay = isNaN(priceNum) ? p.price : '¥ ' + priceNum.toLocaleString();
+            document.getElementById('detailPrice').textContent = priceDisplay;
+            document.getElementById('detailCategory').textContent = `COLLECTION / ${p.category || p.tag || 'LIMITED EDITION'}`;
+            const heroImgUrl = (p.images && p.images[0]) ? p.images[0] : (p.img || "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=80");
+            document.getElementById('detailHeroImg').src = heroImgUrl;
+            const defaultDesc = (p.description || p.desc || "").trim() !== "" ? (p.description || p.desc) : "雕塑般的轮廓与温润材质交织，呈现当代东方极简主义。";
+            document.getElementById('detailDesc').textContent = defaultDesc + " 该作品深度融合空间叙事，廓形凝练而典雅，完美诠释SHANYAO对艺术生活的不懈探索。";
+            
+            const waterfall = document.getElementById('detailWaterfall');
+            const detailImgs = (p.detailImages && p.detailImages.length) ? p.detailImages : (p.images ? p.images : [heroImgUrl]);
+            waterfall.innerHTML = detailImgs.map(img => `
+                <div class="detail-image-item">
+                    <img src="${img}" alt="detail view" loading="lazy" onerror="this.src='https://placehold.co/1000x800/1c1b20/CC9933?text=SHANYAO'">
+                </div>
+            `).join('');
+            
+            document.getElementById('detailPage').classList.remove('translate-x-full');
+            document.getElementById('detailPage').classList.add('translate-x-0');
+            backdropDim.classList.add('active');
+            isDetailOpen = true;
+            setTimeout(() => lucide.createIcons(), 50);
+        }
 
- async function fetchProducts() {
- try {
- const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
- if (EMBEDDED_TOKEN) headers['Authorization'] = 'Bearer ' + EMBEDDED_TOKEN;
- const res = await fetch(GITHUB_API, { headers, cache: 'no-store' });
- if (!res.ok) throw new Error('云端获取失败');
- const data = await res.json();
- const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
- allProducts = content.products || [];
- } catch(e) {
- console.error(e);
- const cached = getSafeLocalStorage('furniture_gallery_db');
- allProducts = cached ? JSON.parse(cached) : [];
- }
+        window.closeDetail = function() {
+            document.getElementById('detailPage').classList.remove('translate-x-0');
+            document.getElementById('detailPage').classList.add('translate-x-full');
+            backdropDim.classList.remove('active');
+            isDetailOpen = false;
+        };
 
- inspirationProducts = allProducts.filter(p => (p.page || '首页') === '灵感');
- if (inspirationProducts.length === 0) {
- inspirationProducts = [
- { name: "华尔兹极奢岩石柜", price: "18900", images: ["https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=1600&q=85"], category: "书架", description: "极致利落骨骼与冷岩肌理交融，捕捉流光艺术投影。" },
- { name: "奥德赛东方罗汉榻", price: "24500", images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1600&q=85"], category: "床", description: "古典骨架融合现代极简泡棉工艺，勾勒悠远清雅。" },
- { name: "圆舞曲黑檀木茶几", price: "14800", images: ["https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=1600&q=85"], category: "茶几", description: "精选百年高密度黑檀木纯手工旋切，留驻大地诗篇。" },
- { name: "北欧极简中古休闲椅", price: "8600", images: ["https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=1600&q=85"], category: "餐椅", description: "经典流线剪影，精纺马海毛座面，雕琢岁月温度。" },
- { name: "空灵之境艺术屏风", price: "32200", images: ["https://images.unsplash.com/photo-1551298370-9d3d53740c72?auto=format&fit=crop&w=1600&q=85"], category: "屏风", description: "半透云纱与手工木构的禅意共鸣，光影流动。" }
- ];
- }
- numCards = inspirationProducts.length;
- renderDynamicCards();
- }
-
- function renderDynamicCards() {
- carousel.innerHTML = '';
- inspirationProducts.forEach((p, idx) => {
- const card = document.createElement('div');
- card.className = 'card';
- card.dataset.index = idx;
- const imgUrl = (p.images && p.images[0]) ? p.images[0] : (p.img || "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1600&q=80");
- card.innerHTML = `
- <img class="card-img-full" src="${imgUrl}" alt="${p.name}" onerror="this.onerror=null; this.src='https://placehold.co/1200x1600/1c1b20/CC9933?text=SHANYAO'">
- <div class="card-content-overlay">
- <div class="card-category">${p.category || p.tag || 'ATELIER'}</div>
- <div class="card-title-bottom">
- <h3>${p.name}</h3>
- </div>
- </div>
- `;
- card.addEventListener('click', (e) => {
- if (isSwiping) {
- e.preventDefault();
- e.stopPropagation();
- return;
- }
- let diff = idx - Math.round(currentOffset);
- const N = numCards;
- diff = ((diff + N/2) % N + N) % N - N/2;
- if (Math.abs(diff) === 0) {
- openDetailPage(p);
- } else {
- targetOffset += diff;
- }
- e.stopPropagation();
- });
- carousel.appendChild(card);
- });
- lucide.createIcons();
- }
-
- function openDetailPage(p) {
- if (isDetailOpen) return;
- document.getElementById('detailTitle').textContent = p.name;
- const priceNum = Number(p.price);
- const priceDisplay = isNaN(priceNum) ? p.price : '¥ ' + priceNum.toLocaleString();
- document.getElementById('detailPrice').textContent = priceDisplay;
- document.getElementById('detailCategory').textContent = `COLLECTION / ${p.category || p.tag || 'LIMITED EDITION'}`;
- const heroImgUrl = (p.images && p.images[0]) ? p.images[0] : (p.img || "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=80");
- document.getElementById('detailHeroImg').src = heroImgUrl;
- const defaultDesc = (p.description || p.desc || "").trim() !== "" ? (p.description || p.desc) : "雕塑般的轮廓与温润材质交织，呈现当代东方极简主义。";
- document.getElementById('detailDesc').textContent = defaultDesc + " 该作品深度融合空间叙事，廓形凝练而典雅，完美诠释SHANYAO对艺术生活的不懈探索。";
- const waterfall = document.getElementById('detailWaterfall');
- const detailImgs = (p.detailImages && p.detailImages.length) ? p.detailImages : (p.images ? p.images : [heroImgUrl]);
- waterfall.innerHTML = detailImgs.map(img => `
- <div class="bg-[#1C1B20] p-4 rounded-2xl border border-white/5 shadow-xl mb-5 flex items-center justify-center transition-all hover:border-[#CC9933]/30">
- <img src="${img}" class="w-full h-auto max-h-64 object-contain rounded-lg" loading="lazy">
- </div>
- `).join('');
- document.getElementById('detailPage').classList.remove('translate-x-full');
- document.getElementById('detailPage').classList.add('translate-x-0');
- backdropDim.classList.add('active');
- isDetailOpen = true;
- setTimeout(() => lucide.createIcons(), 50);
- }
-
- window.closeDetail = function() {
- document.getElementById('detailPage').classList.remove('translate-x-0');
- document.getElementById('detailPage').classList.add('translate-x-full');
- backdropDim.classList.remove('active');
- isDetailOpen = false;
- };
-
- // ===================== 核心动画引擎：完全还原原始代码的极致流畅 =====================
- // 基于原始流畅参数：阻尼系数0.1，间距动态调整，完美无延迟
-
- function animate() {
- if (numCards > 0) {
- // 平滑追随阻尼系数 0.1 —— 原始代码的丝滑参数
- currentOffset += (targetOffset - currentOffset) * 0.1;
-
- const isMobile = window.innerWidth < 768;
- const baseTranslateX = isMobile ? window.innerWidth * 0.3 : window.innerWidth * 0.2;
- const N = numCards;
- const cards = document.querySelectorAll('.card');
-
- for (let i = 0; i < cards.length; i++) {
- const card = cards[i];
- let diff = i - currentOffset;
- diff = ((diff + N/2) % N + N) % N - N/2;
- const absDiff = Math.abs(diff);
-
- const x = diff * baseTranslateX;
- const z = -absDiff * 110;
- const scale = Math.max(0.48, 1 - absDiff * 0.1);
- const opacityVal = Math.max(0, 1 - absDiff * 0.52);
- const brightnessVal = Math.max(0.4, 1 - absDiff * 0.24);
-
- card.style.transform = `translate(-50%, -50%) translateX(${x}px) translateZ(${z}px) scale(${scale})`;
- card.style.zIndex = Math.round(100 - absDiff * 7);
- card.style.filter = `brightness(${brightnessVal})`;
- card.style.opacity = absDiff > 2.6 ? 0 : opacityVal;
- }
- }
- requestAnimationFrame(animate);
- }
-
- // 自动慢速巡游 (保持原始优雅速度)
- let autoRotateSpeed = 0.0015;
- let autoRotateActive = true;
-
- function startAutoRotate() {
- function autoTick() {
- if (!isDetailOpen && !isDragging && autoRotateActive && numCards > 0) {
- targetOffset += autoRotateSpeed;
- if (Math.abs(targetOffset) > 10000) targetOffset = targetOffset % numCards;
- }
- requestAnimationFrame(autoTick);
- }
- autoTick();
- }
-
- // ----- 拖拽系统参考原始代码的简单高效模型（无冗余惯性，直接跟手）-----
- let isDragging = false;
- let isSwiping = false;
- let lastX = 0;
- let startX = 0;
- let dragStartOffset = 0;
-
- function startDrag(clientX) {
- if (isDetailOpen) return;
- isDragging = true;
- isSwiping = false;
- lastX = clientX;
- startX = clientX;
- dragStartOffset = targetOffset;
- autoRotateActive = false;
- }
-
- function moveDrag(clientX) {
- if (!isDragging) return;
- const deltaX = clientX - lastX;
- if (Math.abs(clientX - startX) > 8) {
- isSwiping = true;
- }
- const sensitivity = window.innerWidth < 768 ? 0.006 : 0.0045;
- targetOffset -= deltaX * sensitivity;
- lastX = clientX;
- }
-
- function endDrag() {
- if (!isDragging) return;
- isDragging = false;
- autoRotateActive = true;
- if (numCards > 0) {
- // 松手时柔和吸附最近卡片，使用当前 targetOffset 四舍五入
- targetOffset = Math.round(targetOffset);
- }
- setTimeout(() => { isSwiping = false; }, 80);
- }
-
- function bindEvents() {
- // 鼠标事件
- window.addEventListener('mousedown', e => startDrag(e.clientX));
- window.addEventListener('mousemove', e => { if (isDragging) moveDrag(e.clientX); });
- window.addEventListener('mouseup', endDrag);
- // 触摸事件，增加 preventDefault 提升移动端流畅性
- window.addEventListener('touchstart', e => startDrag(e.touches[0].clientX), { passive: false });
- window.addEventListener('touchmove', e => {
- if (isDragging) {
- e.preventDefault();
- moveDrag(e.touches[0].clientX);
- }
- }, { passive: false });
- window.addEventListener('touchend', endDrag);
- }
-
- // 箭头控制 (加大尺寸已经实现)
- function initArrowControls() {
- const prevBtn = document.getElementById('prevArrow');
- const nextBtn = document.getElementById('nextArrow');
- prevBtn.addEventListener('click', (e) => {
- e.stopPropagation();
- if (isDetailOpen) return;
- targetOffset -= 1;
- autoRotateActive = false;
- setTimeout(() => { if (!isDragging) autoRotateActive = true; }, 500);
- });
- nextBtn.addEventListener('click', (e) => {
- e.stopPropagation();
- if (isDetailOpen) return;
- targetOffset += 1;
- autoRotateActive = false;
- setTimeout(() => { if (!isDragging) autoRotateActive = true; }, 500);
- });
- }
-
- function init() {
- fetchProducts().then(() => {
- if (numCards > 0) {
- targetOffset = 0;
- currentOffset = 0;
- }
- setTimeout(() => lucide.createIcons(), 80);
- });
- bindEvents();
- animate();
- startAutoRotate();
- initArrowControls();
- lucide.createIcons();
- }
-
- init();
- </script>
+        // 动画引擎
+        function animate() {
+            if (numCards > 0) {
+                currentOffset += (targetOffset - currentOffset) * 0.1;
+                const isMobile = window.innerWidth < 768;
+                const baseTranslateX = isMobile ? window.innerWidth * 0.78 : window.innerWidth * 0.52;
+                const N = numCards;
+                const cards = document.querySelectorAll('.card');
+                for (let i = 0; i < cards.length; i++) {
+                    const card = cards[i];
+                    let diff = i - currentOffset;
+                    diff = ((diff + N/2) % N + N) % N - N/2;
+                    const absDiff = Math.abs(diff);
+                    const x = diff * baseTranslateX;
+                    const z = -absDiff * 110;
+                    const scale = Math.max(0.48, 1 - absDiff * 0.1);
+                    const opacityVal = Math.max(0, 1 - absDiff * 0.52);
+                    const brightnessVal = Math.max(0.4, 1 - absDiff * 0.24);
+                    card.style.transform = `translate(-50%, -50%) translateX(${x}px) translateZ(${z}px) scale(${scale})`;
+                    card.style.zIndex = Math.round(100 - absDiff * 7);
+                    card.style.filter = `brightness(${brightnessVal})`;
+                    card.style.opacity = absDiff > 2.6 ? 0 : opacityVal;
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        
+        let autoRotateSpeed = 0.0015;
+        let autoRotateActive = true;
+        function startAutoRotate() {
+            function autoTick() {
+                if (!isDetailOpen && !isDraggingActive && autoRotateActive && numCards > 0) {
+                    targetOffset += autoRotateSpeed;
+                    if (Math.abs(targetOffset) > 10000) targetOffset = targetOffset % numCards;
+                }
+                requestAnimationFrame(autoTick);
+            }
+            autoTick();
+        }
+        
+        // 拖拽系统（按住滑动）
+        let isDraggingActive = false;
+        let isSwiping = false;
+        let dragStartX = 0;
+        let dragStartOffsetValue = 0;
+        
+        function onPointerStart(clientX) {
+            if (isDetailOpen) return;
+            isDraggingActive = true;
+            isSwiping = false;
+            dragStartX = clientX;
+            dragStartOffsetValue = targetOffset;
+            autoRotateActive = false;
+            document.body.style.cursor = 'grabbing';
+        }
+        
+        function onPointerMove(clientX) {
+            if (!isDraggingActive) return;
+            const deltaX = clientX - dragStartX;
+            if (Math.abs(deltaX) > 5) isSwiping = true;
+            const sensitivity = window.innerWidth < 768 ? 0.006 : 0.0045;
+            targetOffset = dragStartOffsetValue - deltaX * sensitivity;
+        }
+        
+        function onPointerEnd() {
+            if (!isDraggingActive) return;
+            isDraggingActive = false;
+            autoRotateActive = true;
+            if (numCards > 0) targetOffset = Math.round(targetOffset);
+            document.body.style.cursor = '';
+            setTimeout(() => { if (!isDraggingActive) isSwiping = false; }, 50);
+        }
+        
+        function bindDragEvents() {
+            window.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.nav-arrow') || e.target.closest('#backHomeBtn')) return;
+                onPointerStart(e.clientX);
+                e.preventDefault();
+            });
+            window.addEventListener('mousemove', (e) => { if (isDraggingActive) { e.preventDefault(); onPointerMove(e.clientX); } });
+            window.addEventListener('mouseup', () => { if (isDraggingActive) onPointerEnd(); });
+            window.addEventListener('touchstart', (e) => {
+                if (e.target.closest('.nav-arrow') || e.target.closest('#backHomeBtn')) return;
+                if (e.touches.length) { onPointerStart(e.touches[0].clientX); e.preventDefault(); }
+            }, { passive: false });
+            window.addEventListener('touchmove', (e) => {
+                if (isDraggingActive && e.touches.length) { e.preventDefault(); onPointerMove(e.touches[0].clientX); }
+            }, { passive: false });
+            window.addEventListener('touchend', () => { if (isDraggingActive) onPointerEnd(); });
+        }
+        
+        function initArrowControls() {
+            const prevBtn = document.getElementById('prevArrow');
+            const nextBtn = document.getElementById('nextArrow');
+            prevBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (isDetailOpen) return;
+                targetOffset -= 1;
+                autoRotateActive = false;
+                setTimeout(() => { if (!isDraggingActive) autoRotateActive = true; }, 500);
+            });
+            nextBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (isDetailOpen) return;
+                targetOffset += 1;
+                autoRotateActive = false;
+                setTimeout(() => { if (!isDraggingActive) autoRotateActive = true; }, 500);
+            });
+        }
+        
+        function init() {
+            fetchProducts().then(() => {
+                if (numCards > 0) { targetOffset = 0; currentOffset = 0; }
+                setTimeout(() => lucide.createIcons(), 80);
+            });
+            bindDragEvents();
+            animate();
+            startAutoRotate();
+            initArrowControls();
+            lucide.createIcons();
+        }
+        
+        init();
+    </script>
 </body>
 </html>
