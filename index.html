@@ -124,6 +124,7 @@
                 <div class="hidden md:flex gap-8 text-[11px] uppercase tracking-[0.2em] font-medium opacity-50">
                     <a href="#" onclick="goHome(event)" class="hover:text-[var(--accent)] hover:opacity-100 transition-all">首页 / HOME</a>
                     <a href="inspiration.html" class="hover:text-[var(--accent)] hover:opacity-100 transition-all">灵感 / INSPIRATION</a>
+                    <a href="widgets.html" class="hover:text-[var(--accent)] hover:opacity-100 transition-all">小工具 / TOOLS</a>
                 </div>
             </div>
             <div class="flex items-center gap-6">
@@ -263,6 +264,7 @@
                 <div class="flex gap-2" id="adminTabs">
                     <div class="admin-tab active bg-black text-white px-3 py-1.5 rounded text-[10px] uppercase tracking-wider cursor-pointer" id="tab-products" onclick="switchAdminTab('products')">单品</div>
                     <div class="admin-tab bg-neutral-100 text-neutral-400 px-3 py-1.5 rounded text-[10px] uppercase tracking-wider cursor-pointer" id="tab-widgets" onclick="switchAdminTab('widgets')">组件</div>
+                    <div class="admin-tab bg-neutral-100 text-neutral-400 px-3 py-1.5 rounded text-[10px] uppercase tracking-wider cursor-pointer" id="tab-pages" onclick="switchAdminTab('pages')">页面</div>
                 </div>
                 <button onclick="resetToken()" title="Reset Token" class="text-xs opacity-20 hover:opacity-100 transition-opacity">🔑</button>
                 <div class="flex items-center gap-1">
@@ -335,6 +337,25 @@
                     </section>
                 </div>
             </div>
+
+                <div id="adminPageSection" class="hidden space-y-6">
+                    <section class="space-y-3">
+                        <h3 class="text-[10px] uppercase tracking-[0.15em] text-[var(--accent)] font-semibold">生成独立小工具页面</h3>
+                        <p class="text-[10px] text-neutral-400 font-light leading-relaxed">粘贴网页 HTML 代码，系统生成独立页面并托管至 widgets/ 目录，同时同步链接到「小工具」展示页。</p>
+                        <input type="text" id="wp_name" placeholder="页面名称（如：房贷计算器）" class="w-full border-b border-neutral-200 py-2 outline-none text-xs bg-transparent">
+                        <textarea id="wp_code" class="w-full text-xs font-mono p-3 bg-neutral-50 border border-neutral-200 rounded outline-none h-40" placeholder="粘贴完整 HTML 代码（含 &lt;html&gt; 标签，或仅 &lt;body&gt; 内容）..."></textarea>
+                        <div class="flex gap-2">
+                            <button onclick="previewWidgetPage()" class="flex-1 py-2.5 text-[10px] tracking-wider border border-neutral-200 rounded-sm hover:bg-neutral-50 transition-colors">解析预览</button>
+                            <button onclick="addWidgetPage()" class="flex-1 bg-black text-white py-2.5 text-[10px] tracking-wider rounded-sm">确认生成页面</button>
+                        </div>
+                        <div id="wpPreview" class="hidden border border-neutral-200 rounded bg-white p-3 h-40 overflow-auto text-[10px] font-mono"></div>
+                    </section>
+                    <section class="space-y-3">
+                        <h3 class="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">已部署页面</h3>
+                        <div id="adminPageList" class="space-y-2.5"></div>
+                    </section>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -342,6 +363,7 @@
     <div class="mobile-nav">
         <a href="#" onclick="goHome(event)" class="active" id="mNavHome"><i data-lucide="home"></i>画廊</a>
         <a href="inspiration.html" id="mNavInspire"><i data-lucide="compass"></i>灵感</a>
+        <a href="widgets.html" id="mNavWidgets"><i data-lucide="wrench"></i>小工具</a>
         <a href="#" onclick="handleAdminAccess()"><i data-lucide="box"></i>控制台</a>
     </div>
 
@@ -360,6 +382,7 @@
         let categories = ["餐台", "茶几", "餐椅", "床", "书架"];
         let products = [];
         let widgets = [];
+        let widgetPages = [];
         let currentCategory = 'all';
         let currentSearch = '';
 
@@ -392,6 +415,7 @@
                 categories = content.categories || categories;
                 products = content.products || [];
                 widgets = content.widgets || [];
+                widgetPages = content.widgetPages || [];
                 
                 localStorage.setItem('artisan_categories', JSON.stringify(categories));
                 localStorage.setItem('furniture_gallery_db', JSON.stringify(products));
@@ -416,7 +440,7 @@
                 });
                 if (headRes.ok) { const headData = await headRes.json(); dataSha = headData.sha; }
 
-                const data = { categories, products, widgets };
+                const data = { categories, products, widgets, widgetPages };
                 const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
                 const body = { message: '✨ 艺术画廊UI布局精细调整: ' + new Date().toISOString(), content: content, sha: dataSha };
                 
@@ -441,6 +465,7 @@
             localStorage.setItem('artisan_categories', JSON.stringify(categories));
             localStorage.setItem('furniture_gallery_db', JSON.stringify(products));
             localStorage.setItem('artisan_widgets', JSON.stringify(widgets));
+            localStorage.setItem('artisan_widgetPages', JSON.stringify(widgetPages));
         }
 
         async function saveAll() { await saveToGitHub(); }
@@ -655,7 +680,9 @@
             wBtn.className = tab==='widgets'?'admin-tab active bg-black text-white px-3 py-1.5 rounded text-[10px]':'admin-tab bg-neutral-100 text-neutral-400 px-3 py-1.5 rounded text-[10px]';
             document.getElementById('adminProductSection').className = tab==='products'?'space-y-8':'hidden';
             document.getElementById('adminWidgetSection').className = tab==='widgets'?'space-y-6':'hidden';
+            document.getElementById('adminPageSection').className = tab==='pages'?'space-y-6':'hidden';
             if(tab === 'widgets') renderAdminWidgetList();
+            if(tab === 'pages') renderWidgetPagesList();
         };
 
         window.addCategory = function() {
@@ -814,6 +841,65 @@
                     <button onclick="deleteWidget(${w.id})" class="text-neutral-400 hover:text-red-500 transition-colors p-1"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button>
                 </div>
             `).join(''); lucide.createIcons();
+        }
+
+
+        // --- 独立页面管理 ---
+        window.previewWidgetPage = function() {
+            const code = document.getElementById('wp_code').value.trim();
+            const preview = document.getElementById('wpPreview');
+            if (!code) { preview.classList.add('hidden'); return; }
+            preview.classList.remove('hidden');
+            preview.textContent = code.length > 3000 ? code.substring(0, 3000) + '...' : code;
+        };
+
+        function generateSlug(name) {
+            return name.replace(/[^\w\u4e00-\u9fff]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').toLowerCase() || 'page';
+        }
+
+        window.addWidgetPage = async function() {
+            const name = document.getElementById('wp_name').value.trim();
+            const code = document.getElementById('wp_code').value.trim();
+            if (!name || !code) { alert('请填写页面名称并粘贴代码'); return; }
+            const slug = generateSlug(name);
+            const fileName = 'widgets/' + slug + '.html';
+            const pageUrl = 'https://luohaijun8888-art.github.io/artisan-gallery/' + fileName;
+            showSaveStatus('saving', '正在生成页面并上传...');
+            try {
+                let fullHTML = code;
+                if (!fullHTML.match(/<html/i)) {
+                    fullHTML = '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>' + name + ' | SHANYAO</title><script src="https://cdn.tailwindcss.com"></script><style>body{font-family:Inter,sans-serif;background:#FBFBFA;color:#161615;padding:2rem}.back-btn{position:fixed;top:1rem;left:1rem;padding:0.5rem 1rem;background:#161615;color:#fff;border-radius:999px;font-size:12px;text-decoration:none;z-index:99}</style></head><body><a href="../widgets.html" class="back-btn">← 返回小工具</a>\n' + code + '\n</body></html>';
+                }
+                const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-API-Version': '2022-11-28', 'Authorization': 'Bearer ' + githubToken, 'Content-Type': 'application/json' };
+                const fileRes = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + fileName, {
+                    method: 'PUT', headers,
+                    body: JSON.stringify({ message: 'add: widget page ' + name, content: btoa(unescape(encodeURIComponent(fullHTML))), branch: 'main' })
+                });
+                if (!fileRes.ok) { const err = await fileRes.json(); throw new Error(err.message || '上传失败'); }
+                widgetPages.push({ id: Date.now(), name, slug, url: pageUrl, createdAt: new Date().toISOString().split('T')[0] });
+                await saveAll();
+                document.getElementById('wp_name').value = '';
+                document.getElementById('wp_code').value = '';
+                document.getElementById('wpPreview').classList.add('hidden');
+                showSaveStatus('saved', '页面已生成：' + pageUrl);
+            } catch (e) {
+                console.error(e);
+                showSaveStatus('error', '生成失败：' + e.message);
+            }
+        };
+
+        window.deleteWidgetPage = async function(id) {
+            if (!confirm('确定删除该页面条目？（GitHub 上的文件需手动删除）')) return;
+            widgetPages = widgetPages.filter(p => p.id !== id);
+            await saveAll();
+            renderWidgetPagesList();
+        };
+
+        function renderWidgetPagesList() {
+            const container = document.getElementById('adminPageList'); if(!container) return;
+            if(!widgetPages.length) { container.innerHTML = '<p class="text-center text-xs text-neutral-300 py-4 font-light">暂无独立页面</p>'; return; }
+            container.innerHTML = widgetPages.map(w => '<div class="flex items-center justify-between p-3 bg-neutral-50 border border-neutral-100 rounded text-xs font-light"><div><p class="text-neutral-800 font-normal">' + w.name + '</p><a href="' + w.url + '" target="_blank" class="text-[10px] text-[var(--accent)] break-all">' + w.url + '</a></div><button onclick="deleteWidgetPage(' + w.id + ')" class="text-neutral-400 hover:text-red-500 transition-colors p-1"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button></div>').join('');
+            if (window.lucide) lucide.createIcons();
         }
 
         window.exportToExcel = function() {
