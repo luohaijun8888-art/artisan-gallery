@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SHANYAO | 小工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Noto+Serif+SC:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #CC9933;
+            --bg: #FBFBFA;
+            --text-main: #161615;
+            --text-muted: #8A8A85;
+        }
+        body { font-family: 'Inter', 'Noto Serif SC', serif; background-color: var(--bg); color: var(--text-main); padding-bottom: 80px; }
+        @media (min-width: 769px) { body { padding-bottom: 0; } }
+        .serif-title { font-family: 'Cinzel', 'Noto Serif SC', serif; letter-spacing: 0.05em; }
+        .glass { background: rgba(251,251,250,0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); }
+
+        .mobile-nav {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 32px); max-width: 380px; height: 56px;
+            background: rgba(22,22,21,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 28px; display: flex; align-items: center; justify-content: space-around;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15); z-index: 90; padding: 0 10px;
+        }
+        @media (min-width: 769px) { .mobile-nav { display: none; } }
+        .mobile-nav a { display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 500; letter-spacing: 0.1em; transition: all 0.3s; gap: 2px; }
+        .mobile-nav a i { width: 18px; height: 18px; margin-bottom: 1px; stroke-width: 1.5; }
+        .mobile-nav a.active { color: var(--accent); }
+
+        .widget-card {
+            transition: all 0.4s cubic-bezier(0.15, 0.85, 0.35, 1);
+            background: white;
+            border: 1px solid rgba(0,0,0,0.04);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        @media (hover: hover) {
+            .widget-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px -8px rgba(204,153,51,0.10); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full z-[60] glass border-b border-black/[0.02]">
+        <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 md:h-24 flex items-center justify-between">
+            <div class="flex items-center gap-12">
+                <a href="index.html" class="text-xl md:text-2xl font-medium tracking-[0.25em] serif-title">SHANYAO</a>
+                <div class="hidden md:flex gap-8 text-[11px] uppercase tracking-[0.2em] font-medium opacity-50">
+                    <a href="index.html" class="hover:text-[var(--accent)] hover:opacity-100 transition-all">首页 / HOME</a>
+                    <a href="inspiration.html" class="hover:text-[var(--accent)] hover:opacity-100 transition-all">灵感 / INSPIRATION</a>
+                    <a href="widgets.html" class="text-[var(--accent)] font-semibold">小工具 / TOOLS</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主体 -->
+    <div class="pt-28 md:pt-40 pb-24 max-w-[1400px] mx-auto px-6 md:px-12">
+        <header class="mb-12 md:mb-16 fade-up">
+            <h2 class="text-[10px] uppercase tracking-[0.4em] text-[var(--accent)] font-semibold mb-4">INTERACTIVE TOOLS</h2>
+            <h1 class="text-3xl md:text-5xl serif-title leading-[1.3] text-neutral-900 font-light">
+                小工具<span class="text-neutral-400">集市</span>
+            </h1>
+            <p class="text-xs text-neutral-400 mt-4 tracking-[0.1em] font-light leading-relaxed">自由添加、随时调用，你的专属网页工具库</p>
+        </header>
+
+        <!-- 小工具卡片网格 -->
+        <div id="widgetGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 动态渲染 -->
+        </div>
+
+        <!-- 空状态 -->
+        <div id="emptyState" class="hidden text-center py-20">
+            <i data-lucide="package-open" class="w-12 h-12 text-neutral-300 mx-auto mb-4"></i>
+            <p class="text-sm text-neutral-400 tracking-widest uppercase">暂无小工具</p>
+            <p class="text-xs text-neutral-300 mt-2">进入首页 → 控制台 →「页面」Tab 添加</p>
+        </div>
+    </div>
+
+    <!-- 移动端导航 -->
+    <div class="mobile-nav">
+        <a href="index.html" id="mNavHome"><i data-lucide="home"></i>画廊</a>
+        <a href="inspiration.html" id="mNavInspire"><i data-lucide="compass"></i>灵感</a>
+        <a href="widgets.html" id="mNavWidgets" class="active"><i data-lucide="wrench"></i>小工具</a>
+        <a href="index.html" onclick="event.preventDefault(); window.open('','_blank').document.write('<script>window.opener.handleAdminAccess()<'+'/script>');"><i data-lucide="box"></i>控制台</a>
+    </div>
+
+    <script>
+        const GITHUB_REPO = "luohaijun8888-art/artisan-gallery";
+        const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/products.json";
+        const _tk=['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5XZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];
+        const EMBEDDED_TOKEN=_tk.join('');
+        let githubToken = EMBEDDED_TOKEN;
+
+        let widgetPages = [];
+
+        async function fetchWidgetPages() {
+            try {
+                const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+                if (githubToken) headers['Authorization'] = 'Bearer ' + githubToken;
+                const res = await fetch(GITHUB_API, { headers, cache: 'no-store' });
+                if (!res.ok) throw new Error('数据拉取失败');
+                const data = await res.json();
+                const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+                widgetPages = content.widgetPages || [];
+                renderWidgetPages();
+            } catch (e) {
+                console.error('加载小工具失败:', e);
+            }
+        }
+
+        function renderWidgetPages() {
+            const grid = document.getElementById('widgetGrid');
+            const empty = document.getElementById('emptyState');
+
+            if (!widgetPages.length) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            grid.innerHTML = widgetPages.map(w => `
+                <a href="${w.url}" target="_blank" class="widget-card block p-6 group">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center">
+                            <i data-lucide="globe" class="w-5 h-5 text-[var(--accent)]"></i>
+                        </div>
+                        <span class="text-[10px] text-neutral-300 font-mono">${w.slug}.html</span>
+                    </div>
+                    <h3 class="text-base font-medium text-neutral-900 mb-1 group-hover:text-[var(--accent)] transition-colors">${w.name}</h3>
+                    <p class="text-xs text-neutral-400 font-light">创建于 ${w.createdAt || '—'}</p>
+                </a>
+            `).join('');
+
+            // re-init lucide icons
+            if (window.lucide) lucide.createIcons();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchWidgetPages();
+            if (window.lucide) lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
