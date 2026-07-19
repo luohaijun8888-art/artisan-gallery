@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PDF 页面排列与签名编辑器</title>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 禁用手机端的长按选择和高亮蓝色外框 */
+        * { -webkit-tap-highlight-color: transparent; }
+        
+        .page-card { transition: transform 0.2s, box-shadow 0.2s; cursor: grab; }
+        .page-card:active { cursor: grabbing; }
+        .dragging { opacity: 0.4; transform: scale(0.95); }
+        .drop-target-active { border-color: #3b82f6 !important; background-color: #eff6ff !important; }
+        
+        #fileDropOverlay { 
+            pointer-events: none; 
+            opacity: 0; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: rgba(59, 130, 246, 0.1);
+            backdrop-filter: blur(2px);
+        }
+        #fileDropOverlay.active { pointer-events: auto; opacity: 1; }
+        
+        /* 签名叠加层 - 优化触控区域 */
+        .signature-overlay {
+            position: absolute;
+            cursor: move;
+            border: 1px dashed #3b82f6;
+            background-color: rgba(59, 130, 246, 0.05);
+            user-select: none;
+            touch-action: none; /* 核心：防止触发手机原生滚动 */
+        }
+        
+        /* 手机端放大触控控制点，方便手指操作 */
+        .signature-overlay .resizer {
+            position: absolute;
+            width: 22px; height: 22px;
+            background: #3b82f6;
+            right: -11px; bottom: -11px;
+            cursor: nwse-resize;
+            border-radius: 50%;
+            border: 3px solid white;
+            z-index: 40;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        .signature-overlay .delete-btn {
+            position: absolute;
+            top: -11px; right: -11px;
+            background: #ef4444;
+            color: white;
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: bold; cursor: pointer;
+            z-index: 40;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        #statusMessage {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 300;
+        }
+
+        /* 签名库在手机端支持横向平滑滚动，不占用过多垂直空间 */
+        .scroll-x-fast {
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen relative text-gray-800 antialiased selection:bg-blue-500 selection:text-white">
+
+    <div id="fileDropOverlay" class="fixed inset-0 z-[100] flex items-center justify-center">
+        <div class="border-4 border-dashed border-blue-500 bg-white/90 p-12 rounded-3xl shadow-2xl text-center m-8 max-w-lg w-full">
+            <svg class="w-20 h-20 mx-auto text-blue-500 mb-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+            <p class="text-2xl font-bold text-blue-600">释放鼠标添加 PDF</p>
+        </div>
+    </div>
+
+    <div id="statusMessage" class="hidden px-5 py-2.5 bg-gray-900/95 text-white rounded-full shadow-xl text-xs sm:text-sm font-medium"></div>
+
+    <div id="confirmModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-[250] backdrop-blur-sm p-4">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full transform scale-95 transition-all duration-300">
+            <h3 class="text-lg font-bold text-gray-900 mb-2" id="confirmTitle">确认操作</h3>
+            <p class="text-sm text-gray-500 mb-6" id="confirmMessage">你确定要执行此操作吗？</p>
+            <div class="flex justify-end gap-3">
+                <button id="confirmCancelBtn" class="flex-1 sm:flex-none px-4 py-2.5 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium">取消</button>
+                <button id="confirmActionBtn" class="flex-1 sm:flex-none px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-medium">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+        <header class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">PDF 页面编辑器</h1>
+                <p class="text-xs sm:text-sm text-gray-500 mt-1">支持页面重排、旋转、改尺寸、手机触控签名与多模式导出</p>
+            </div>
+            <div class="flex items-center space-x-2 bg-white p-1.5 rounded-xl shadow-sm border border-gray-200 w-full sm:w-auto">
+                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-2 whitespace-nowrap">导出名称</label>
+                <input type="text" id="filenameInput" class="bg-gray-50 border-none rounded-lg px-2.5 py-1.5 text-xs sm:text-sm w-full sm:w-48 outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+        </header>
+
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-6 sticky top-2 sm:top-4 z-50 bg-white/95 backdrop-blur-sm p-3 sm:p-4 rounded-2xl shadow-md border border-gray-100">
+            <button id="uploadBtn" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all active:scale-95 whitespace-nowrap shadow-sm">添加 PDF</button>
+            <button id="uploadSignBtn" class="flex-1 sm:flex-none bg-orange-500 hover:bg-orange-600 text-white px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all active:scale-95 whitespace-nowrap shadow-sm">上传签名</button>
+            
+            <div class="h-6 w-[1px] bg-gray-200 mx-1 hidden sm:block"></div>
+            
+            <button id="downloadBtn" class="flex-1 sm:flex-none bg-gray-900 hover:bg-black text-white px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all active:scale-95 disabled:opacity-30 whitespace-nowrap">合并导出</button>
+            <button id="downloadCurrentBtn" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all active:scale-95 disabled:opacity-30 whitespace-nowrap">单页导出</button>
+            <button id="downloadAllSeparateBtn" class="hidden sm:inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all active:scale-95 disabled:opacity-30">批量分拆</button>
+            
+            <button id="clearBtn" class="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-all disabled:opacity-30 border border-red-100 ml-auto" disabled>✕</button>
+            
+            <input type="file" id="fileInput" class="hidden" accept="application/pdf" multiple>
+            <input type="file" id="signInput" class="hidden" accept="image/png">
+        </div>
+
+        <div id="signLibrary" class="mb-6 hidden bg-orange-50/60 p-4 rounded-2xl border border-orange-100/70">
+            <div class="w-full text-xs font-bold text-orange-700 mb-2 uppercase tracking-widest flex items-center justify-between">
+                <div>🎨 签名库 <span class="font-normal normal-case text-orange-500/90 ml-1">点击添加至当前第 <span id="activePageIndicator" class="font-bold underline">1</span> 页</span></div>
+            </div>
+            <div id="signThumbnails" class="scroll-x-fast flex gap-3 py-1"></div>
+        </div>
+
+        <div id="pagesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6 min-h-[150px]"></div>
+
+        <div id="emptyState" class="flex flex-col items-center justify-center py-16 px-4 bg-white rounded-3xl border-2 border-dashed border-gray-200 shadow-inner">
+            <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p class="text-sm sm:text-base text-gray-500 font-medium text-center mb-4">暂无载入的文档</p>
+            <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 text-white text-xs sm:text-sm px-5 py-2.5 rounded-xl font-bold shadow active:scale-95 transition-all">立即选择 PDF 文件</button>
+        </div>
+
+        <div id="loadingOverlay" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm hidden items-center justify-center z-[200]">
+            <div class="bg-white p-8 rounded-2xl flex flex-col items-center shadow-2xl max-w-xs w-full mx-4">
+                <div class="animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent mb-3"></div>
+                <p id="loadingText" class="text-sm font-bold text-gray-800 text-center">处理中...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const { PDFDocument, degrees } = PDFLib;
+        
+        let pdfPages = []; 
+        let signatures = []; 
+        let activePageIndex = 0;
+        let draggedCardIndex = null;
+
+        const SIZE_PRESETS = {
+            'Original': null, 'A4': [595.28, 841.89], 'A3': [841.89, 1190.55], 'Letter': [612.0, 792.0], 'Legal': [612.0, 1008.0]
+        };
+
+        const el = {
+            fileInput: document.getElementById('fileInput'),
+            signInput: document.getElementById('signInput'),
+            uploadBtn: document.getElementById('uploadBtn'),
+            uploadSignBtn: document.getElementById('uploadSignBtn'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            downloadCurrentBtn: document.getElementById('downloadCurrentBtn'),
+            downloadAllSeparateBtn: document.getElementById('downloadAllSeparateBtn'),
+            clearBtn: document.getElementById('clearBtn'),
+            pagesGrid: document.getElementById('pagesGrid'),
+            emptyState: document.getElementById('emptyState'),
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            loadingText: document.getElementById('loadingText'),
+            filenameInput: document.getElementById('filenameInput'),
+            signLibrary: document.getElementById('signLibrary'),
+            signThumbnails: document.getElementById('signThumbnails'),
+            fileDropOverlay: document.getElementById('fileDropOverlay'),
+            activePageIndicator: document.getElementById('activePageIndicator'),
+            statusMessage: document.getElementById('statusMessage')
+        };
+
+        el.filenameInput.value = `PDF_${new Date().toISOString().slice(0,10).replace(/-/g,'')}`;
+        el.uploadBtn.onclick = () => el.fileInput.click();
+        el.uploadSignBtn.onclick = () => el.signInput.click();
+        el.downloadBtn.onclick = () => exportPDF('merged');
+        el.downloadCurrentBtn.onclick = () => exportPDF('current');
+        el.downloadAllSeparateBtn.onclick = () => exportPDF('separate');
+        
+        el.clearBtn.onclick = () => {
+            showConfirm('清空工作区', '确定要清空当前所有页面和编辑内容吗？', () => {
+                pdfPages = []; activePageIndex = 0; renderGrid(); showMessage('工作区已重置清空');
+            });
+        };
+
+        el.fileInput.onchange = (e) => { processFiles(Array.from(e.target.files)); e.target.value = ''; };
+        el.signInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        signatures.push({ id: Date.now(), data: ev.target.result, aspect: img.width / img.height });
+                        renderSignLibrary();
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+            e.target.value = '';
+        };
+
+        // PC端文件拖拽支持
+        window.addEventListener('dragenter', (e) => {
+            e.preventDefault(); if (e.dataTransfer.types.includes('Files')) el.fileDropOverlay.classList.add('active');
+        });
+        el.fileDropOverlay.addEventListener('dragleave', (e) => {
+            e.preventDefault(); el.fileDropOverlay.classList.remove('active');
+        });
+        window.addEventListener('dragover', (e) => e.preventDefault());
+        window.addEventListener('drop', (e) => {
+            e.preventDefault(); el.fileDropOverlay.classList.remove('active');
+            const files = Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf');
+            if (files.length > 0) processFiles(files);
+        });
+
+        function showConfirm(title, message, onConfirm) {
+            const modal = document.getElementById('confirmModal');
+            document.getElementById('confirmTitle').innerText = title;
+            document.getElementById('confirmMessage').innerText = message;
+            modal.classList.replace('hidden', 'flex');
+            
+            const cancelBtn = document.getElementById('confirmCancelBtn');
+            const actionBtn = document.getElementById('confirmActionBtn');
+            const close = () => { modal.classList.replace('flex', 'hidden'); cancelBtn.onclick = null; actionBtn.onclick = null; };
+            
+            cancelBtn.onclick = close;
+            actionBtn.onclick = () => { onConfirm(); close(); };
+        }
+
+        function showMessage(msg, isError = false) {
+            el.statusMessage.innerText = msg;
+            el.statusMessage.className = `fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full shadow-2xl text-xs sm:text-sm font-semibold z-[300] transition-all ${isError ? 'bg-red-600' : 'bg-gray-900/95'} text-white`;
+            el.statusMessage.style.display = 'block';
+            setTimeout(() => { el.statusMessage.style.display = 'none'; }, 2500);
+        }
+
+        function renderSignLibrary() {
+            el.signLibrary.classList.remove('hidden');
+            el.signThumbnails.innerHTML = '';
+            signatures.forEach(s => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'inline-block h-14 w-auto flex-shrink-0 bg-white border border-gray-200 shadow-sm rounded-xl p-1.5 cursor-pointer active:scale-95 transition-all';
+                const img = document.createElement('img');
+                img.src = s.data; img.className = 'h-full w-auto object-contain';
+                wrapper.onclick = () => addSignatureToPage(s);
+                wrapper.appendChild(img);
+                el.signThumbnails.appendChild(wrapper);
+            });
+        }
+
+        function addSignatureToPage(signObj) {
+            if (pdfPages.length === 0) return;
+            const page = pdfPages[activePageIndex];
+            if (!page.signs) page.signs = [];
+            page.signs.push({ 
+                id: Date.now(), data: signObj.data, aspect: signObj.aspect, x: 25, y: 35, w: 35, h: 35 / signObj.aspect 
+            });
+            renderGrid();
+            showMessage('签名已添加至画布，请在当前页内拖拽或缩放');
+        }
+
+        async function processFiles(files) {
+            showLoading('正在安全解析 PDF 页面文件...');
+            try {
+                for (const file of files) {
+                    const originalBuffer = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument({ data: originalBuffer.slice(0) }).promise;
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const vp = page.getViewport({ scale: 0.4 });
+                        const canvas = document.createElement('canvas');
+                        canvas.height = vp.height; canvas.width = vp.width;
+                        await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+                        
+                        pdfPages.push({
+                            fileBytes: new Uint8Array(originalBuffer), pageIndex: i - 1, signs: [], rotation: 0, targetSize: 'Original',
+                            thumbnail: canvas.toDataURL('image/jpeg', 0.75)
+                        });
+                    }
+                }
+                renderGrid();
+            } catch (err) { console.error(err); showMessage('解析失败: ' + err.message, true); }
+            hideLoading();
+        }
+
+        function renderGrid() {
+            el.pagesGrid.innerHTML = '';
+            const hasPages = pdfPages.length > 0;
+            el.emptyState.classList.toggle('hidden', hasPages);
+            el.downloadBtn.disabled = el.downloadCurrentBtn.disabled = el.downloadAllSeparateBtn.disabled = el.clearBtn.disabled = !hasPages;
+            el.activePageIndicator.innerText = activePageIndex + 1;
+
+            pdfPages.forEach((page, index) => {
+                const active = index === activePageIndex;
+                const card = document.createElement('div');
+                card.className = `page-card bg-white p-2 rounded-2xl shadow-sm border-2 transition-all relative group ${active ? 'border-blue-500 ring-4 ring-blue-50' : 'border-gray-100'}`;
+                
+                // 拖拽排序 (支持常规PC与移动端混合兼容)
+                card.draggable = true;
+                card.ondragstart = (e) => { draggedCardIndex = index; card.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; };
+                card.ondragend = () => card.classList.remove('dragging');
+                card.ondragover = (e) => { e.preventDefault(); card.classList.add('drop-target-active'); };
+                card.ondragleave = () => card.classList.remove('drop-target-active');
+                card.ondrop = (e) => {
+                    e.preventDefault(); card.classList.remove('drop-target-active');
+                    if (draggedCardIndex === null || draggedCardIndex === index) return;
+                    const item = pdfPages.splice(draggedCardIndex, 1)[0];
+                    pdfPages.splice(index, 0, item); activePageIndex = index; renderGrid();
+                };
+
+                card.onclick = () => { if(activePageIndex !== index) { activePageIndex = index; renderGrid(); } };
+
+                // 快捷工具条（直接显现 85% 透明度，对触屏无 Hover 环境极为友好）
+                const actions = document.createElement('div');
+                actions.className = 'absolute top-3 right-3 flex gap-1.5 z-30 opacity-85 group-hover:opacity-100 transition-opacity';
+                
+                const rotateBtn = document.createElement('button');
+                rotateBtn.className = 'w-7 h-7 bg-white text-blue-600 rounded-full flex items-center justify-center text-xs font-bold shadow border border-gray-100 active:bg-gray-100';
+                rotateBtn.innerHTML = '⟳';
+                rotateBtn.onclick = (e) => { e.stopPropagation(); page.rotation = (page.rotation + 90) % 360; renderGrid(); };
+
+                const deletePageBtn = document.createElement('button');
+                deletePageBtn.className = 'w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold shadow border border-white active:bg-red-600';
+                deletePageBtn.innerHTML = '✕';
+                deletePageBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    showConfirm('删除页面', `确认要移除第 ${index + 1} 页吗？`, () => {
+                        pdfPages.splice(index, 1);
+                        activePageIndex = Math.max(0, Math.min(activePageIndex, pdfPages.length - 1));
+                        renderGrid(); showMessage('页面已删除');
+                    });
+                };
+
+                actions.append(rotateBtn, deletePageBtn); card.appendChild(actions);
+
+                const thumbWrap = document.createElement('div');
+                thumbWrap.className = 'aspect-[3/4.2] bg-gray-50 rounded-xl overflow-hidden relative border border-gray-100/60';
+                
+                const img = document.createElement('img');
+                img.src = page.thumbnail;
+                img.className = 'w-full h-full object-contain pointer-events-none select-none transition-transform duration-200';
+                img.style.transform = `rotate(${page.rotation}deg)`;
+                thumbWrap.appendChild(img);
+
+                const sizeSelector = document.createElement('select');
+                sizeSelector.className = 'absolute bottom-1.5 right-1.5 text-[10px] bg-white/95 border border-gray-300 rounded-lg px-1.5 py-0.5 opacity-90 font-semibold shadow-sm cursor-pointer z-30 outline-none';
+                Object.keys(SIZE_PRESETS).forEach(key => {
+                    const opt = document.createElement('option'); opt.value = key;
+                    opt.innerText = key === 'Original' ? '原始尺寸' : key; opt.selected = page.targetSize === key;
+                    sizeSelector.appendChild(opt);
+                });
+                sizeSelector.onclick = (e) => e.stopPropagation(); 
+                sizeSelector.onchange = (e) => { page.targetSize = e.target.value; renderGrid(); };
+                thumbWrap.appendChild(sizeSelector);
+
+                // 核心重构：支持手机触控（Touch）与鼠标（Mouse）双规联合绑定
+                page.signs.forEach((s, sIdx) => {
+                    const sBox = document.createElement('div');
+                    sBox.className = 'signature-overlay';
+                    sBox.style.left = s.x + '%'; sBox.style.top = s.y + '%';
+                    sBox.style.width = s.w + '%'; sBox.style.height = s.h + '%';
+                    sBox.innerHTML = `<img src="${s.data}" class="w-full h-full object-contain pointer-events-none select-none"><div class="delete-btn">✕</div><div class="resizer"></div>`;
+
+                    // 删除单张签名
+                    sBox.querySelector('.delete-btn').addEventListener('touchstart', (e) => { e.stopPropagation(); e.preventDefault(); page.signs.splice(sIdx, 1); renderGrid(); });
+                    sBox.querySelector('.delete-btn').onclick = (e) => { e.stopPropagation(); page.signs.splice(sIdx, 1); renderGrid(); };
+                    
+                    // 统一的拖拽位置引擎
+                    const initDrag = (clientX, clientY, isTouch) => {
+                        const r = thumbWrap.getBoundingClientRect();
+                        const startX = clientX, startY = clientY, sL = s.x, sT = s.y;
+                        
+                        const moveHandler = (me) => {
+                            if(isTouch && me.cancelable) me.preventDefault(); // 极其关键：防止手机网页上下滑动乱滚
+                            const curX = isTouch ? me.touches[0].clientX : me.clientX;
+                            const curY = isTouch ? me.touches[0].clientY : me.clientY;
+                            s.x = Math.max(0, Math.min(100 - s.w, sL + (curX - startX) / r.width * 100));
+                            s.y = Math.max(0, Math.min(100 - s.h, sT + (curY - startY) / r.height * 100));
+                            sBox.style.left = s.x + '%'; sBox.style.top = s.y + '%';
+                        };
+                        
+                        const upHandler = () => {
+                            window.removeEventListener(isTouch ? 'touchmove' : 'mousemove', moveHandler);
+                            window.removeEventListener(isTouch ? 'touchend' : 'mouseup', upHandler);
+                        };
+                        window.addEventListener(isTouch ? 'touchmove' : 'mousemove', moveHandler, { passive: false });
+                        window.addEventListener(isTouch ? 'touchend' : 'mouseup', upHandler);
+                    };
+
+                    sBox.addEventListener('mousedown', (e) => { if(e.target.classList.contains('resizer')) return; e.stopPropagation(); initDrag(e.clientX, e.clientY, false); });
+                    sBox.addEventListener('touchstart', (e) => { if(e.target.classList.contains('resizer')) return; e.stopPropagation(); initDrag(e.touches[0].clientX, e.touches[0].clientY, true); }, { passive: true });
+
+                    // 统一的拉伸缩放引擎
+                    const initResize = (clientX, isTouch) => {
+                        const r = thumbWrap.getBoundingClientRect();
+                        const startX = clientX, sW = s.w;
+                        
+                        const moveHandler = (me) => {
+                            if(isTouch && me.cancelable) me.preventDefault();
+                            const curX = isTouch ? me.touches[0].clientX : me.clientX;
+                            const newW = Math.max(8, Math.min(100 - s.x, sW + (curX - startX) / r.width * 100));
+                            s.w = newW; s.h = newW / s.aspect;
+                            sBox.style.width = s.w + '%'; sBox.style.height = s.h + '%';
+                        };
+                        const upHandler = () => {
+                            window.removeEventListener(isTouch ? 'touchmove' : 'mousemove', moveHandler);
+                            window.removeEventListener(isTouch ? 'touchend' : 'mouseup', upHandler);
+                        };
+                        window.addEventListener(isTouch ? 'touchmove' : 'mousemove', moveHandler, { passive: false });
+                        window.addEventListener(isTouch ? 'touchend' : 'mouseup', upHandler);
+                    };
+
+                    sBox.querySelector('.resizer').addEventListener('mousedown', (e) => { e.stopPropagation(); initResize(e.clientX, false); });
+                    sBox.querySelector('.resizer').addEventListener('touchstart', (e) => { e.stopPropagation(); initResize(e.touches[0].clientX, true); }, { passive: true });
+
+                    thumbWrap.appendChild(sBox);
+                });
+
+                card.appendChild(thumbWrap);
+                const foot = document.createElement('div');
+                foot.className = 'mt-2 flex justify-between items-center text-[10px] font-bold text-gray-400 px-0.5';
+                const sizeLabel = page.targetSize === 'Original' ? '原比例' : `${page.targetSize}`;
+                foot.innerHTML = `<span>#${index+1} (${sizeLabel})</span>${active ? '<span class="text-blue-500 font-extrabold">编辑中</span>' : ''}`;
+                card.appendChild(foot); el.pagesGrid.appendChild(card);
+            });
+        }
+
+        async function createPdfFromPages(pages) {
+            const pdfDoc = await PDFDocument.create();
+            for (const p of pages) {
+                const srcDoc = await PDFDocument.load(new Uint8Array(p.fileBytes).slice(0));
+                const [copiedPage] = await pdfDoc.copyPages(srcDoc, [p.pageIndex]);
+                const { width: origW, height: origH } = copiedPage.getSize();
+                const rot = (p.rotation % 360 + 360) % 360;
+                const is90or270 = rot === 90 || rot === 270;
+
+                let targetW, targetH;
+                if (p.targetSize === 'Original') {
+                    targetW = is90or270 ? origH : origW; targetH = is90or270 ? origW : origH;
+                } else {
+                    const preset = SIZE_PRESETS[p.targetSize];
+                    const isSourceLandscape = origW > origH;
+                    const isContentLandscape = is90or270 ? !isSourceLandscape : isSourceLandscape;
+                    const [pW, pH] = preset;
+                    if (isContentLandscape) { targetW = Math.max(pW, pH); targetH = Math.min(pW, pH); } 
+                    else { targetW = Math.min(pW, pH); targetH = Math.max(pW, pH); }
+                }
+
+                const newPage = pdfDoc.addPage([targetW, targetH]);
+                const embeddedPage = await pdfDoc.embedPage(copiedPage);
+                const contentW = is90or270 ? origH : origW; const contentH = is90or270 ? origW : origH;
+                const scale = Math.min(targetW / contentW, targetH / contentH);
+                const drawW = origW * scale; const drawH = origH * scale;
+                const rectW = contentW * scale; const rectH = contentH * scale;
+
+                let x = (targetW - rectW) / 2; let y = (targetH - rectH) / 2;
+                if (rot === 90) x += rectW; else if (rot === 180) { x += rectW; y += rectH; } else if (rot === 270) y += rectH;
+
+                newPage.drawPage(embeddedPage, { x: x, y: y, width: drawW, height: drawH, rotate: degrees(rot) });
+
+                if (p.signs) {
+                    for (const s of p.signs) {
+                        try {
+                            const img = await pdfDoc.embedPng(s.data);
+                            const sW = (s.w / 100) * targetW; const sH = sW / s.aspect;
+                            const sX = (s.x / 100) * targetW; const sY = targetH - ((s.y / 100) * targetH) - sH;
+                            newPage.drawImage(img, { x: sX, y: sY, width: sW, height: sH });
+                        } catch (e) { console.error(e); }
+                    }
+                }
+            }
+            return await pdfDoc.save();
+        }
+
+        function triggerDownload(bytes, filename) {
+            try {
+                const blob = new Blob([bytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none'; a.href = url; a.download = filename;
+                document.body.appendChild(a); a.click();
+                setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 2000);
+            } catch (err) { showMessage("导出中断: " + err.message, true); }
+        }
+
+        async function exportPDF(mode) {
+            if (pdfPages.length === 0) return;
+            showLoading('正在编译并导出 PDF 文件...');
+            try {
+                const baseName = el.filenameInput.value || 'PDF_Export';
+                if (mode === 'current') {
+                    const bytes = await createPdfFromPages([pdfPages[activePageIndex]]);
+                    triggerDownload(bytes, `${baseName}_P${activePageIndex + 1}.pdf`);
+                    showMessage('当前页已成功下载');
+                } else if (mode === 'separate') {
+                    for (let i = 0; i < pdfPages.length; i++) {
+                        el.loadingText.innerText = `处理中 (${i + 1}/${pdfPages.length})...`;
+                        const bytes = await createPdfFromPages([pdfPages[i]]);
+                        triggerDownload(bytes, `${baseName}_P${i + 1}.pdf`);
+                        await new Promise(r => setTimeout(r, 800)); 
+                    }
+                    showMessage('所有独立分拆页已批量下载');
+                } else if (mode === 'merged') {
+                    const bytes = await createPdfFromPages(pdfPages);
+                    triggerDownload(bytes, `${baseName}_Merged.pdf`);
+                    showMessage('合并文件下载已启动');
+                }
+            } catch (err) { console.error(err); showMessage('导出故障: ' + err.message, true); }
+            hideLoading();
+        }
+
+        function showLoading(t) { el.loadingText.innerText = t; el.loadingOverlay.classList.replace('hidden', 'flex'); }
+        function hideLoading() { el.loadingOverlay.classList.replace('flex', 'hidden'); }
+    </script>
+</body>
+</html>
