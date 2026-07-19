@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>图册 | SHANYAO 闪耀家具</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: Inter, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background:#FBFBFA; color:#161615; margin:0; }
+    .topbar { position: sticky; top:0; z-index: 20; display:flex; align-items:center; justify-content:space-between; padding:1rem 1.5rem; background:rgba(251,251,250,0.85); backdrop-filter:blur(8px); border-bottom:1px solid #EDEDED; }
+    .brand { font-weight:600; letter-spacing:0.15em; font-size:14px; }
+    .back { font-size:12px; color:#666; text-decoration:none; border:1px solid #ddd; padding:0.4rem 0.9rem; border-radius:999px; }
+    .back:hover { background:#161615; color:#fff; border-color:#161615; }
+    .hero { text-align:center; padding:2.5rem 1rem 1rem; }
+    .hero h1 { font-size:1.6rem; font-weight:600; letter-spacing:0.1em; margin:0 0 0.4rem; }
+    .hero p { color:#999; font-size:13px; margin:0; }
+    .grid { column-count:4; column-gap:12px; padding:1.5rem; max-width:1400px; margin:0 auto; }
+    @media (max-width:1200px){ .grid{column-count:3;} }
+    @media (max-width:800px){ .grid{column-count:2;} }
+    @media (max-width:480px){ .grid{column-count:2; column-gap:8px; padding:0.8rem;} }
+    .item { break-inside:avoid; margin-bottom:12px; border-radius:8px; overflow:hidden; cursor:pointer; background:#eee; }
+    @media (max-width:480px){ .item{margin-bottom:8px;} }
+    .item img { width:100%; display:block; transition:transform .4s ease; }
+    .item:hover img { transform:scale(1.03); }
+    /* lightbox */
+    #lightbox { position:fixed; inset:0; background:rgba(0,0,0,0.9); display:none; align-items:center; justify-content:center; z-index:100; flex-direction:column; }
+    #lightbox.open { display:flex; }
+    #lightbox img { max-width:92vw; max-height:82vh; border-radius:4px; }
+    #lightbox .close { position:absolute; top:1rem; right:1.2rem; color:#fff; font-size:30px; cursor:pointer; line-height:1; }
+    #lightbox .nav { position:absolute; top:50%; transform:translateY(-50%); color:#fff; font-size:40px; cursor:pointer; user-select:none; padding:0 1rem; opacity:0.7; }
+    #lightbox .nav:hover { opacity:1; }
+    #lightbox .prev { left:0; }
+    #lightbox .next { right:0; }
+    #lightbox .count { position:absolute; bottom:1.2rem; color:#fff; font-size:12px; opacity:0.7; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">SHANYAO 图册</div>
+    <a class="back" href="./">← 返回首页</a>
+  </div>
+  <div class="hero">
+    <h1>客户实拍 · 灵感图册</h1>
+    <p>37 张照片</p>
+  </div>
+  <div class="grid" id="grid">
+      <div class="item" onclick="openLightbox(0)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-001.jpg" loading="lazy" alt="图册照片 1" />
+      </div>
+      <div class="item" onclick="openLightbox(1)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-002.jpg" loading="lazy" alt="图册照片 2" />
+      </div>
+      <div class="item" onclick="openLightbox(2)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-003.jpg" loading="lazy" alt="图册照片 3" />
+      </div>
+      <div class="item" onclick="openLightbox(3)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-004.jpg" loading="lazy" alt="图册照片 4" />
+      </div>
+      <div class="item" onclick="openLightbox(4)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-005.jpg" loading="lazy" alt="图册照片 5" />
+      </div>
+      <div class="item" onclick="openLightbox(5)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-006.jpg" loading="lazy" alt="图册照片 6" />
+      </div>
+      <div class="item" onclick="openLightbox(6)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-007.jpg" loading="lazy" alt="图册照片 7" />
+      </div>
+      <div class="item" onclick="openLightbox(7)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-008.jpg" loading="lazy" alt="图册照片 8" />
+      </div>
+      <div class="item" onclick="openLightbox(8)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-009.jpg" loading="lazy" alt="图册照片 9" />
+      </div>
+      <div class="item" onclick="openLightbox(9)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-010.jpg" loading="lazy" alt="图册照片 10" />
+      </div>
+      <div class="item" onclick="openLightbox(10)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-011.png" loading="lazy" alt="图册照片 11" />
+      </div>
+      <div class="item" onclick="openLightbox(11)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-012.jpg" loading="lazy" alt="图册照片 12" />
+      </div>
+      <div class="item" onclick="openLightbox(12)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-013.jpg" loading="lazy" alt="图册照片 13" />
+      </div>
+      <div class="item" onclick="openLightbox(13)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-014.jpg" loading="lazy" alt="图册照片 14" />
+      </div>
+      <div class="item" onclick="openLightbox(14)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-015.jpg" loading="lazy" alt="图册照片 15" />
+      </div>
+      <div class="item" onclick="openLightbox(15)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-016.jpg" loading="lazy" alt="图册照片 16" />
+      </div>
+      <div class="item" onclick="openLightbox(16)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-017.jpg" loading="lazy" alt="图册照片 17" />
+      </div>
+      <div class="item" onclick="openLightbox(17)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-018.jpg" loading="lazy" alt="图册照片 18" />
+      </div>
+      <div class="item" onclick="openLightbox(18)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-019.jpg" loading="lazy" alt="图册照片 19" />
+      </div>
+      <div class="item" onclick="openLightbox(19)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-020.jpg" loading="lazy" alt="图册照片 20" />
+      </div>
+      <div class="item" onclick="openLightbox(20)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-021.jpg" loading="lazy" alt="图册照片 21" />
+      </div>
+      <div class="item" onclick="openLightbox(21)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-022.jpg" loading="lazy" alt="图册照片 22" />
+      </div>
+      <div class="item" onclick="openLightbox(22)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-023.jpg" loading="lazy" alt="图册照片 23" />
+      </div>
+      <div class="item" onclick="openLightbox(23)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-024.jpg" loading="lazy" alt="图册照片 24" />
+      </div>
+      <div class="item" onclick="openLightbox(24)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-025.jpg" loading="lazy" alt="图册照片 25" />
+      </div>
+      <div class="item" onclick="openLightbox(25)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-026.jpg" loading="lazy" alt="图册照片 26" />
+      </div>
+      <div class="item" onclick="openLightbox(26)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-027.jpg" loading="lazy" alt="图册照片 27" />
+      </div>
+      <div class="item" onclick="openLightbox(27)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-028.jpg" loading="lazy" alt="图册照片 28" />
+      </div>
+      <div class="item" onclick="openLightbox(28)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-029.jpg" loading="lazy" alt="图册照片 29" />
+      </div>
+      <div class="item" onclick="openLightbox(29)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-030.jpg" loading="lazy" alt="图册照片 30" />
+      </div>
+      <div class="item" onclick="openLightbox(30)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-031.jpg" loading="lazy" alt="图册照片 31" />
+      </div>
+      <div class="item" onclick="openLightbox(31)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-032.jpg" loading="lazy" alt="图册照片 32" />
+      </div>
+      <div class="item" onclick="openLightbox(32)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-033.jpg" loading="lazy" alt="图册照片 33" />
+      </div>
+      <div class="item" onclick="openLightbox(33)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-034.jpg" loading="lazy" alt="图册照片 34" />
+      </div>
+      <div class="item" onclick="openLightbox(34)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-035.jpg" loading="lazy" alt="图册照片 35" />
+      </div>
+      <div class="item" onclick="openLightbox(35)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-036.jpg" loading="lazy" alt="图册照片 36" />
+      </div>
+      <div class="item" onclick="openLightbox(36)">
+        <img src="https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-037.jpg" loading="lazy" alt="图册照片 37" />
+      </div></div>
+
+  <div id="lightbox" onclick="if(event.target===this)closeLightbox()">
+    <span class="close" onclick="closeLightbox()">&times;</span>
+    <span class="nav prev" onclick="event.stopPropagation();prevImg()">&#10094;</span>
+    <img id="lbImg" src="" alt="" />
+    <span class="nav next" onclick="event.stopPropagation();nextImg()">&#10095;</span>
+    <div class="count" id="lbCount"></div>
+  </div>
+
+  <script>
+    const IMAGES = ["https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-001.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-002.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-003.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-004.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-005.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-006.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-007.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-008.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-009.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-010.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-011.png","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-012.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-013.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-014.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-015.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-016.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-017.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-018.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-019.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-020.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-021.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-022.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-023.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-024.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-025.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-026.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-027.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-028.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-029.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-030.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-031.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-032.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-033.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-034.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-035.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-036.jpg","https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/album/album-037.jpg"];
+    let cur = 0;
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lbImg');
+    const lbCount = document.getElementById('lbCount');
+    function openLightbox(i){ cur = i; show(); lb.classList.add('open'); }
+    function closeLightbox(){ lb.classList.remove('open'); }
+    function show(){ lbImg.src = IMAGES[cur]; lbCount.textContent = (cur+1) + ' / ' + IMAGES.length; }
+    function prevImg(){ cur = (cur - 1 + IMAGES.length) % IMAGES.length; show(); }
+    function nextImg(){ cur = (cur + 1) % IMAGES.length; show(); }
+    document.addEventListener('keydown', e => {
+      if(!lb.classList.contains('open')) return;
+      if(e.key === 'Escape') closeLightbox();
+      if(e.key === 'ArrowLeft') prevImg();
+      if(e.key === 'ArrowRight') nextImg();
+    });
+  </script>
+</body>
+</html>
