@@ -354,6 +354,15 @@
                         <h3 class="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">已部署页面</h3>
                         <div id="adminPageList" class="space-y-2.5"></div>
                     </section>
+                    <section class="space-y-3">
+                        <h3 class="text-[10px] uppercase tracking-[0.15em] text-[var(--accent)] font-semibold">小工具访问密码</h3>
+                        <p class="text-[10px] text-neutral-400 font-light leading-relaxed">修改后，所有已部署的小工具页面会同步更新密码，新建页面也使用新密码。</p>
+                        <div class="flex gap-2">
+                            <input type="text" id="wp_pw_new" placeholder="输入新密码" class="flex-1 border-b border-neutral-200 py-2 outline-none text-xs bg-transparent">
+                            <button onclick="changeWidgetPassword()" class="bg-black text-white px-4 py-2 text-[10px] tracking-wider rounded-sm">更新密码</button>
+                        </div>
+                        <p id="wpPwHint" class="text-[10px] text-neutral-400"></p>
+                    </section>
                 </div>
             </div>
         </div>
@@ -376,13 +385,14 @@
         
         let githubToken = EMBEDDED_TOKEN;
         let dataSha = null;
-        const adminPassword = "8888";
+        const adminPassword = "abc123";
         let isAuthenticated = false;
 
         let categories = ["餐台", "茶几", "餐椅", "床", "书架"];
         let products = [];
         let widgets = [];
         let widgetPages = [];
+        let widgetGatePassword = '8888';
         let currentCategory = 'all';
         let currentSearch = '';
 
@@ -416,6 +426,7 @@
                 products = content.products || [];
                 widgets = content.widgets || [];
                 widgetPages = content.widgetPages || [];
+                widgetGatePassword = content.widgetGatePassword || '8888';
                 
                 localStorage.setItem('artisan_categories', JSON.stringify(categories));
                 localStorage.setItem('furniture_gallery_db', JSON.stringify(products));
@@ -440,7 +451,7 @@
                 });
                 if (headRes.ok) { const headData = await headRes.json(); dataSha = headData.sha; }
 
-                const data = { categories, products, widgets, widgetPages };
+                const data = { categories, products, widgets, widgetPages, widgetGatePassword };
                 const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
                 const body = { message: '✨ 艺术画廊UI布局精细调整: ' + new Date().toISOString(), content: content, sha: dataSha };
                 
@@ -682,7 +693,7 @@
             document.getElementById('adminWidgetSection').className = tab==='widgets'?'space-y-6':'hidden';
             document.getElementById('adminPageSection').className = tab==='pages'?'space-y-6':'hidden';
             if(tab === 'widgets') renderAdminWidgetList();
-            if(tab === 'pages') renderWidgetPagesList();
+            if(tab === 'pages'){ renderWidgetPagesList(); var h=document.getElementById('wpPwHint'); if(h) h.textContent='当前小工具密码：' + widgetGatePassword; }
         };
 
         window.addCategory = function() {
@@ -869,6 +880,52 @@
             return h;
         }
 
+
+        async function ghGetFile(path) {
+            const headers = { Authorization: 'Bearer ' + githubToken, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+            const res = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path, { headers, cache: 'no-store' });
+            if (!res.ok) throw new Error('读取失败 ' + path);
+            const j = await res.json();
+            return { sha: j.sha, text: decodeURIComponent(escape(atob(j.content))) };
+        }
+        async function ghPutFile(path, text, msg, sha) {
+            const headers = { Authorization: 'Bearer ' + githubToken, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json' };
+            const body = { message: msg, content: btoa(unescape(encodeURIComponent(text))), branch: 'main' };
+            if (sha) body.sha = sha;
+            const res = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path, { method: 'PUT', headers, body: JSON.stringify(body) });
+            if (!res.ok) throw new Error('写入失败 ' + path);
+            return res.json();
+        }
+        window.changeWidgetPassword = async function() {
+            const inp = document.getElementById('wp_pw_new');
+            const np = inp.value.trim();
+            if (!np) { alert('请输入新密码'); return; }
+            showSaveStatus('saving', '正在更新小工具密码...');
+            try {
+                const escaped = np.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+                const newDecl = 'var PW="' + escaped + '"';
+                // 更新默认值（影响今后新建页面）
+                widgetGatePassword = np;
+                // 重写所有已部署的小工具页面
+                for (const w of widgetPages) {
+                    try {
+                        const fn = 'widgets/' + w.slug + '.html';
+                        const cur = await ghGetFile(fn);
+                        if (cur.text.indexOf('var PW=') >= 0) {
+                            const newText = cur.text.replace(/var PW="[^"]*"/, newDecl);
+                            await ghPutFile(fn, newText, 'update widget password -> ' + np, cur.sha);
+                        }
+                    } catch (e) { console.error('更新页面失败', w.slug, e); }
+                }
+                await saveAll();
+                showSaveStatus('saved', '小工具密码已更新为：' + np);
+                inp.value = '';
+                const h = document.getElementById('wpPwHint'); if (h) h.textContent = '当前小工具密码：' + widgetGatePassword;
+            } catch (e) {
+                showSaveStatus('error', '更新失败: ' + e.message);
+            }
+        };
+
 window.addWidgetPage = async function() {
             const name = document.getElementById('wp_name').value.trim();
             const code = document.getElementById('wp_code').value.trim();
@@ -878,7 +935,7 @@ window.addWidgetPage = async function() {
             const pageUrl = 'https://luohaijun8888-art.github.io/artisan-gallery/' + fileName;
             showSaveStatus('saving', '正在生成页面并上传...');
             try {
-                let fullHTML = addGateToWidget(name, code, '8888');
+                let fullHTML = addGateToWidget(name, code, widgetGatePassword);
                 const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-API-Version': '2022-11-28', 'Authorization': 'Bearer ' + githubToken, 'Content-Type': 'application/json' };
                 const fileRes = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + fileName, {
                     method: 'PUT', headers,
