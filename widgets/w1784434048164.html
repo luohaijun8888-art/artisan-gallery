@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>索菲亚高保真单据模版引擎</title>
+    <!-- 引入核心渲染与数据解析库 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: Arial, "Helvetica Neue", Helvetica, "Microsoft YaHei", "PingFang SC", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        @media print {
+            body { background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; }
+            .no-print { display: none !important; }
+            .print-container { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; background: transparent !important; }
+            .page-break { page-break-after: always; break-after: page; margin-top: 0 !important; margin-bottom: 0 !important; border: none !important; box-shadow: none !important; }
+            table, th, td { border-color: #000000 !important; color: #000000 !important; }
+        }
+        
+        /* 送货单高保真尺寸容器 */
+        .preview-page-delivery {
+            width: 240mm;
+            min-height: 140mm;
+            max-height: 140mm;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            margin: 0 auto 20px auto;
+            box-sizing: border-box;
+            overflow: hidden;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        
+        /* 物流标签高保真尺寸容器 */
+        .preview-page-logistics {
+            width: 105mm;
+            min-height: 145mm;
+            max-height: 145mm;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: #ffffff;
+            margin: 0 auto 20px auto;
+            page-break-inside: avoid;
+            break-inside: avoid;
+            box-sizing: border-box;
+        }
+
+        /* 仅对主数据表格施加高对比度极细 1px 黑色框线 - 完美兼容 html2canvas 无重叠细线设计 */
+        .black-border-table {
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
+            border-top: 1px solid #000000 !important;
+            border-left: 1px solid #000000 !important;
+            border-right: none !important;
+            border-bottom: none !important;
+        }
+        .black-border-table thead th, 
+        .black-border-table tbody td,
+        .black-border-table tfoot td {
+            border-top: none !important;
+            border-left: none !important;
+            border-right: 1px solid #000000 !important;
+            border-bottom: 1px solid #000000 !important;
+        }
+
+        .logistics-grid { display: grid; gap: 1.5rem; }
+        .logistics-grid.cols-1 { grid-template-columns: 1fr; }
+        .logistics-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+        @media (max-width:640px){ .logistics-grid.cols-2 { grid-template-columns:1fr; } }
+
+        /* 导出高精度PDF时的磨砂遮罩 */
+        .export-overlay {
+            position: fixed; top:0; left:0; right:0; bottom:0;
+            background: rgba(0,0,0,0.6); z-index:9999;
+            display: none; align-items:center; justify-content:center;
+            backdrop-filter: blur(4px);
+        }
+        .export-overlay.active { display:flex; }
+        .export-overlay-content {
+            background: white; padding:32px 40px; border-radius:16px;
+            text-align:center; max-width:420px; width:90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .export-overlay-content .spinner {
+            width:48px; height:48px;
+            border:4px solid #e2e8f0; border-top-color:#10b981;
+            border-radius:50%; animation:spin 0.8s linear infinite;
+            margin:0 auto 16px;
+        }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .export-overlay-content .status-text { font-size:14px; color:#1e293b; font-weight:600; }
+        .export-overlay-content .sub-text { font-size:13px; color:#64748b; margin-top:6px; }
+        .export-overlay-content .progress-bar {
+            width:100%; height:6px; background:#e2e8f0;
+            border-radius:4px; margin-top:16px; overflow:hidden;
+        }
+        .export-overlay-content .progress-bar .fill {
+            height:100%; background:linear-gradient(90deg,#10b981,#059669);
+            width:0%; transition:width 0.4s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col antialiased">
+
+    <!-- 导出等待遮罩 -->
+    <div class="export-overlay" id="exportOverlay">
+        <div class="export-overlay-content">
+            <div class="spinner"></div>
+            <div class="status-text" id="exportStatusText">正在准备导出...</div>
+            <div class="sub-text" id="exportSubText">共 0 页</div>
+            <div class="progress-bar"><div class="fill" id="exportProgressFill"></div></div>
+        </div>
+    </div>
+
+    <!-- 顶栏导航 -->
+    <header class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white shadow-md no-print sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/10 p-2 rounded-lg backdrop-blur-sm">
+                    <i class="fa-solid fa-print text-2xl text-emerald-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-wide">索菲亚高保真单据模版引擎</h1>
+                    <p class="text-xs text-slate-300">发运计划解耦 · 100%无冗余边框 · 极速箱名配置中心</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button id="exportPdfBtn" onclick="exportToHighPrecisionPDF()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-md transition-all flex items-center space-x-2">
+                    <i id="exportIcon" class="fa-solid fa-file-pdf"></i>
+                    <span id="exportText">导出合并PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 lg:p-6 space-y-6">
+        <!-- 核心交互操作面板 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 no-print">
+            <!-- 导入面板 -->
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+                            Excel 数据源导入
+                        </h3>
+                        <span class="text-xs text-slate-400">支持规范: 22.xlsx</span>
+                    </div>
+                    <div id="dropzone" class="border-2 border-dashed border-slate-200 hover:border-indigo-500 rounded-xl p-6 text-center cursor-pointer transition-all bg-slate-50 hover:bg-indigo-50/10 group relative">
+                        <div class="space-y-3">
+                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400 group-hover:text-indigo-500 transition-colors"></i>
+                            <div class="text-sm font-medium text-slate-600">
+                                拖拽表格文件到此，或 <span class="text-indigo-600 group-hover:underline">点击浏览</span>
+                            </div>
+                            <p class="text-xs text-slate-400">本地离线解析，确保数据绝对隐私安全</p>
+                        </div>
+                    </div>
+                    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" class="hidden">
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-slate-100">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">第一排序</label>
+                        <select id="primarySort" class="w-full bg-slate-100 border-0 rounded-lg py-2 px-3 text-xs font-medium focus:ring-2 focus:ring-indigo-500" onchange="processAndRender()">
+                            <option value="province-asc">省份 (升序)</option>
+                            <option value="province-desc">省份 (降序)</option>
+                            <option value="none">保持默认</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">第二排序</label>
+                        <select id="secondarySort" class="w-full bg-slate-100 border-0 rounded-lg py-2 px-3 text-xs font-medium focus:ring-2 focus:ring-indigo-500" onchange="processAndRender()">
+                            <option value="date-asc">日期 (升序)</option>
+                            <option value="date-desc">日期 (降序)</option>
+                            <option value="none">保持默认</option>
+                        </select>
+                    </div>
+                    <!-- 统一送货日期交互 -->
+                    <div class="md:col-span-2 flex flex-col justify-end">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase mb-1 flex items-center justify-between">
+                            <span>统一签字送货日期</span>
+                            <span class="text-[10px] text-slate-400 font-normal">默认不启用，显示原表格日期</span>
+                        </label>
+                        <div class="flex items-center space-x-2 bg-slate-100 p-1 rounded-lg">
+                            <input type="checkbox" id="enableCustomDate" onchange="toggleCustomDateInput(); processAndRender();" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 ml-2">
+                            <input type="date" id="customDeliveryDate" onchange="processAndRender()" disabled class="bg-transparent border-0 text-xs py-1 px-1 focus:ring-0 text-slate-400 cursor-not-allowed w-full">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 数据状态分析面板 -->
+            <div class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-2xl p-6 shadow-md flex flex-col justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-emerald-400 mb-3 flex items-center gap-2"><i class="fa-solid fa-chart-simple"></i> 数据状态分析</h3>
+                    <div class="space-y-2.5 text-xs text-slate-300">
+                        <div class="flex justify-between border-b border-white/10 pb-1.5"><span>有效订单行数</span><span id="statTotalRows" class="font-bold text-white">--</span></div>
+                        <div class="flex justify-between border-b border-white/10 pb-1.5"><span>覆盖目标省份</span><span id="statProvinces" class="font-bold text-emerald-400">--</span></div>
+                        <div class="flex justify-between border-b border-white/10 pb-1.5"><span>生成合并送货单</span><span id="statDeliveryNotes" class="font-bold text-white">--</span></div>
+                        <div class="flex justify-between pb-1.5"><span>生成物流标签总数</span><span id="statTotalPackages" class="font-bold text-emerald-400">--</span></div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-white/10 space-y-3">
+                    <div>
+                        <button onclick="loadSampleData()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center space-x-2 shadow-sm">
+                            <i class="fa-solid fa-database"></i><span>载入内置高保真演示数据</span>
+                        </button>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1 font-medium">快速关键字搜索过滤</label>
+                        <div class="relative">
+                            <input type="text" id="searchInput" placeholder="搜索收货方、订单号、省份等..." class="w-full bg-white/10 border-0 rounded-lg pl-8 pr-4 py-1.5 text-xs text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" oninput="processAndRender()">
+                            <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 本地校验报表 & 箱名一键批量配置面板 -->
+        <div id="diagnosticPanel" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4 no-print hidden">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-magnifying-glass-chart text-indigo-600"></i> 数据检验与箱名配置中心</h3>
+                <span class="bg-indigo-50 text-indigo-700 text-xs px-2.5 py-1 rounded-full font-semibold">运算就绪</span>
+            </div>
+            <div id="diagnosticContent" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-600"></div>
+            
+            <!-- 极简、高度自适应的箱名极速配置工作台 -->
+            <div id="boxNameConfigContainer" class="mt-4"></div>
+
+            <div class="overflow-x-auto border border-slate-100 rounded-xl mt-4">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-slate-50 text-slate-500"><tr><th class="p-2 border-b">收货经销商</th><th class="p-2 border-b">采购单号</th><th class="p-2 border-b">销售单号</th><th class="p-2 border-b">物料编码</th><th class="p-2 border-b">物料名称</th><th class="p-2 border-b text-center">数量</th><th class="p-2 border-b text-center">件数</th><th class="p-2 border-b text-center">原始用户需求日期</th></tr></thead>
+                    <tbody id="diagnosticTableBody" class="divide-y divide-slate-50"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 视图切换与配置区 -->
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4 no-print">
+            <div class="flex items-center space-x-1 bg-white p-1 rounded-xl shadow-sm border border-slate-200">
+                <button id="btnViewDelivery" onclick="changeView('delivery')" class="px-5 py-2.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-2 bg-slate-900 text-white shadow-sm">
+                    <i class="fa-solid fa-file-invoice"></i><span>送货单排版预览</span>
+                </button>
+                <button id="btnViewLogistics" onclick="changeView('logistics')" class="px-5 py-2.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-800 transition-all flex items-center space-x-2">
+                    <i class="fa-solid fa-tags"></i><span>物流标签排版预览</span>
+                </button>
+            </div>
+            <div class="flex items-center space-x-3 text-xs">
+                <span class="text-slate-500 font-medium">标签双列拼版排版:</span>
+                <select id="labelColumns" class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium focus:ring-2 focus:ring-indigo-500" onchange="processAndRender()">
+                    <option value="1">单列独立布局</option>
+                    <option value="2" selected>双列并排拼版</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 全局Toast提示 -->
+        <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-xl transition-all translate-y-20 opacity-0 flex items-center space-x-3 max-w-sm pointer-events-none">
+            <div id="toastIcon" class="text-emerald-400 text-lg"><i class="fa-solid fa-circle-check"></i></div>
+            <p id="toastMessage" class="text-xs font-semibold"></p>
+        </div>
+
+        <!-- 页面打印与生成预览根容器 -->
+        <div id="printArea" class="print-container w-full mx-auto"></div>
+    </main>
+
+    <script>
+        let rawDataList = [];
+        let currentView = 'delivery';
+        
+        // 全局存储自定义箱名状态，Key格式: "PO_行号_包索引"，用于数据流彻底解耦，防止输入时重绘闪烁
+        let boxNamesState = {};
+
+        // 统一签字送货日期初始设为不可用，保持原表格日期
+        document.addEventListener("DOMContentLoaded", () => {
+            const todayStr = new Date().toISOString().slice(0, 10);
+            document.getElementById('customDeliveryDate').value = todayStr;
+        });
+
+        // 切换输入启用控制
+        function toggleCustomDateInput() {
+            const cb = document.getElementById('enableCustomDate');
+            const input = document.getElementById('customDeliveryDate');
+            if (cb.checked) {
+                input.removeAttribute('disabled');
+                input.classList.remove('cursor-not-allowed', 'text-slate-400');
+                input.classList.add('text-slate-800');
+            } else {
+                input.setAttribute('disabled', 'true');
+                input.classList.add('cursor-not-allowed', 'text-slate-400');
+                input.classList.remove('text-slate-800');
+            }
+        }
+
+        // 高保真内置离线测试数据集
+        const SAMPLE_DATA = [
+            { poNumber:"SCC2607080042", sender:"索菲亚家居股份有限公司", carrier:"城际物流", receiver:"曲靖市索菲亚", contact:"余兴武", address:"云南省曲靖市麒麟区珠街路口辉煌玻璃厂11号索菲亚仓库", phone:"18388520818", orderId:"P0149082600418-2Y", itemCode:"CM20067028", itemName:"物料推车组合", quantity:1, shippingDate:"2026-07-16", subCode:"CM20067028", subName:"物料推车组合", unit:"套", packagesCount:2, weight:85, volume:0.36, dealerCode:"P01490", dealerName:"曲靖市索菲亚", rowIndex:3, province:"云南省" },
+            { poNumber:"SCC2607060233", sender:"索菲亚家居股份有限公司", carrier:"城际物流", receiver:"安乡县索菲亚", contact:"雷光辉", address:"湖南省常德市安乡县和平路与纯银路交汇处", phone:"15873617777", orderId:"P2422012500045-11", itemCode:"CM20045752", itemName:"阿尔法pro餐椅（泡芙白拼焦糖棕）-2张/包", quantity:2, shippingDate:"2026-07-18", subCode:"CM20045752", subName:"阿尔法pro餐椅（泡芙白拼焦糖棕）-2张/包", unit:"张", packagesCount:1, weight:16.5, volume:0.24, dealerCode:"P24220", dealerName:"安乡县索菲亚", rowIndex:26, province:"湖南省" },
+            { poNumber:"SCC2606170289", sender:"索菲亚家居股份有限公司", carrier:"城际物流", receiver:"嘉禾县索菲亚", contact:"李玉其", address:"湖南省郴州市嘉禾县嘉禾大道皇廷天悦1-3楼商铺", phone:"15074151166", orderId:"P1730022600063-14", itemCode:"CM20069700", itemName:"华尔兹Ultra圆桌（宝格丽黑）-1.5米", quantity:1, shippingDate:"2026-07-19", subCode:"CM20069700", subName:"华尔兹Ultra圆桌（宝格丽黑）-1.5米", unit:"张", packagesCount:2, weight:131, volume:0.27, dealerCode:"P17300", dealerName:"嘉禾县索菲亚", rowIndex:10, province:"湖南省" },
+            { poNumber:"SCC2606250071", sender:"索菲亚家居股份有限公司", carrier:"城际物流", receiver:"垫江县索菲亚", contact:"罗鹏", address:"重庆市长寿区新市街道碧桐三支路2号", phone:"18623512918", orderId:"P0765042600023-5", itemCode:"CM20069685", itemName:"华尔兹Ultra圆桌（宝格丽白）-1.35米", quantity:1, shippingDate:"2026-07-21", subCode:"CM20069685", subName:"华尔兹Ultra圆桌（宝格丽白）-1.35米", unit:"张", packagesCount:2, weight:109.5, volume:0.23, dealerCode:"P07650", dealerName:"垫江县索菲亚", rowIndex:1, province:"重庆市" },
+            { poNumber:"SCC2607060233", sender:"索菲亚家居股份有限公司", carrier:"城际物流", receiver:"长子县索菲亚", contact:"李文灿", address:"山西省长治市长治市长子县丹朱东大街丹朱一中对过", phone:"18634555656", orderId:"P2366022500048-13", itemCode:"CM20045753", itemName:"阿尔法pro餐椅（泡芙白拼米驼灰）-2张/包", quantity:2, shippingDate:"2026-07-19", subCode:"CM20045753", subName:"阿尔法pro餐椅（泡芙白拼米驼灰）-2张/包", unit:"张", packagesCount:1, weight:16.5, volume:0.24, dealerCode:"P23660", dealerName:"长子县索菲亚", rowIndex:29, province:"山西省" }
+        ];
+
+        // 稳健的高精度 Excel 日期序列解析器
+        function parseExcelDate(val) {
+            if(!val) return '2026-07-15';
+            if(typeof val === 'number') {
+                const date = new Date((val - 25569) * 86400 * 1000);
+                return date.toISOString().slice(0, 10);
+            }
+            if(val instanceof Date) {
+                return val.toISOString().slice(0, 10);
+            }
+            const s = String(val).trim();
+            if(/^\d{4}[-\/]\d{1,2}[-\/]\d{1,2}/.test(s)) {
+                const parts = s.split(/[-\/]/);
+                const y = parts[0];
+                const m = parts[1].padStart(2, '0');
+                const d = parts[2].split(' ')[0].padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
+            return s;
+        }
+
+        // 正则省份智能分析
+        function extractProvince(addr) {
+            if(!addr) return "未知";
+            const ps = ['云南省','湖南省','重庆市','山西省','陕西省','甘肃省','四川省','贵州省','湖北省','河南省','山东省','江苏省','浙江省','福建省','广东省','广西壮族自治区','内蒙古自治区','新疆维吾尔自治区','西藏自治区','宁夏回族自治区','青海省','海南省'];
+            for(const p of ps) if(addr.includes(p)) return p;
+            const m = addr.match(/^(.*?省|.*?自治区|北京|上海|天津|重庆)/);
+            return m ? m[1].trim() : addr.slice(0, 3);
+        }
+
+        // 智能箱名识别算法：根据当前分包索引和总包数自动返回预设箱名
+        function getDefaultBoxName(pkgIndex, totalPkgs) {
+            if (totalPkgs <= 1) return "";
+            if (totalPkgs === 2) {
+                if (pkgIndex === 1) return "台面箱";
+                if (pkgIndex === 2) return "架子箱";
+            }
+            if (totalPkgs === 3) {
+                if (pkgIndex === 1) return "台面箱";
+                if (pkgIndex === 2) return "架子箱";
+                if (pkgIndex === 3) return "五金包";
+            }
+            if (pkgIndex === 1) return "台面箱";
+            if (pkgIndex === 2) return "门板箱";
+            if (pkgIndex === 3) return "架子箱";
+            if (pkgIndex === 4) return "五金包";
+            return `配件包${pkgIndex - 4}`;
+        }
+
+        // 绑定拖拽上传
+        function setupFileHandlers() {
+            const dz = document.getElementById('dropzone'), fi = document.getElementById('fileInput');
+            dz.addEventListener('click', ()=>fi.click());
+            dz.addEventListener('dragover', e=>{ e.preventDefault(); dz.classList.add('border-indigo-500','bg-indigo-50/20'); });
+            dz.addEventListener('dragleave', ()=>dz.classList.remove('border-indigo-500','bg-indigo-50/20'));
+            dz.addEventListener('drop', e=>{
+                e.preventDefault();
+                dz.classList.remove('border-indigo-500','bg-indigo-50/20');
+                if(e.dataTransfer.files.length) handleExcelFile(e.dataTransfer.files[0]);
+            });
+            fi.addEventListener('change', e=>{ if(e.target.files.length) handleExcelFile(e.target.files[0]); });
+        }
+
+        function handleExcelFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const wb = XLSX.read(data, { type:'array' });
+                    const ws = wb.Sheets[wb.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(ws, { defval:"" });
+                    if(!json.length) { showToast("Excel表格中未检索到有效行数据","error"); return; }
+
+                    const clean = [], last = {};
+                    const map = {
+                        'poNumber':['采购订单','采购单号','PO'],
+                        'sender':['发货方','送货方','供应商'],
+                        'carrier':['物流商','承运人'],
+                        'receiver':['经销商名称','收货方','收货经销商'],
+                        'contact':['收货联系人','仓库联系人','联系人'],
+                        'address':['收货地址','仓库地址','送货地址'],
+                        'phone':['收货电话','仓库电话','电话'],
+                        'orderId':['客户PO','订单号','销售单号'],
+                        'itemCode':['物料编码','产品编码'],
+                        'itemName':['物料名称','产品名称'],
+                        'shippingDate':['用户需求日期','需求日期','计划日期'],
+                        'quantity':['需求数量','数量'],
+                        'subCode':['物料编码','分包编码'],
+                        'subName':['物料名称','分包名称'],
+                        'unit':['单位'],
+                        'packagesCount':['总件数','件数','包数'],
+                        'weight':['总重量（kg）','总重量','重量'],
+                        'volume':['总体积（m³）','总体积','体积'],
+                        'dealerCode':['经销商账号','经销商编码'],
+                        'dealerName':['经销商名称','收货方名称'],
+                        'province':['省份','省份2']
+                    };
+
+                    json.forEach((row, idx) => {
+                        const keys = Object.keys(row);
+                        if(!keys.length) return;
+                        const str = Object.values(row).join("").replace(/\s+/g,"");
+                        if(str.includes('合计')||str.includes('汇总')||str.includes('总计')) return;
+
+                        let ext = {};
+                        for(const [k, ks] of Object.entries(map)) {
+                            let found = false;
+                            for(const pk of ks) {
+                                const m = keys.find(x => x.trim()===pk || x.trim().includes(pk));
+                                if(m) { 
+                                    ext[k] = row[m]!==undefined&&row[m]!==null ? String(row[m]).trim() : ''; 
+                                    found = true; 
+                                    break; 
+                                }
+                            }
+                            if(!found) ext[k]='';
+                        }
+
+                        // 支持向上继承空白列
+                        const po = ext.poNumber || last.poNumber || "SCC2607060233";
+                        const sender = ext.sender || last.sender || "索菲亚家居股份有限公司";
+                        const carrier = ext.carrier || last.carrier || "城际物流";
+                        const receiver = ext.receiver || last.receiver || "未知收货方";
+                        const contact = ext.contact || last.contact || "未知联系人";
+                        const address = ext.address || last.address || "未知地址";
+                        const phone = ext.phone || last.phone || "未知电话";
+                        const orderId = ext.orderId || last.orderId || "未知订单号";
+                        const shippingDate = parseExcelDate(ext.shippingDate || last.shippingDate);
+                        const dealerCode = ext.dealerCode || last.dealerCode || "P00000";
+                        const dealerName = ext.dealerName || last.dealerName || receiver;
+
+                        if(po) last.poNumber=po; if(sender) last.sender=sender; if(carrier) last.carrier=carrier;
+                        if(receiver) last.receiver=receiver; if(contact) last.contact=contact;
+                        if(address) last.address=address; if(phone) last.phone=phone;
+                        if(orderId) last.orderId=orderId; if(shippingDate) last.shippingDate=shippingDate;
+                        if(dealerCode) last.dealerCode=dealerCode; if(dealerName) last.dealerName=dealerName;
+
+                        const itemCode = ext.itemCode || "未知编码";
+                        const itemName = ext.itemName || "未知物料名称";
+                        const quantity = ext.quantity ? parseFloat(ext.quantity)||0 : 0;
+                        const packagesCount = ext.packagesCount ? parseInt(ext.packagesCount)||1 : 1;
+                        const weight = ext.weight ? parseFloat(ext.weight)||0 : 0;
+                        const volume = ext.volume ? parseFloat(ext.volume)||0 : 0;
+                        const unit = ext.unit || "张";
+                        if(!itemCode && !itemName && quantity===0) return;
+                        const province = ext.province || extractProvince(address);
+
+                        clean.push({ 
+                            poNumber:po, sender, carrier, receiver, contact, address, phone, 
+                            orderId, itemCode, itemName, quantity, shippingDate, 
+                            subCode:itemCode, subName:itemName, unit, packagesCount, 
+                            weight, volume, dealerCode, dealerName, rowIndex:idx+1, province 
+                        });
+                    });
+
+                    rawDataList = clean;
+                    renderDiagnostics(file.name);
+                    showToast(`Excel数据解析成功！共加载并核验了 ${rawDataList.length} 条有效明细记录`);
+                    processAndRender();
+                } catch(err) { 
+                    console.error(err); 
+                    showToast("文件解析失败，请确保格式正确","error"); 
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function renderDiagnostics(name) {
+            const panel = document.getElementById('diagnosticPanel');
+            const content = document.getElementById('diagnosticContent');
+            const tbody = document.getElementById('diagnosticTableBody');
+            panel.classList.remove('hidden');
+            content.innerHTML = ''; 
+            tbody.innerHTML = '';
+            
+            const provinces = [...new Set(rawDataList.map(i=>i.province))];
+            const dealers = [...new Set(rawDataList.map(i=>i.receiver))];
+            content.innerHTML = `
+                <div class="space-y-1.5 p-3 bg-slate-50 rounded-lg">
+                    <div class="font-bold text-slate-800 border-b pb-1 mb-1.5 flex justify-between">
+                        <span>数据概览</span><span class="text-emerald-600">${rawDataList.length} 条明细</span>
+                    </div>
+                    <div><span class="text-slate-400">已识别到省份:</span> <span class="font-bold text-indigo-700">${provinces.join(', ')}</span></div>
+                    <div><span class="text-slate-400">涉及下属经销商总数:</span> <span class="font-bold text-indigo-700">${dealers.length} 家</span></div>
+                </div>
+                <div class="space-y-1.5 p-3 bg-slate-50 rounded-lg">
+                    <div class="font-bold text-slate-800 border-b pb-1 mb-1.5">宽泛关系映射表</div>
+                    <div><span class="text-slate-400">采购订单 →</span> <span class="font-mono text-indigo-700">poNumber</span></div>
+                    <div><span class="text-slate-400">经销商名称 →</span> <span class="font-mono text-indigo-700">receiver</span></div>
+                    <div><span class="text-slate-400">物料编码 →</span> <span class="font-mono text-indigo-700">itemCode</span></div>
+                    <div><span class="text-slate-400">计划日期 →</span> <span class="font-mono text-indigo-700">shippingDate (原表用户需求日期)</span></div>
+                </div>
+            `;
+            rawDataList.slice(0,5).forEach(item=>{
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td class="p-2 border-b truncate max-w-[100px]" title="${item.receiver}">${item.receiver}</td>
+                    <td class="p-2 border-b font-mono text-xs">${item.poNumber}</td>
+                    <td class="p-2 border-b font-mono text-xs">${item.orderId}</td>
+                    <td class="p-2 border-b text-indigo-600 font-mono text-xs">${item.itemCode}</td>
+                    <td class="p-2 border-b truncate max-w-[120px]" title="${item.itemName}">${item.itemName}</td>
+                    <td class="p-2 border-b text-center font-bold">${item.quantity}</td>
+                    <td class="p-2 border-b text-center font-bold text-emerald-600">${item.packagesCount}</td>
+                    <td class="p-2 border-b text-center text-xs font-mono">${item.shippingDate}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderBoxNameConfigPanel(processedItems) {
+            const configContainer = document.getElementById('boxNameConfigContainer');
+            if (!configContainer) return;
+
+            let html = `
+                <div class="border border-slate-200 rounded-xl overflow-hidden mt-4">
+                    <div class="bg-indigo-50/50 px-4 py-3 border-b border-slate-200 flex justify-between items-center">
+                        <span class="font-bold text-xs text-indigo-950 flex items-center gap-1.5">
+                            <i class="fa-solid fa-boxes-stacked text-indigo-600"></i> 📦 发运分包自定义箱名配置中心（支持自动识别填写，随时手动修改覆盖）
+                        </span>
+                        <span class="text-[10px] text-slate-500 font-medium">支持键盘 [Tab] 键极速切换输入框，下方标签即时渲染同步</span>
+                    </div>
+                    <div class="overflow-y-auto max-h-[320px] divide-y divide-slate-100 bg-white">
+            `;
+
+            let hasPackages = false;
+            processedItems.forEach(item => {
+                const totalPkgs = parseInt(item.packagesCount || 1);
+                for (let p = 1; p <= totalPkgs; p++) {
+                    hasPackages = true;
+                    const key = `${item.poNumber}_${item.rowIndex}_${p}`;
+                    // 如果用户还没有手动覆盖，则自动加载智能识别默认值
+                    const currentVal = boxNamesState[key] !== undefined ? boxNamesState[key] : getDefaultBoxName(p, totalPkgs);
+
+                    html += `
+                        <div class="p-3 hover:bg-slate-50 flex flex-wrap items-center justify-between gap-3 text-xs">
+                            <div class="flex-grow min-w-[200px]">
+                                <div class="font-bold text-slate-800">${item.receiver} <span class="font-normal text-slate-400">(${item.province})</span></div>
+                                <div class="text-[11px] text-slate-500 mt-1 truncate max-w-[480px]">
+                                    销售单号: <span class="font-mono text-slate-700">${item.orderId}</span> | 
+                                    物料: <span class="text-indigo-600 font-medium">${item.itemName}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2.5">
+                                <span class="text-[10px] text-indigo-700 font-bold bg-indigo-50 border border-indigo-100 px-2 py-1 rounded">第 ${p} 包 / 共 ${totalPkgs} 包</span>
+                                <input type="text" id="diag_input_${key}" value="${currentVal}" 
+                                       placeholder="输入自定义箱子名称 (如: 台面箱 / 五金包)" 
+                                       oninput="saveBoxName('${key}', this.value)"
+                                       class="w-[220px] border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 focus:outline-none transition-all">
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            if (!hasPackages) {
+                html += `<div class="p-8 text-center text-slate-400 text-xs">等待数据导入，暂无有效发运标签进行配置</div>`;
+            }
+
+            html += `</div></div>`;
+            configContainer.innerHTML = html;
+        }
+
+        // 双向即时同步，不失焦
+        function saveBoxName(key, value) {
+            boxNamesState[key] = value.trim();
+            
+            // 同步上方配置面板
+            const diagInput = document.getElementById(`diag_input_${key}`);
+            if (diagInput && diagInput.value !== value) {
+                diagInput.value = value;
+            }
+
+            // 同步下方标签卡片内呈现的静止文本
+            const displaySpan = document.getElementById(`span_${key}`);
+            if (displaySpan) {
+                displaySpan.textContent = value.trim() ? `（${value.trim()}）` : "";
+            }
+        }
+
+        function processAndRender() {
+            if(!rawDataList.length) {
+                document.getElementById('printArea').innerHTML = `<div class="bg-white rounded-2xl p-12 text-center text-slate-400 border border-slate-200"><i class="fa-solid fa-file-excel text-5xl mb-4 text-slate-300"></i><p class="text-xs">等待导入Excel数据源进行模板渲染编译...</p></div>`;
+                return;
+            }
+            let processed = rawDataList.map(item => ({ ...item, province: item.province || extractProvince(item.address) }));
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            if(query) {
+                processed = processed.filter(item =>
+                    (item.province||'').toLowerCase().includes(query) ||
+                    (item.poNumber||'').toLowerCase().includes(query) ||
+                    (item.receiver||'').toLowerCase().includes(query) ||
+                    (item.orderId||'').toLowerCase().includes(query) ||
+                    (item.itemName||'').toLowerCase().includes(query) ||
+                    (item.dealerName||'').toLowerCase().includes(query)
+                );
+            }
+            const pSort = document.getElementById('primarySort').value;
+            const sSort = document.getElementById('secondarySort').value;
+            processed.sort((a,b)=>{
+                if(pSort!=='none') { const d = (a.province||'').localeCompare((b.province||''),'zh'); if(d) return d * (pSort==='province-asc'?1:-1); }
+                if(sSort!=='none') { const da = new Date(a.shippingDate||'1970-01-01'), db = new Date(b.shippingDate||'1970-01-01'); return (da-db) * (sSort==='date-asc'?1:-1); }
+                return 0;
+            });
+            
+            // 实时生成最上方配置工作台
+            renderBoxNameConfigPanel(processed);
+
+            if(currentView==='delivery') {
+                const groups=[], seen=new Set();
+                processed.forEach(item=>{
+                    const key = `${item.receiver}_${item.shippingDate}`;
+                    if(!seen.has(key)) {
+                        seen.add(key);
+                        const items = processed.filter(x=>x.receiver===item.receiver && x.shippingDate===item.shippingDate);
+                        groups.push({ 
+                            key, items, receiver:item.receiver, 
+                            shippingDate:item.shippingDate, 
+                            province:item.province, 
+                            poNumber:[...new Set(items.map(x=>x.poNumber))].join('/'), 
+                            sender:item.sender, carrier:item.carrier, contact:item.contact, 
+                            phone:item.phone, address:item.address 
+                        });
+                    }
+                });
+                updateStatistics(processed, groups.length);
+                renderDeliveryNotes(groups);
+            } else {
+                updateStatistics(processed, processed.length);
+                renderLogisticsLabels(processed);
+            }
+        }
+
+        function updateStatistics(items, count) {
+            document.getElementById('statTotalRows').innerText = rawDataList.length + " 行";
+            const ps = [...new Set(items.map(i=>i.province).filter(Boolean))];
+            document.getElementById('statProvinces').innerText = ps.length ? ps.join(', ') : '无';
+            document.getElementById('statDeliveryNotes').innerText = count + " 张";
+            const total = items.reduce((s,i)=>s+(i.packagesCount||1),0);
+            document.getElementById('statTotalPackages').innerText = total + " 包";
+        }
+
+        function renderDeliveryNotes(groups) {
+            const c = document.getElementById('printArea');
+            c.innerHTML = '';
+            if(!groups.length) { c.innerHTML = `<div class="bg-white rounded-2xl p-12 text-center text-slate-400"><p class="text-xs">未筛选到符合条件的送货单数据</p></div>`; return; }
+            
+            const enableCustomDate = document.getElementById('enableCustomDate').checked;
+            const customDeliveryDate = document.getElementById('customDeliveryDate').value;
+
+            groups.forEach(group=>{
+                const w = document.createElement('div');
+                w.className = 'preview-page-delivery p-[8mm] page-break text-black relative bg-white';
+                let tp=0, tw=0, tv=0;
+                group.items.forEach(it=>{ 
+                    tp += parseInt(it.packagesCount||0); 
+                    tw += parseFloat(it.weight||0); 
+                    tv += parseFloat(it.volume||0); 
+                });
+                tw = parseFloat(tw.toFixed(1)); 
+                tv = parseFloat(tv.toFixed(2));
+                
+                // 签字送货日期
+                const shownDeliveryDate = enableCustomDate ? customDeliveryDate : group.shippingDate;
+
+                let rows = '';
+                group.items.forEach(it=>{
+                    rows += `<tr class="data-row" style="min-height:3rem; height:auto; line-height:1.4;">
+                        <td class="px-1 py-1.5 leading-tight break-all font-mono text-[10px] align-middle">${it.orderId}</td>
+                        <td class="px-1 py-1.5 leading-tight font-mono text-[10px] align-middle">${it.itemCode}</td>
+                        <td class="px-1.5 py-1.5 text-left leading-tight break-all text-[10px] align-middle">${it.itemName}</td>
+                        <td class="px-1 py-1.5 text-sm font-sans text-center align-middle">${it.quantity}</td>
+                        <!-- 原汁原味呈现Excel中的用户需求日期作为发运计划 -->
+                        <td class="px-1 py-1.5 leading-tight font-mono text-[10px] text-center align-middle">${it.shippingDate}</td>
+                        <td class="px-1 py-1.5 leading-tight font-mono text-[10px] align-middle">${it.subCode}</td>
+                        <td class="px-1.5 py-1.5 text-left leading-tight break-all text-[10px] align-middle">${it.subName}</td>
+                        <td class="px-1 py-1.5 text-center align-middle">${it.unit}</td>
+                        <td class="px-1 py-1.5 font-mono text-center align-middle">${it.packagesCount}</td>
+                        <td class="px-1 py-1.5 font-mono text-center align-middle">${it.weight}</td>
+                        <td class="px-1 py-1.5 font-mono text-center align-middle">${it.volume}</td>
+                    </tr>`;
+                });
+
+                w.innerHTML = `<div style="height:100%; display:flex; flex-direction:column; justify-content:space-between;">
+                    <div>
+                        <h2 class="text-center text-[20px] font-medium tracking-[0.12em] mb-2">供应商送货单</h2>
+                        
+                        <!-- 顶部收送货元数据：无边框布局表格，防止文本截断、错位及下边界侵蚀 -->
+                        <table style="width: 100%; border: none !important; border-collapse: collapse !important; margin-bottom: 8px; font-size: 11.5px; line-height: 1.5;" class="text-slate-900">
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 2.5px 0; border: none !important; width: 35%; font-weight: normal; vertical-align: top;">采购单号：<span class="font-mono">${group.poNumber}</span></td>
+                                    <td style="padding: 2.5px 0; border: none !important; width: 65%; font-weight: normal; vertical-align: top;" colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 2.5px 0; border: none !important; width: 35%; font-weight: normal; vertical-align: middle;">送货方：${group.sender}</td>
+                                    <td style="padding: 2.5px 0; border: none !important; width: 65%; font-weight: normal; vertical-align: middle;" colspan="2">收货方：${group.receiver}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 2.5px 0; border: none !important; width: 35%; font-weight: normal; vertical-align: middle;">物流商：${group.carrier}</td>
+                                    <td style="padding: 2.5px 0; border: none !important; width: 30%; font-weight: normal; vertical-align: middle;">联系人：${group.contact}</td>
+                                    <td style="padding: 2.5px 0; border: none !important; width: 35%; font-weight: normal; vertical-align: middle;">电话：<span class="font-mono">${group.phone}</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 2.5px 0; border: none !important; width: 100%; font-weight: normal; vertical-align: middle;" colspan="3">地址：${group.address}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- 主物料清单（仅此大表格拥有黑色网格线） -->
+                        <table class="w-full text-center border-collapse black-border-table text-[10.5px] table-fixed">
+                            <thead>
+                                <tr class="h-7 bg-slate-50">
+                                    <th class="font-normal w-[11%]">订单号</th>
+                                    <th class="font-normal w-[10%]">物料编码</th>
+                                    <th class="font-normal w-[18%] text-left px-1">物料名称</th>
+                                    <th class="font-normal w-[6%]">数量</th>
+                                    <th class="font-normal w-[10%]">发运计划</th>
+                                    <th class="font-normal w-[10%]">分包编码</th>
+                                    <th class="font-normal w-[18%] text-left px-1">分包名称</th>
+                                    <th class="font-normal w-[5%]">单位</th>
+                                    <th class="font-normal w-[4%] leading-tight">件数</th>
+                                    <th class="font-normal w-[4%] leading-tight">重量</th>
+                                    <th class="font-normal w-[4%] leading-tight">体积</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                            <tfoot>
+                                <tr class="h-8">
+                                    <td colspan="8" class="text-left font-sans text-[12px] px-2 font-bold">汇总：</td>
+                                    <td class="font-mono font-bold text-[11px]">${tp}</td>
+                                    <td class="font-mono font-bold text-[11px]">${tw}</td>
+                                    <td class="font-mono font-bold text-[11px]">${tv}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    <!-- 签字收发区域 -->
+                    <div style="width: 100%; border: none !important; padding-top: 10px;" class="text-[12px] text-slate-900 leading-normal">
+                        <table style="width: 100%; border: none !important; border-collapse: collapse !important;">
+                            <tbody>
+                                <tr style="height: 24px;">
+                                    <td style="border: none !important; width: 33%; padding: 2px 0;">收货人签字：</td>
+                                    <td style="border: none !important; width: 33%; padding: 2px 0;">送货人签字：潘秋玉</td>
+                                    <td style="border: none !important; width: 34%; padding: 2px 0;">送货日期：${shownDeliveryDate}</td>
+                                </tr>
+                                <tr style="height: 24px;">
+                                    <td style="border: none !important; width: 33%; padding: 2px 0;">收货日期：</td>
+                                    <td style="border: none !important; width: 67%; padding: 2px 0;" colspan="2">送货人电话：13729885005</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`;
+                c.appendChild(w);
+            });
+        }
+
+        function renderLogisticsLabels(items) {
+            const c = document.getElementById('printArea');
+            c.innerHTML = '';
+            if(!items.length) { c.innerHTML = `<div class="bg-white rounded-2xl p-12 text-center text-slate-400"><p class="text-xs">暂无标签数据，请导入Excel或载入测试数据</p></div>`; return; }
+            const col = document.getElementById('labelColumns').value;
+            const outer = document.createElement('div');
+            outer.className = `logistics-grid cols-${col==='2'?'2':'1'}`;
+            
+            // 统合网格硬笔质感标准 (22% 左列，78% 右列宽，垂直水平完美居中，使用自适应内边距防溢出)
+            const leftGridStyle = `style="width: 22%; vertical-align: middle; text-align: center; padding: 5px 4px; box-sizing: border-box; word-break: break-all; color: #000000 !important; font-family: Arial, sans-serif; font-size: 11px; font-weight: 600;"`;
+            const rightGridStyle = `style="width: 78%; vertical-align: middle; text-align: center; padding: 5px 4px; box-sizing: border-box; word-break: break-all; color: #000000 !important; font-family: Arial, sans-serif; font-size: 11px; font-weight: 600;"`;
+
+            items.forEach(item=>{
+                // 精准获取该行产品的总件数 N，独立裂变出 N 页不切边包裹标签
+                const totalPkgs = parseInt(item.packagesCount || 1);
+                
+                for (let pkgIndex = 1; pkgIndex <= totalPkgs; pkgIndex++) {
+                    const uniqueKey = `${item.poNumber}_${item.rowIndex}_${pkgIndex}`;
+                    // 如果用户没有手动修改，则自动读取智能箱名默认值
+                    const boxName = boxNamesState[uniqueKey] !== undefined ? boxNamesState[uniqueKey] : getDefaultBoxName(pkgIndex, totalPkgs);
+
+                    const card = document.createElement('div');
+                    // 容器本身完美契合打印尺寸，去除了 border 外框，根治由于边框重叠产生的凸起和偏下偏移
+                    card.className = 'preview-page-logistics p-[4.5mm] page-break flex flex-col justify-start text-black relative bg-white';
+                    
+                    card.innerHTML = `
+                        <div class="text-center pb-2 pt-1 mb-2">
+                            <div class="text-2xl font-bold tracking-[0.4em] text-[#5c3e35]" style="font-family:'Times New Roman',Times,serif;">索菲亞</div>
+                            <div class="text-[9px] tracking-[0.35em] text-stone-500 uppercase font-sans mt-0.5">家具 | 整家定制</div>
+                        </div>
+                        <table class="w-full black-border-table text-[11px] leading-tight font-sans bg-white table-fixed" style="width: 100%; box-sizing: border-box;">
+                            <tbody>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>分包编码</td>
+                                    <td ${rightGridStyle} style="font-family: monospace;">${item.subCode}</td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>分包名称</td>
+                                    <td ${rightGridStyle}>${item.subName}</td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>数量</td>
+                                    <td ${rightGridStyle}>
+                                        <div style="font-size: 11.5px; font-weight: bold; color: #000000 !important; line-height: 1.4;">
+                                            ${item.quantity} (行号 ${item.rowIndex}, 第 ${pkgIndex} 包<span id="span_${uniqueKey}">${boxName ? `（${boxName}）` : ''}</span>, 共 ${totalPkgs} 包)
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>整包编码</td>
+                                    <td ${rightGridStyle} style="font-family: monospace;">${item.itemCode}</td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>整包名称</td>
+                                    <td ${rightGridStyle}>${item.itemName}</td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>销售单号</td>
+                                    <td ${rightGridStyle} style="font-family: monospace;">${item.orderId}</td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>经销商编码</td>
+                                    <td ${rightGridStyle} style="font-family: monospace;">${item.dealerCode}</td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>经销商名称</td>
+                                    <td ${rightGridStyle}>${item.dealerName}</td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>收货人</td>
+                                    <td ${rightGridStyle}>${item.contact}</td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>联系电话</td>
+                                    <td ${rightGridStyle} style="font-family: monospace;">${item.phone}</td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>收货地址</td>
+                                    <td ${rightGridStyle}>${item.address}</td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>物流商</td>
+                                    <td ${rightGridStyle}>${item.carrier}</td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>仓库联系人</td>
+                                    <td ${rightGridStyle}>${item.contact}</td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>仓库电话</td>
+                                    <td ${rightGridStyle} style="font-family: monospace;">${item.phone}</td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>仓库地址</td>
+                                    <td ${rightGridStyle}>${item.address}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    `;
+                    outer.appendChild(card);
+                }
+            });
+            c.appendChild(outer);
+        }
+
+        async function exportToHighPrecisionPDF() {
+            const btn = document.getElementById('exportPdfBtn');
+            const icon = document.getElementById('exportIcon');
+            const text = document.getElementById('exportText');
+
+            if (!rawDataList.length) { showToast("暂无可用明细，请先导入数据后再行编译导出","error"); return; }
+
+            // 锁定按钮
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-wait');
+            icon.className = "fa-solid fa-circle-notch animate-spin";
+            text.innerText = "正在高清编译...";
+
+            const overlay = document.getElementById('exportOverlay');
+            const statusText = document.getElementById('exportStatusText');
+            const subText = document.getElementById('exportSubText');
+            const progressFill = document.getElementById('exportProgressFill');
+            
+            overlay.classList.add('active');
+            statusText.textContent = '初始化缓冲区...';
+            subText.textContent = '正在构建文档排版页面...';
+            progressFill.style.width = '0%';
+
+            const container = document.getElementById('printArea');
+            const isDelivery = (currentView === 'delivery');
+            const pageClass = isDelivery ? '.preview-page-delivery' : '.preview-page-logistics';
+            const pageElements = container.querySelectorAll(pageClass);
+
+            if (!pageElements.length) {
+                showToast("未检测到当前视图下可导出的页面", "error");
+                overlay.classList.remove('active');
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-wait');
+                icon.className = "fa-solid fa-file-pdf";
+                text.innerText = "导出合并PDF";
+                return;
+            }
+
+            const total = pageElements.length;
+            subText.textContent = `共计发现 ${total} 页`;
+            statusText.textContent = '开始进行一键高保真离屏渲染...';
+
+            const pageWidth = isDelivery ? 240 : 105;
+            const pageHeight = isDelivery ? 140 : 145;
+            const MM_TO_PX = 3.7795;
+            const canvasW = pageWidth * MM_TO_PX;
+            const canvasH = pageHeight * MM_TO_PX;
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    unit: 'mm',
+                    format: [pageWidth, pageHeight],
+                    orientation: isDelivery ? 'landscape' : 'portrait',
+                    compress: true
+                });
+
+                for (let i = 0; i < total; i++) {
+                    statusText.textContent = `正在完美映射第 ${i+1}/${total} 页...`;
+                    progressFill.style.width = `${((i) / total) * 90}%`;
+
+                    const el = pageElements[i];
+                    const clone = el.cloneNode(true);
+
+                    // 彻底清除预览时的投影、外层多余间距与灰色边框
+                    clone.style.boxShadow = 'none';
+                    clone.style.margin = '0';
+                    clone.style.borderRadius = '0';
+                    clone.style.outline = 'none';
+                    clone.style.border = 'none';
+
+                    // 彻底移除 clone 内带有 no-print 属性的行内控件
+                    const noPrints = clone.querySelectorAll('.no-print');
+                    noPrints.forEach(np => np.remove());
+
+                    // 1:1 像素级严苛锁定：不进行任何外围百分比缩小或 matrix 变换，保持与预览绝对一致的折行与字体大小！
+                    clone.style.width = canvasW + 'px';
+                    clone.style.height = canvasH + 'px';
+                    clone.style.minWidth = canvasW + 'px';
+                    clone.style.maxWidth = canvasW + 'px';
+                    clone.style.minHeight = canvasH + 'px';
+                    clone.style.maxHeight = canvasH + 'px';
+                    clone.style.overflow = 'hidden';
+                    clone.style.background = '#ffffff';
+                    clone.style.boxSizing = 'border-box';
+                    clone.style.position = 'relative';
+
+                    // 强力网格硬化：重构为极其精准的 1px 细线，完美契合预览版表格粗细，彻底避开 html2canvas 渲染多重粗线 Bug
+                    const blackTables = clone.querySelectorAll('table.black-border-table');
+                    blackTables.forEach(t => {
+                        t.style.setProperty('border-collapse', 'separate', 'important');
+                        t.style.setProperty('border-spacing', '0', 'important');
+                        t.style.setProperty('border-top', '1px solid #000000', 'important');
+                        t.style.setProperty('border-left', '1px solid #000000', 'important');
+                        t.style.setProperty('border-right', 'none', 'important');
+                        t.style.setProperty('border-bottom', 'none', 'important');
+                        t.style.setProperty('width', '100%', 'important');
+
+                        const cells = t.querySelectorAll('td, th');
+                        cells.forEach(cell => {
+                            cell.style.setProperty('border-top', 'none', 'important');
+                            cell.style.setProperty('border-left', 'none', 'important');
+                            cell.style.setProperty('border-right', '1px solid #000000', 'important');
+                            cell.style.setProperty('border-bottom', '1px solid #000000', 'important');
+                            cell.style.setProperty('padding', '5px 4px', 'important');
+                            cell.style.setProperty('vertical-align', 'middle', 'important');
+                            cell.style.setProperty('text-align', 'center', 'important');
+                        });
+                    });
+
+                    // 异步装载至离屏安全沙盒进行画质快照
+                    const tempDiv = document.createElement('div');
+                    tempDiv.style.cssText = 'position:absolute; left:-9999px; top:0; z-index:-1; width:auto; height:auto; background:white;';
+                    tempDiv.appendChild(clone);
+                    document.body.appendChild(tempDiv);
+
+                    // 超高清3倍渲染，实现完美的印刷抗锯齿和线条硬化
+                    const canvas = await html2canvas(clone, {
+                        scale: 3,
+                        useCORS: true,
+                        logging: false,
+                        backgroundColor: '#ffffff',
+                        width: canvasW,
+                        height: canvasH
+                    });
+
+                    document.body.removeChild(tempDiv);
+                    const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+                    if (i > 0) {
+                        pdf.addPage([pageWidth, pageHeight]);
+                    }
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
+                }
+
+                // 编译成功，触发下载
+                progressFill.style.width = '100%';
+                statusText.textContent = '磁盘写入中，正在保存PDF二进制文档...';
+
+                const filename = isDelivery ? `供应商送货单_合并打印_${total}页.pdf` : `物流标签_拼版印刷_${total}页.pdf`;
+                pdf.save(filename);
+
+                overlay.classList.remove('active');
+                showToast(`✅ 完美高保真 PDF 导出成功！共计 ${total} 页`);
+            } catch (err) {
+                console.error('PDF导出编译链发生异常:', err);
+                overlay.classList.remove('active');
+                showToast('PDF离屏合成编译时发生异常，请重试', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-wait');
+                icon.className = "fa-solid fa-file-pdf";
+                text.innerText = "导出合并PDF";
+            }
+        }
+
+        // 演示数据批量装填
+        function loadSampleData() {
+            rawDataList = JSON.parse(JSON.stringify(SAMPLE_DATA));
+            document.getElementById('diagnosticPanel').classList.add('hidden');
+            showToast("✅ 已成功挂载内置高保真测试数据集！");
+            processAndRender();
+        }
+
+        // 切换单据和标签视图
+        function changeView(view) {
+            currentView = view;
+            const b1 = document.getElementById('btnViewDelivery'), b2 = document.getElementById('btnViewLogistics');
+            if(view==='delivery') {
+                b1.className = 'px-5 py-2.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-2 bg-slate-900 text-white shadow-sm';
+                b2.className = 'px-5 py-2.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-800 transition-all flex items-center space-x-2';
+            } else {
+                b2.className = 'px-5 py-2.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-2 bg-slate-900 text-white shadow-sm';
+                b1.className = 'px-5 py-2.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-800 transition-all flex items-center space-x-2';
+            }
+            processAndRender();
+        }
+
+        // 轻量Toast消息栈
+        function showToast(msg, type='success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const el = document.getElementById('toastMessage');
+            el.textContent = msg;
+            icon.innerHTML = type==='error' ? '<i class="fa-solid fa-circle-exclamation"></i>' : '<i class="fa-solid fa-circle-check"></i>';
+            icon.className = type==='error' ? 'text-red-400 text-lg' : 'text-emerald-400 text-lg';
+            toast.classList.remove('translate-y-20','opacity-0');
+            toast.classList.add('translate-y-0','opacity-100');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(()=>{
+                toast.classList.add('translate-y-20','opacity-0');
+                toast.classList.remove('translate-y-0','opacity-100');
+            }, 3000);
+        }
+
+        // 引导启动
+        setupFileHandlers();
+        changeView('delivery');
+    </script>
+</body>
+</html>
