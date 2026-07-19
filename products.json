@@ -2156,6 +2156,13 @@
       "slug": "装柜排柜",
       "url": "https://luohaijun8888-art.github.io/artisan-gallery/widgets/装柜排柜.html",
       "createdAt": "2026-07-19"
+    },
+    {
+      "id": 1784441310732,
+      "name": "CAD自动标注",
+      "slug": "cad自动标注",
+      "url": "https://luohaijun8888-art.github.io/artisan-gallery/widgets/cad自动标注.html",
+      "createdAt": "2026-07-19"
     }
   ]
 }
