@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>截图转 Excel 工具</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS (XLSX) 用于在浏览器端生成 Excel 文件 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.mini.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .drag-over {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- 顶部导航栏 -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-blue-600 text-white rounded-lg">
+                    <i data-lucide="table-properties" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900">智能截图转 Excel 工具</h1>
+                    <p class="text-xs text-slate-500">粘贴或拖入截图，AI 自动识别并一键导出表格</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span class="w-1.5 h-1.5 mr-1.5 bg-green-500 rounded-full"></span>
+                    本地 AI 驱动版
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体区域 -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
+        
+        <!-- 左侧：图片输入与配置 -->
+        <div class="w-full lg:w-5/12 flex flex-col space-y-6">
+            
+            <!-- 上传/粘贴区 -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col">
+                <h2 class="text-sm font-semibold text-slate-900 mb-4 flex items-center">
+                    <i data-lucide="image" class="w-4 h-4 mr-2 text-blue-600"></i>
+                    第一步：输入表格截图
+                </h2>
+                
+                <div id="drop-zone" class="border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-colors bg-slate-50 hover:bg-blue-50/50 min-h-[220px]" tabindex="0">
+                    <input type="file" id="file-input" accept="image/*" class="hidden">
+                    <div id="upload-prompt" class="text-center flex flex-col items-center">
+                        <div class="p-4 bg-white rounded-full shadow-sm border border-slate-100 mb-4 text-slate-400">
+                            <i data-lucide="clippy" class="w-8 h-8 text-blue-500"></i>
+                        </div>
+                        <p class="text-sm font-medium text-slate-700">点击上传 或 拖拽图片至此</p>
+                        <p class="text-xs text-slate-400 mt-2">支持在任何地方截图后直接 <kbd class="px-1.5 py-0.5 bg-slate-200 rounded text-[10px] font-mono">Ctrl + V</kbd> 粘贴</p>
+                    </div>
+                    
+                    <div id="preview-container" class="hidden w-full h-full flex-col items-center">
+                        <div class="relative w-full max-h-[300px] rounded-lg overflow-hidden border border-slate-200 bg-slate-100 flex items-center justify-center">
+                            <img id="image-preview" class="max-w-full max-h-[280px] object-contain" alt="Preview">
+                            <button id="remove-btn" class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-md transition-all" title="移除图片">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <p id="image-info" class="text-xs text-slate-500 mt-3"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 识别配置 -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <h2 class="text-sm font-semibold text-slate-900 mb-4 flex items-center">
+                    <i data-lucide="settings" class="w-4 h-4 mr-2 text-blue-600"></i>
+                    第二步：AI 识别配置
+                </h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">识别偏好引导</label>
+                        <textarea id="prompt-guide" rows="3" class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-slate-50" placeholder="（可选）例如：这是一个考勤表，请确保日期格式为 YYYY-MM-DD，若有空值请留空。"></textarea>
+                    </div>
+
+                    <!-- 新增：尺寸规格拆分配置开关 -->
+                    <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-start space-x-3">
+                        <input type="checkbox" id="split-dimensions" class="mt-1 w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 cursor-pointer" checked>
+                        <div class="flex-1">
+                            <label for="split-dimensions" class="text-xs font-bold text-slate-700 cursor-pointer flex items-center">
+                                自动拆分尺寸列 (1155*613*15)
+                            </label>
+                            <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                                开启后，AI 会自动将类似 <span class="font-mono text-blue-600 bg-blue-50 px-1 rounded">1155*613*15</span> 的连乘尺寸拆分为三个独立的列进行表示，方便后续计算。
+                            </p>
+                        </div>
+                    </div>
+
+                    <button id="start-btn" disabled class="w-full py-3 px-4 bg-slate-300 text-slate-500 font-medium rounded-xl cursor-not-allowed transition-all flex items-center justify-center space-x-2">
+                        <i data-lucide="cpu" class="w-5 h-5"></i>
+                        <span>开始 AI 智能识别</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 使用说明 -->
+            <div class="bg-blue-50/50 rounded-2xl p-5 border border-blue-100">
+                <h3 class="text-xs font-bold text-blue-900 uppercase tracking-wide mb-2 flex items-center">
+                    <i data-lucide="info" class="w-4 h-4 mr-1.5"></i> 提效小贴士
+                </h3>
+                <ul class="text-xs text-blue-800 space-y-1.5 list-disc list-inside">
+                    <li>使用系统的截图工具（如 Win+Shift+S 或 Mac 的 Cmd+Shift+4）截取表格。</li>
+                    <li>直接回到此页面，点击一下网页后，直接按键盘 <kbd class="px-1 bg-white border rounded">Ctrl + V</kbd> 粘贴。</li>
+                    <li>AI 将全自动提取每一行和每一列，转换成您可以直接编辑的数字和文字。</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- 右侧：识别结果、可编辑表格与导出 -->
+        <div class="w-full lg:w-7/12 flex flex-col space-y-6">
+            
+            <!-- 状态展示区 -->
+            <div id="status-card" class="hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col items-center justify-center py-12">
+                <div id="status-spinner" class="relative w-16 h-16 mb-4">
+                    <div class="absolute inset-0 rounded-full border-4 border-slate-100"></div>
+                    <div class="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
+                </div>
+                <h3 id="status-title" class="text-base font-semibold text-slate-800">正在分析并提取表格数据...</h3>
+                <p id="status-desc" class="text-sm text-slate-500 mt-2 text-center max-w-sm">正在请求 Gemini 2.5 Flash 视觉模型。我们正在使用指数退避算法进行重试以确保连接稳定。</p>
+            </div>
+
+            <!-- 数据结果展示/编辑器 -->
+            <div id="result-card" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+                
+                <!-- 结果控制头 -->
+                <div class="p-6 border-b border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h2 class="text-sm font-semibold text-slate-900 flex items-center">
+                            <i data-lucide="check-square" class="w-4 h-4 mr-2 text-green-600"></i>
+                            第三步：核对并导出数据
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">您可以直接双击下方单元格修改内容，确认无误后导出。</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button id="add-row-btn" class="px-3 py-1.5 border border-slate-300 hover:border-slate-400 text-slate-700 text-xs font-medium rounded-lg flex items-center space-x-1 hover:bg-slate-50 transition-colors">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                            <span>增行</span>
+                        </button>
+                        <button id="export-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded-lg flex items-center space-x-1.5 shadow-sm transition-colors">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                            <span>导出为 Excel (.xlsx)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 可编辑的网页表格 -->
+                <div class="overflow-x-auto max-h-[500px] overflow-y-auto">
+                    <table id="data-table" class="w-full text-left border-collapse text-sm">
+                        <!-- 动态渲染 -->
+                    </table>
+                </div>
+
+                <!-- 底部提示 -->
+                <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500">
+                    <span>双击单元格可以直接修改</span>
+                    <span id="table-stats">共识别 0 行 0 列</span>
+                </div>
+            </div>
+
+            <!-- 历史记录（保存在内存） -->
+            <div id="history-card" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <h2 class="text-sm font-semibold text-slate-900 mb-4 flex items-center">
+                    <i data-lucide="history" class="w-4 h-4 mr-2 text-slate-600"></i>
+                    历史记录
+                </h2>
+                <div id="history-list" class="space-y-3 max-h-[220px] overflow-y-auto">
+                    <!-- 动态记录 -->
+                    <p class="text-xs text-slate-400 py-4 text-center">暂无历史转换记录。成功识别后将自动记录在此处。</p>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- 简易通知提示 -->
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-10 opacity-0 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-2 transition-all duration-300 z-50 text-sm">
+        <span id="toast-icon" class="text-blue-500"></span>
+        <span id="toast-msg"></span>
+    </div>
+
+    <script>
+        // API 密钥常置为空，运行时由环境注入
+        const apiKey = "";
+        
+        // 全局状态
+        let currentBase64Image = null;
+        let tableData = []; // 二维数组表示的表格数据 [ [col1, col2...], [col1, col2...] ]
+        let conversionHistory = [];
+
+        // 页面元素
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const uploadPrompt = document.getElementById('upload-prompt');
+        const previewContainer = document.getElementById('preview-container');
+        const imagePreview = document.getElementById('image-preview');
+        const removeBtn = document.getElementById('remove-btn');
+        const imageInfo = document.getElementById('image-info');
+        const startBtn = document.getElementById('start-btn');
+        const promptGuide = document.getElementById('prompt-guide');
+        const splitDimensions = document.getElementById('split-dimensions');
+        
+        const statusCard = document.getElementById('status-card');
+        const statusTitle = document.getElementById('status-title');
+        const statusDesc = document.getElementById('status-desc');
+        const resultCard = document.getElementById('result-card');
+        const dataTable = document.getElementById('data-table');
+        const tableStats = document.getElementById('table-stats');
+        const exportBtn = document.getElementById('export-btn');
+        const addRowBtn = document.getElementById('add-row-btn');
+        const historyList = document.getElementById('history-list');
+
+        // 初始化 Lucide 图标
+        lucide.createIcons();
+
+        // ------------------ 事件监听：剪贴板与拖拽上传 ------------------
+
+        // 点击上传框触发文件选择
+        dropZone.addEventListener('click', (e) => {
+            if (e.target === removeBtn || removeBtn.contains(e.target)) return;
+            fileInput.click();
+        });
+
+        // 键盘导航触发文件选择
+        dropZone.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                fileInput.click();
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // 拖拽相关
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // 全局粘贴监听 (Ctrl + V)
+        document.addEventListener('paste', (e) => {
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let index in items) {
+                const item = items[index];
+                if (item.kind === 'file' && item.type.startsWith('image/')) {
+                    const blob = item.getAsFile();
+                    handleFile(blob);
+                    showToast('check-circle', '已从剪贴板成功读取粘贴的图片！', 'text-green-500');
+                    break;
+                }
+            }
+        });
+
+        // 移除已选择图片
+        removeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            clearSelectedImage();
+        });
+
+        // 处理输入图像
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showToast('alert-triangle', '请选择有效的图片文件！', 'text-amber-500');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = function () {
+                currentBase64Image = reader.result;
+                imagePreview.src = currentBase64Image;
+                
+                // 更新UI展示预览
+                uploadPrompt.classList.add('hidden');
+                previewContainer.classList.remove('hidden');
+                previewContainer.classList.add('flex');
+                
+                // 提取文件大小和名称
+                const sizeKB = (file.size / 1024).toFixed(1);
+                imageInfo.textContent = `${file.name || '粘贴的图片'} (${sizeKB} KB)`;
+
+                // 激活识别按钮
+                startBtn.removeAttribute('disabled');
+                startBtn.className = "w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2 cursor-pointer";
+            };
+        }
+
+        function clearSelectedImage() {
+            currentBase64Image = null;
+            imagePreview.src = '';
+            fileInput.value = '';
+            uploadPrompt.classList.remove('hidden');
+            previewContainer.classList.add('hidden');
+            previewContainer.classList.remove('flex');
+            imageInfo.textContent = '';
+            
+            // 禁用识别按钮
+            startBtn.setAttribute('disabled', 'true');
+            startBtn.className = "w-full py-3 px-4 bg-slate-300 text-slate-500 font-medium rounded-xl cursor-not-allowed transition-all flex items-center justify-center space-x-2";
+        }
+
+
+        // ------------------ API 请求与指数退避重试 ------------------
+
+        startBtn.addEventListener('click', async () => {
+            if (!currentBase64Image) return;
+
+            // 提取纯 Base64 编码部分
+            const base64Data = currentBase64Image.split(',')[1];
+            const mimeType = currentBase64Image.split(';')[0].split(':')[1];
+
+            // 切换状态显示
+            statusCard.classList.remove('hidden');
+            resultCard.classList.add('hidden');
+            startBtn.setAttribute('disabled', 'true');
+
+            try {
+                // 核心：若勾选拆分尺寸列，在此向提示词中植入强制业务逻辑
+                let dimensionSplitRule = "";
+                if (splitDimensions && splitDimensions.checked) {
+                    dimensionSplitRule = `
+【极其重要规则：自动尺寸拆分列】
+如果表格中的单元格内包含形如 '1155*613*15'、'800*600*10' 或带有 'x' 连接的尺寸规格数据（例如：1155*613*15 这样的长*宽*高规格），请务必将其**拆分为 3 个独立的连续单元格**，分配在 3 个相邻的新列中（即分别表示为 1155、613、15 ），切勿合并在一个单元格。请同时在表头中对这三列进行合理的对齐和拆分（例如：将其命名为"长","宽","高"或"尺寸1","尺寸2","尺寸3"）。`;
+                }
+
+                const promptText = `请对这张图片进行表格OCR识别。请精细地提取图像中的所有表格单元格。
+用户可能有一些特别的提取指引：${promptGuide.value || "无特别说明"}。${dimensionSplitRule}
+请直接将数据整理为标准的二维字符串数组结构，其中每一项都是一个表示该行单元格内容的数组。保持原本的文字、数字、日期或格式。`;
+
+                // 重点：使用 responseSchema 强制确保 AI 返回格式完美的 JSON 二维数组
+                const systemPrompt = "你是一个专业的高精度表格数据提取专家。分析图像中的所有表格，将其提取为完全一致的行与列。必须严格按照 Schema 提供的 JSON 格式返回，不要提供任何 Markdown 标记或解析说明文本。";
+
+                const responseSchema = {
+                    type: "OBJECT",
+                    properties: {
+                        table: {
+                            type: "ARRAY",
+                            description: "一个包含表格中所有行的数据的数组，每一行是一个子数组，子数组中是具体的单元格文本。例如：[['姓名','年龄'],['张三','18']]",
+                            items: {
+                                type: "ARRAY",
+                                items: {
+                                    type: "STRING"
+                                }
+                            }
+                        }
+                    },
+                    required: ["table"]
+                };
+
+                const payload = {
+                    contents: [
+                        {
+                            role: "user",
+                            parts: [
+                                { text: promptText },
+                                {
+                                    inlineData: {
+                                        mimeType: mimeType,
+                                        data: base64Data
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    systemInstruction: {
+                        parts: [{ text: systemPrompt }]
+                    },
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: responseSchema
+                    }
+                };
+
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+                const resultText = await callGeminiWithRetry(url, payload);
+                const parsedResult = JSON.parse(resultText);
+
+                if (parsedResult && parsedResult.table && parsedResult.table.length > 0) {
+                    tableData = parsedResult.table;
+                    renderEditableTable(tableData);
+                    addToHistory(tableData);
+                    showToast('check-circle', '表格提取并自动转换成功！', 'text-green-500');
+                    
+                    statusCard.classList.add('hidden');
+                    resultCard.classList.remove('hidden');
+                } else {
+                    throw new Error("模型返回了空数据或格式不正确");
+                }
+
+            } catch (error) {
+                console.error(error);
+                statusCard.classList.add('hidden');
+                showToast('x-circle', `识别失败: ${error.message || '请检查网络或重试'}`, 'text-red-500');
+            } finally {
+                startBtn.removeAttribute('disabled');
+            }
+        });
+
+        // 带有指数退避的高抗冲击重试函数
+        async function callGeminiWithRetry(url, payload, maxRetries = 5) {
+            let delay = 1000; // 起始延迟 1 秒
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    statusDesc.textContent = i > 0 
+                        ? `正在尝试重新连接 (第 ${i}/${maxRetries} 次)...` 
+                        : "正在请求 Gemini 2.5 视觉模型提取图像数据...";
+
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errBody = await response.text();
+                        throw new Error(`HTTP ${response.status}: ${errBody || '未知错误'}`);
+                    }
+
+                    const resData = await response.json();
+                    const text = resData.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (!text) {
+                        throw new Error("未在响应中找到有效的 candidate 数据");
+                    }
+                    return text;
+
+                } catch (err) {
+                    if (i === maxRetries - 1) throw err;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2; 
+                }
+            }
+        }
+
+
+        // ------------------ 数据渲染与编辑逻辑 ------------------
+
+        // 在前端渲染可进行双击直接编辑的 HTML 电子表格
+        function renderEditableTable(data) {
+            dataTable.innerHTML = '';
+            if (data.length === 0) return;
+
+            // 识别最大列数，防止返回不规则的数据导致对齐崩溃
+            const colCount = Math.max(...data.map(row => row.length));
+
+            data.forEach((row, rowIndex) => {
+                const tr = document.createElement('tr');
+                tr.className = rowIndex === 0 
+                    ? 'bg-slate-100/80 border-b border-slate-200 font-semibold text-slate-700' 
+                    : 'border-b border-slate-100 hover:bg-slate-50/50 transition-colors';
+
+                for (let colIndex = 0; colIndex < colCount; colIndex++) {
+                    const value = row[colIndex] !== undefined ? row[colIndex] : '';
+                    
+                    if (rowIndex === 0) {
+                        // 表头
+                        const th = document.createElement('th');
+                        th.className = 'px-4 py-3 border-r border-slate-200 min-w-[120px] focus:outline-blue-500';
+                        th.setAttribute('contenteditable', 'true');
+                        th.textContent = value;
+                        th.addEventListener('blur', (e) => updateLocalData(rowIndex, colIndex, e.target.textContent));
+                        tr.appendChild(th);
+                    } else {
+                        // 普通单元格
+                        const td = document.createElement('td');
+                        td.className = 'px-4 py-2.5 border-r border-slate-200 min-w-[120px] focus:outline-blue-500 break-words';
+                        td.setAttribute('contenteditable', 'true');
+                        td.textContent = value;
+                        td.addEventListener('blur', (e) => updateLocalData(rowIndex, colIndex, e.target.textContent));
+                        tr.appendChild(td);
+                    }
+                }
+
+                // 为内容行（非表头）添加删除本行操作
+                if (rowIndex > 0) {
+                    const actionTd = document.createElement('td');
+                    actionTd.className = 'px-3 py-1.5 text-center min-w-[50px]';
+                    actionTd.innerHTML = `<button class="text-slate-400 hover:text-red-500 p-1 rounded hover:bg-red-50 transition-colors" title="删除此行"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button>`;
+                    actionTd.querySelector('button').addEventListener('click', () => {
+                        deleteRow(rowIndex);
+                    });
+                    tr.appendChild(actionTd);
+                } else {
+                    // 表头额外加一列操作栏
+                    const actionTh = document.createElement('th');
+                    actionTh.className = 'px-3 py-1.5 text-slate-400 font-normal text-center min-w-[50px]';
+                    actionTh.textContent = '操作';
+                    tr.appendChild(actionTh);
+                }
+
+                dataTable.appendChild(tr);
+            });
+
+            // 重新刷新图标
+            lucide.createIcons();
+            // 更新底部统计
+            tableStats.textContent = `共识别 ${data.length} 行，最大 ${colCount} 列`;
+        }
+
+        // 修改单元格同步到全局变量中
+        function updateLocalData(rowIdx, colIdx, value) {
+            if (!tableData[rowIdx]) tableData[rowIdx] = [];
+            tableData[rowIdx][colIdx] = value.trim();
+        }
+
+        // 删除指定行
+        function deleteRow(rowIndex) {
+            tableData.splice(rowIndex, 1);
+            renderEditableTable(tableData);
+            showToast('check-circle', '已删除对应行', 'text-amber-500');
+        }
+
+        // 动态增加新行
+        addRowBtn.addEventListener('click', () => {
+            if (tableData.length === 0) return;
+            const colCount = Math.max(...tableData.map(row => row.length));
+            const newRow = Array(colCount).fill('');
+            tableData.push(newRow);
+            renderEditableTable(tableData);
+            showToast('plus', '已新增一行空白数据', 'text-blue-500');
+        });
+
+
+        // ------------------ 导出 Excel 逻辑 ------------------
+
+        exportBtn.addEventListener('click', () => {
+            if (tableData.length === 0) {
+                showToast('alert-triangle', '暂无可导出的表格数据', 'text-amber-500');
+                return;
+            }
+
+            try {
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.aoa_to_sheet(tableData);
+
+                // 设置各列自适应列宽
+                const colWidths = [];
+                tableData.forEach(row => {
+                    row.forEach((val, colIdx) => {
+                        const len = val ? val.toString().replace(/[^\x00-\xff]/g, "00").length : 5;
+                        colWidths[colIdx] = Math.max(colWidths[colIdx] || 10, len + 3);
+                    });
+                });
+                ws['!cols'] = colWidths.map(w => ({ wch: w }));
+
+                XLSX.utils.book_append_sheet(wb, ws, "AI提取表格");
+
+                const dateStr = new Date().toISOString().slice(0,10);
+                const filename = `AI提取数据_${dateStr}.xlsx`;
+                XLSX.writeFile(wb, filename);
+
+                showToast('check', `已成功导出为 ${filename}！`, 'text-green-500');
+            } catch (err) {
+                console.error(err);
+                showToast('x-circle', '导出失败，请检查数据完整性。', 'text-red-500');
+            }
+        });
+
+
+        // ------------------ 历史记录管理 ------------------
+
+        function addToHistory(data) {
+            const date = new Date();
+            const timeStr = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+            const summary = `表格 (${data.length}行 x ${data[0].length}列)`;
+            
+            const record = {
+                id: Date.now(),
+                time: timeStr,
+                summary: summary,
+                data: JSON.parse(JSON.stringify(data)) // 深拷贝数据
+            };
+
+            conversionHistory.unshift(record);
+            renderHistoryList();
+        }
+
+        function renderHistoryList() {
+            if (conversionHistory.length === 0) {
+                historyList.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">暂无历史转换记录。</p>`;
+                return;
+            }
+
+            historyList.innerHTML = '';
+            conversionHistory.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-3 bg-slate-50 hover:bg-blue-50/50 rounded-xl border border-slate-100 transition-all text-xs';
+                
+                div.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="font-semibold text-slate-400">${item.time}</span>
+                        <span class="font-medium text-slate-700">${item.summary}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="restore-btn text-blue-600 hover:text-blue-800 font-semibold" title="载入此数据">载入</button>
+                        <span class="text-slate-300">|</span>
+                        <button class="delete-hist-btn text-red-500 hover:text-red-700" title="删除记录">删除</button>
+                    </div>
+                `;
+
+                div.querySelector('.restore-btn').addEventListener('click', () => {
+                    tableData = JSON.parse(JSON.stringify(item.data));
+                    renderEditableTable(tableData);
+                    resultCard.classList.remove('hidden');
+                    statusCard.classList.add('hidden');
+                    showToast('rotate-ccw', '已重载历史表格数据。', 'text-blue-500');
+                });
+
+                div.querySelector('.delete-hist-btn').addEventListener('click', () => {
+                    conversionHistory = conversionHistory.filter(h => h.id !== item.id);
+                    renderHistoryList();
+                });
+
+                historyList.appendChild(div);
+            });
+        }
+
+
+        // ------------------ 简易轻量级 Toast 提示 ------------------
+
+        let toastTimeout;
+        function showToast(iconName, message, iconColorClass = 'text-blue-500') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toast-icon');
+            const toastMsg = document.getElementById('toast-msg');
+
+            toastIcon.innerHTML = `<i data-lucide="${iconName}" class="w-4 h-4 ${iconColorClass}"></i>`;
+            lucide.createIcons();
+            toastMsg.textContent = message;
+
+            toast.className = "fixed bottom-6 right-6 transform translate-y-0 opacity-100 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-2 transition-all duration-300 z-50 text-sm";
+            
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.className = "fixed bottom-6 right-6 transform translate-y-10 opacity-0 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-2 transition-all duration-300 z-50 text-sm pointer-events-none";
+            }, 3000);
+        }
+
+    </script>
+</body>
+</html>
