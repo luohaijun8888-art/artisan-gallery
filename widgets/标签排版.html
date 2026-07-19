@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云端智能标签排版系统</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Premium Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- html2pdf.js for High-fidelity PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        /* Page simulation in browser preview */
+        .page-preview {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            background: white;
+            position: relative;
+            box-sizing: border-box;
+            page-break-after: always;
+            margin-bottom: 2rem;
+            border: 1px solid #e5e7eb;
+            overflow: hidden; /* Prevent visual overflow */
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Print Media Styles */
+        @media print {
+            html, body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                height: auto !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-area {
+                padding: 0 !important;
+                margin: 0 !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                width: 100% !important;
+                max-width: none !important;
+            }
+            .page-preview {
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+                page-break-after: always !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                overflow: hidden !important; /* Forces strict size bounds on hardware */
+                box-sizing: border-box !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <!-- App Header -->
+    <header class="bg-slate-900 text-white shadow-md no-print px-6 py-4 flex flex-wrap justify-between items-center gap-4 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+            <div class="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-500/30">
+                <i class="fa-solid fa-tags text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-tight">云端标签排版大师</h1>
+                <p class="text-xs text-slate-400">高精度排版 · 自动分页 · 云端同步</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <!-- User Status Info -->
+            <div id="user-badge" class="hidden md:flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-xs text-slate-300">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                <span>云端已连接</span>
+                <span id="user-id-display" class="font-mono text-[10px] text-indigo-300 ml-1"></span>
+            </div>
+            
+            <!-- Action Buttons Group -->
+            <button onclick="downloadPDF()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition duration-150 shadow-md shadow-indigo-600/20">
+                <i class="fa-solid fa-file-pdf"></i> 下载 PDF (推荐打印)
+            </button>
+            <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition duration-150 shadow-md shadow-emerald-600/20">
+                <i class="fa-solid fa-print"></i> 立即打印 (Ctrl+P)
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Grid -->
+    <main class="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
+        
+        <!-- Configuration Panel Sidebar -->
+        <aside class="w-full lg:w-[420px] bg-white border-r border-slate-200 flex flex-col no-print h-full overflow-y-auto shrink-0 shadow-sm">
+            
+            <!-- Tabs Menu -->
+            <div class="flex border-b border-slate-100 bg-slate-50">
+                <button onclick="switchTab('layout')" id="tab-btn-layout" class="flex-1 py-3 px-4 font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600 flex items-center justify-center gap-2 transition duration-150">
+                    <i class="fa-solid fa-sliders"></i> 排版 & 纸张
+                </button>
+                <button onclick="switchTab('content')" id="tab-btn-content" class="flex-1 py-3 px-4 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center justify-center gap-2 transition duration-150">
+                    <i class="fa-solid fa-font"></i> 内容 & 样式
+                </button>
+                <button onclick="switchTab('storage')" id="tab-btn-storage" class="flex-1 py-3 px-4 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center justify-center gap-2 transition duration-150">
+                    <i class="fa-solid fa-cloud"></i> 云端模版
+                </button>
+            </div>
+
+            <!-- TAB 1: Layout & Page Settings -->
+            <div id="tab-layout" class="p-6 space-y-6">
+                <!-- Grid Limits -->
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">排版网格设置</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">每行标签数量 (列)</label>
+                            <input type="number" id="cols" value="3" oninput="triggerLayoutUpdate()" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" min="1" max="20">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">每页行数 (行)</label>
+                            <input type="number" id="rows" value="8" oninput="triggerLayoutUpdate()" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" min="1" max="30">
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1.5"><i class="fa-solid fa-info-circle"></i> 超出最大网格时将自动创建新纸张分页</p>
+                </div>
+
+                <!-- Spacing Settings -->
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">标签间距 (mm)</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">水平间距 (Gap X)</label>
+                            <input type="number" id="gapX" value="3" step="0.5" oninput="triggerLayoutUpdate()" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" min="0">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">垂直间距 (Gap Y)</label>
+                            <input type="number" id="gapY" value="3" step="0.5" oninput="triggerLayoutUpdate()" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page Format Settings -->
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">纸张与方向</h3>
+                    <div class="grid grid-cols-2 gap-4 mb-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">纸张尺寸</label>
+                            <select id="paperType" onchange="changePaperPreset()" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="A4">A4 (210 x 297mm)</option>
+                                <option value="A3">A3 (297 x 420mm)</option>
+                                <option value="Letter">Letter (216 x 279mm)</option>
+                                <option value="Custom">自定义尺寸</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">纸张方向</label>
+                            <select id="orientation" onchange="triggerLayoutUpdate()" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="portrait">纵向 (Portrait)</option>
+                                <option value="landscape">横向 (Landscape)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Custom paper dimensions -->
+                    <div id="custom-paper-dimensions" class="hidden grid grid-cols-2 gap-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                        <div>
+                            <label class="block text-[11px] font-medium text-slate-600 mb-1">宽度 (mm)</label>
+                            <input type="number" id="paperWidth" value="210" oninput="triggerLayoutUpdate()" class="w-full p-2 border border-slate-300 rounded text-sm bg-white focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-slate-600 mb-1">高度 (mm)</label>
+                            <input type="number" id="paperHeight" value="297" oninput="triggerLayoutUpdate()" class="w-full p-2 border border-slate-300 rounded text-sm bg-white focus:ring-indigo-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page Margins Settings -->
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">纸张页边距 (mm)</h3>
+                        <button onclick="resetMargins()" class="text-[11px] text-indigo-600 hover:underline">重置默认</button>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div>
+                            <label class="block text-[10px] text-center text-slate-500 mb-0.5">上边</label>
+                            <input type="number" id="marginTop" value="10" oninput="triggerLayoutUpdate()" class="w-full p-1.5 text-center border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-center text-slate-500 mb-0.5">下边</label>
+                            <input type="number" id="marginBottom" value="10" oninput="triggerLayoutUpdate()" class="w-full p-1.5 text-center border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-center text-slate-500 mb-0.5">左边</label>
+                            <input type="number" id="marginLeft" value="10" oninput="triggerLayoutUpdate()" class="w-full p-1.5 text-center border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-center text-slate-500 mb-0.5">右边</label>
+                            <input type="number" id="marginRight" value="10" oninput="triggerLayoutUpdate()" class="w-full p-1.5 text-center border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: Label Content & Styling -->
+            <div id="tab-content" class="hidden p-6 space-y-6">
+                <!-- Label Dimensions -->
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">单个标签尺寸控制</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">标签宽度</label>
+                            <select id="labelWidthType" onchange="toggleSizeFields()" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm bg-white">
+                                <option value="auto" selected>自动平分页面</option>
+                                <option value="fixed">固定尺寸 (mm)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">标签高度</label>
+                            <select id="labelHeightType" onchange="toggleSizeFields()" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm bg-white">
+                                <option value="auto" selected>自动平分页面</option>
+                                <option value="fixed">固定尺寸 (mm)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Fixed Dimensions inputs -->
+                    <div id="fixed-label-sizes" class="hidden grid grid-cols-2 gap-4 mt-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                        <div>
+                            <label class="block text-[11px] text-slate-600 mb-1">固定宽 (mm)</label>
+                            <input type="number" id="fixedWidth" value="50" oninput="triggerLayoutUpdate()" class="w-full p-2 border border-slate-300 rounded text-sm bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-600 mb-1">固定高 (mm)</label>
+                            <input type="number" id="fixedHeight" value="30" oninput="triggerLayoutUpdate()" class="w-full p-2 border border-slate-300 rounded text-sm bg-white">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Styling Controls -->
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">标签外观视觉样式</h3>
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">文字大小</label>
+                            <select id="fontSizePreset" onchange="toggleFontSizeFields()" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm bg-white">
+                                <option value="small">小 (9pt)</option>
+                                <option value="medium" selected>中 (12pt)</option>
+                                <option value="large">大 (18pt)</option>
+                                <option value="custom">自定义</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">文本对齐</label>
+                            <select id="textAlign" onchange="triggerLayoutUpdate()" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm bg-white">
+                                <option value="center" selected>居中对齐</option>
+                                <option value="left">左对齐</option>
+                                <option value="right">右对齐</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Custom font size input, hidden by default -->
+                    <div id="custom-font-size-container" class="hidden mb-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                        <label class="block text-xs font-medium text-slate-600 mb-1">自定义字号 (pt)</label>
+                        <input type="number" id="fontSize" value="12" min="6" max="72" oninput="triggerLayoutUpdate()" class="w-full p-2 border border-slate-300 rounded-lg text-sm">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">字体颜色</label>
+                            <div class="flex items-center gap-2 border border-slate-300 rounded-lg p-1.5 bg-white">
+                                <input type="color" id="fontColor" value="#1e293b" oninput="triggerLayoutUpdate()" class="w-8 h-8 rounded cursor-pointer border-0 p-0 bg-transparent">
+                                <input type="text" id="fontColorHex" value="#1E293B" oninput="syncColorInput(this.value)" class="w-full text-xs font-mono text-slate-600 focus:outline-none uppercase">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">边角圆弧 (Radius)</label>
+                            <select id="borderRadius" onchange="triggerLayoutUpdate()" class="w-full p-2 border border-slate-300 rounded-lg text-sm bg-white">
+                                <option value="rounded-none">直角 (0px)</option>
+                                <option value="rounded-md">微圆角 (4px)</option>
+                                <option value="rounded-xl">大圆角 (8px)</option>
+                                <option value="rounded-full">椭圆/圆形</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">边框线条</label>
+                            <select id="borderStyle" onchange="triggerLayoutUpdate()" class="w-full p-2 border border-slate-300 rounded-lg text-sm bg-white">
+                                <option value="solid">实线细边框</option>
+                                <option value="dashed">虚线剪切线</option>
+                                <option value="dotted">点线裁剪线</option>
+                                <option value="none">无边框 (空白底)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Data Source -->
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider">输入标签数据（每行一个）</label>
+                        <button onclick="openGeneratorModal()" class="text-[11px] text-indigo-600 hover:underline flex items-center gap-1">
+                            <i class="fa-solid fa-magic"></i> 批量填充
+                        </button>
+                    </div>
+                    <textarea id="labelInput" oninput="triggerLayoutUpdate()" class="w-full h-44 p-3 border border-slate-300 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="第一排标签&#10;第二排标签&#10;商品：A001 价格：￥20&#10;支持HTML代码，例：&#10;<b>粗体标题</b><br><span class='text-xs'>小字注释</span>"></textarea>
+                </div>
+            </div>
+
+            <!-- TAB 3: Storage Panel (Firestore Template Management) -->
+            <div id="tab-storage" class="hidden p-6 space-y-6 flex-1 flex flex-col">
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">保存当前排版模版</h3>
+                    <div class="space-y-3">
+                        <input type="text" id="template-name-input" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm" placeholder="例如：A4-3x6商品条码模版">
+                        <button onclick="saveCurrentTemplate()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2 px-4 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition duration-150">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> 保持/备份至云端
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex-1 flex flex-col min-h-0 border-t border-slate-100 pt-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">云端模版库</h3>
+                        <button onclick="loadTemplates()" class="text-slate-400 hover:text-slate-700 p-1" title="刷新列表">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Templates List Container -->
+                    <div id="templates-list-container" class="flex-1 overflow-y-auto space-y-2 pr-1 min-h-[150px]">
+                        <div class="text-center py-8 text-slate-400 text-xs">
+                            <i class="fa-solid fa-spinner animate-spin text-lg mb-2 block"></i>
+                            正在读取您的云端模版...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Live Layout Workspace (Centered & Zoomed A4 Sheet Simulators) -->
+        <section class="flex-1 bg-slate-200 p-4 md:p-8 overflow-auto flex flex-col items-center select-text relative">
+            
+            <!-- Quick Alert / Toast Container -->
+            <div id="toast-container" class="fixed top-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+            <!-- Layout Indicator (Helper Bar) -->
+            <div class="no-print w-full max-w-4xl mb-6 bg-slate-800 text-slate-200 text-xs rounded-xl p-3.5 flex flex-wrap justify-between items-center gap-2">
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 bg-indigo-600 text-white rounded text-[10px] font-bold">LIVE PREVIEW</span>
+                    <span>打印排版预览 (支持物理 A4 比例及分页显示)</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="preview-page-count" class="font-semibold text-indigo-300">共 1 页</span>
+                    <span class="text-slate-400">|</span>
+                    <button onclick="triggerLayoutUpdate()" class="text-slate-400 hover:text-white transition" title="重新排版">
+                        <i class="fa-solid fa-sync"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Print Area (Contains generated sheet wrappers) -->
+            <div id="print-area-wrapper" class="print-area w-full flex flex-col items-center">
+                <!-- Pages get programmatically injected here -->
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Batch Generator Modal Window (No-Print Popup) -->
+    <div id="generator-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative border border-slate-100">
+            <button onclick="closeGeneratorModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-magic text-indigo-600"></i> 快速批量数据生成器
+            </h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">标签文本前缀</label>
+                    <input type="text" id="gen-prefix" value="闪耀家具色板&#10;板纸编号：&#10;封边条编号：&#10;适用产品：" class="w-full h-24 p-2 border border-slate-300 rounded-lg text-sm" placeholder="前缀内容">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">起始数值</label>
+                        <input type="number" id="gen-start" value="1001" class="w-full p-2 border border-slate-300 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">生成数量</label>
+                        <input type="number" id="gen-count" value="18" class="w-full p-2 border border-slate-300 rounded-lg text-sm" min="1">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">标签文本后缀</label>
+                    <input type="text" id="gen-suffix" value="" class="w-full p-2 border border-slate-300 rounded-lg text-sm">
+                </div>
+                
+                <button onclick="applyBatchGeneration()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg text-sm shadow transition">
+                    填充到输入框并渲染
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cloud Storage Connection (Firebase Core Configuration) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDocs, deleteDoc, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Configuration fallback for sandbox/environment execution
+        const defaultAppId = 'label-layout-tool';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : defaultAppId;
+        
+        let firebaseConfig = {};
+        if (typeof __firebase_config !== 'undefined') {
+            firebaseConfig = JSON.parse(__firebase_config);
+        } else {
+            // Development fallback mock
+            firebaseConfig = {
+                apiKey: "mock-api-key",
+                authDomain: "mock-auth-domain",
+                projectId: "mock-project-id",
+                storageBucket: "mock-storage-bucket",
+                messagingSenderId: "mock-sender-id",
+                appId: "mock-app-id"
+            };
+        }
+
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+        let isFirebaseInitialized = false;
+
+        // Initialize Firebase logic securely
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            isFirebaseInitialized = true;
+        } catch (e) {
+            console.warn("Firebase Init failed. Storage functions will operate in local fallback state.", e);
+        }
+
+        // Authenticate User sequentially (RULE 3)
+        if (isFirebaseInitialized && auth) {
+            const authenticate = async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (authError) {
+                    console.error("Firestore Auth Failed:", authError);
+                }
+            };
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    const badge = document.getElementById('user-badge');
+                    const idDisplay = document.getElementById('user-id-display');
+                    if (badge) badge.classList.remove('hidden');
+                    if (idDisplay) idDisplay.textContent = user.uid.slice(0, 8) + '...';
+                    
+                    // Fetch templates from cloud once user logs in
+                    loadTemplates();
+                } else {
+                    authenticate();
+                }
+            });
+        } else {
+            // Local fallback template storage if Firestore is unconfigured or blocked
+            setupLocalTemplatesMock();
+        }
+
+        // Expose Firebase DB, User, and Firestore methods to the Window context for global layout engine
+        window.getFirebaseContext = () => ({
+            db,
+            auth,
+            user: currentUser,
+            appId,
+            enabled: isFirebaseInitialized
+        });
+
+        // Expose Firestore methods globally so that they can be used in the standard script tags below
+        if (isFirebaseInitialized) {
+            window.collection = collection;
+            window.doc = doc;
+            window.getDocs = getDocs;
+            window.setDoc = setDoc;
+            window.deleteDoc = deleteDoc;
+        }
+    </script>
+
+    <!-- Application Logic, Storage & UI Layout Core Systems -->
+    <script>
+        // Preset dimensions (in mm)
+        const PAPER_PRESETS = {
+            'A4': { width: 210, height: 297 },
+            'A3': { width: 297, height: 420 },
+            'Letter': { width: 215.9, height: 279.4 }
+        };
+
+        // Standard Demo content initialized with user specifications
+        const DEMO_LABELS = [
+            "<b>闪耀家具色板</b><br>板纸编号：SZ-881<br>封边条编号：FB-301<br>适用产品：现代衣柜",
+            "<b>闪耀家具色板</b><br>板纸编号：SZ-882<br>封边条编号：FB-302<br>适用产品：极简书架",
+            "<b>闪耀家具色板</b><br>板纸编号：SZ-883<br>封边条编号：FB-303<br>适用产品：北欧餐桌",
+            "<b>闪耀家具色板</b><br>板纸编号：SZ-884<br>封边条编号：FB-304<br>适用产品：轻奢玄关",
+            "<b>闪耀家具色板</b><br>板纸编号：SZ-885<br>封边条编号：FB-305<br>适用产品：榻榻米床",
+            "<b>闪耀家具色板</b><br>板纸编号：SZ-886<br>封边条编号：FB-306<br>适用产品：整体橱柜"
+        ];
+
+        // System states
+        let localTemplatesFallback = [];
+
+        window.onload = function() {
+            // Load Demo Data if text input is empty
+            const inputArea = document.getElementById('labelInput');
+            if (!inputArea.value) {
+                inputArea.value = DEMO_LABELS.join('\n');
+            }
+
+            // Bind triggers to live update
+            triggerLayoutUpdate();
+        };
+
+        // Tab Switching Controls
+        function switchTab(tabId) {
+            const tabs = ['layout', 'content', 'storage'];
+            tabs.forEach(tab => {
+                const element = document.getElementById(`tab-${tab}`);
+                const btn = document.getElementById(`tab-btn-${tab}`);
+                if (tab === tabId) {
+                    element.classList.remove('hidden');
+                    btn.classList.add('border-indigo-600', 'text-indigo-600');
+                    btn.classList.remove('border-transparent', 'text-slate-500');
+                } else {
+                    element.classList.add('hidden');
+                    btn.classList.remove('border-indigo-600', 'text-indigo-600');
+                    btn.classList.add('border-transparent', 'text-slate-500');
+                }
+            });
+        }
+
+        // Change Preset logic
+        function changePaperPreset() {
+            const preset = document.getElementById('paperType').value;
+            const customDiv = document.getElementById('custom-paper-dimensions');
+            
+            if (preset === 'Custom') {
+                customDiv.classList.remove('hidden');
+            } else {
+                customDiv.classList.add('hidden');
+                document.getElementById('paperWidth').value = PAPER_PRESETS[preset].width;
+                document.getElementById('paperHeight').value = PAPER_PRESETS[preset].height;
+            }
+            triggerLayoutUpdate();
+        }
+
+        // Toggle manual dimensions inputs
+        function toggleSizeFields() {
+            const widthType = document.getElementById('labelWidthType').value;
+            const heightType = document.getElementById('labelHeightType').value;
+            const fixedBlock = document.getElementById('fixed-label-sizes');
+
+            if (widthType === 'fixed' || heightType === 'fixed') {
+                fixedBlock.classList.remove('hidden');
+            } else {
+                fixedBlock.classList.add('hidden');
+            }
+            triggerLayoutUpdate();
+        }
+
+        // Toggle custom font size fields
+        function toggleFontSizeFields() {
+            const preset = document.getElementById('fontSizePreset').value;
+            const customContainer = document.getElementById('custom-font-size-container');
+            if (preset === 'custom') {
+                customContainer.classList.remove('hidden');
+            } else {
+                customContainer.classList.add('hidden');
+            }
+            triggerLayoutUpdate();
+        }
+
+        // Synchronize hexadecimal color code manually entered
+        function syncColorInput(hex) {
+            if (/^#[0-9A-F]{6}$/i.test(hex)) {
+                document.getElementById('fontColor').value = hex;
+                triggerLayoutUpdate();
+            }
+        }
+
+        // Reset paper margins
+        function resetMargins() {
+            document.getElementById('marginTop').value = 10;
+            document.getElementById('marginBottom').value = 10;
+            document.getElementById('marginLeft').value = 10;
+            document.getElementById('marginRight').value = 10;
+            triggerLayoutUpdate();
+            showToast("页边距已成功重置为默认值(10mm)！", "success");
+        }
+
+        // Calculate Grid sizing, Pages and render HTML elements dynamically
+        function triggerLayoutUpdate() {
+            // Extract Page specs
+            const orientation = document.getElementById('orientation').value;
+            let rawW = parseFloat(document.getElementById('paperWidth').value) || 210;
+            let rawH = parseFloat(document.getElementById('paperHeight').value) || 297;
+
+            // Handle Landscape / Portrait rotation
+            let pWidth = orientation === 'landscape' ? Math.max(rawW, rawH) : Math.min(rawW, rawH);
+            let pHeight = orientation === 'landscape' ? Math.min(rawW, rawH) : Math.max(rawW, rawH);
+
+            // Print margins
+            const mTop = parseFloat(document.getElementById('marginTop').value) || 0;
+            const mBottom = parseFloat(document.getElementById('marginBottom').value) || 0;
+            const mLeft = parseFloat(document.getElementById('marginLeft').value) || 0;
+            const mRight = parseFloat(document.getElementById('marginRight').value) || 0;
+
+            // Total grid bounds
+            const cols = parseInt(document.getElementById('cols').value) || 1;
+            const rows = parseInt(document.getElementById('rows').value) || 1;
+            const gapX = parseFloat(document.getElementById('gapX').value) || 0;
+            const gapY = parseFloat(document.getElementById('gapY').value) || 0;
+
+            // Content options
+            const inputVal = document.getElementById('labelInput').value;
+            const lines = inputVal.split('\n').filter(line => line.trim() !== '');
+
+            // Styling variables
+            const fontSizePreset = document.getElementById('fontSizePreset').value;
+            let fontSize = 12;
+            if (fontSizePreset === 'small') fontSize = 9;
+            else if (fontSizePreset === 'medium') fontSize = 12;
+            else if (fontSizePreset === 'large') fontSize = 18;
+            else fontSize = parseFloat(document.getElementById('fontSize').value) || 12;
+
+            const fontColor = document.getElementById('fontColor').value || '#1e293b';
+            // Sync Text Hex Color code
+            document.getElementById('fontColorHex').value = fontColor.toUpperCase();
+
+            const textAlign = document.getElementById('textAlign').value;
+            const borderStyle = document.getElementById('borderStyle').value;
+            const borderRadius = document.getElementById('borderRadius').value;
+
+            // CRITICAL DEFENSE RULE: Apply Micro-buffer Guard (-0.2mm)
+            // This prevents subpixel mathematical rounding inaccuracies on different printing/PDF generation engines.
+            const printW = pWidth - mLeft - mRight - 0.2;
+            const printH = pHeight - mTop - mBottom - 0.2;
+
+            // Determine Label Dimensioning
+            const widthType = document.getElementById('labelWidthType').value;
+            const heightType = document.getElementById('labelHeightType').value;
+            const fixedW = parseFloat(document.getElementById('fixedWidth').value) || 50;
+            const fixedH = parseFloat(document.getElementById('fixedHeight').value) || 30;
+
+            let finalLabelW, finalLabelH;
+
+            if (widthType === 'auto') {
+                const totalGapX = (cols - 1) * gapX;
+                finalLabelW = (printW - totalGapX) / cols;
+            } else {
+                finalLabelW = fixedW;
+            }
+
+            if (heightType === 'auto') {
+                const totalGapY = (rows - 1) * gapY;
+                finalLabelH = (printH - totalGapY) / rows;
+            } else {
+                finalLabelH = fixedH;
+            }
+
+            // Create Dynamic Print CSS to communicate directly with browser engine
+            updatePageMediaStyles(pWidth, pHeight, mTop, mBottom, mLeft, mRight);
+
+            // Distribute labels into sheets
+            const labelsPerPage = cols * rows;
+            const totalPages = Math.max(1, Math.ceil(lines.length / labelsPerPage));
+            document.getElementById('preview-page-count').textContent = `共 ${totalPages} 页 (共 ${lines.length} 个标签)`;
+
+            // Render Preview Layout HTML
+            const printArea = document.getElementById('print-area-wrapper');
+            printArea.innerHTML = '';
+
+            for (let pageIdx = 0; pageIdx < totalPages; pageIdx++) {
+                // Create single Sheet container
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'page-preview relative select-text';
+                
+                // Real-world proportional styling for fluid preview
+                pageDiv.style.width = `${pWidth}mm`;
+                pageDiv.style.height = `${pHeight}mm`;
+                pageDiv.style.padding = `${mTop}mm ${mRight}mm ${mBottom}mm ${mLeft}mm`;
+
+                // Add grid wrapper inside the printable boundaries
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'grid w-full h-full';
+                gridDiv.style.display = 'grid';
+                gridDiv.style.gridTemplateColumns = `repeat(${cols}, ${finalLabelW}mm)`;
+                gridDiv.style.gridTemplateRows = `repeat(${rows}, ${finalLabelH}mm)`;
+                gridDiv.style.gap = `${gapY}mm ${gapX}mm`;
+                gridDiv.style.alignContent = 'start';
+                gridDiv.style.justifyContent = 'start';
+
+                // Slice data for this current page
+                const startIdx = pageIdx * labelsPerPage;
+                const pageLines = lines.slice(startIdx, startIdx + labelsPerPage);
+
+                for (let cellIdx = 0; cellIdx < labelsPerPage; cellIdx++) {
+                    const cellContent = pageLines[cellIdx];
+                    
+                    const labelDiv = document.createElement('div');
+                    
+                    // Style border classes
+                    let borderClass = 'border-slate-400';
+                    if (borderStyle === 'dashed') borderClass = 'border-2 border-dashed border-slate-400';
+                    else if (borderStyle === 'dotted') borderClass = 'border-2 border-dotted border-slate-400';
+                    else if (borderStyle === 'none') borderClass = 'border-0';
+                    else borderClass = 'border border-slate-400';
+
+                    labelDiv.className = `label-item p-3 relative flex flex-col justify-center overflow-hidden bg-white box-border ${borderClass} ${borderRadius}`;
+                    labelDiv.style.width = `${finalLabelW}mm`;
+                    labelDiv.style.height = `${finalLabelH}mm`;
+                    labelDiv.style.fontSize = `${fontSize}pt`;
+                    labelDiv.style.color = fontColor;
+                    labelDiv.style.textAlign = textAlign;
+
+                    if (cellContent !== undefined) {
+                        labelDiv.innerHTML = cellContent;
+                    } else {
+                        // Empty spacer tags for alignment matching in final grid
+                        labelDiv.className += ' opacity-10 no-print';
+                        labelDiv.innerHTML = "<span class='text-xs text-slate-300'>[空白位置]</span>";
+                    }
+
+                    gridDiv.appendChild(labelDiv);
+                }
+
+                pageDiv.appendChild(gridDiv);
+                printArea.appendChild(pageDiv);
+            }
+        }
+
+        // Dynamic @media print CSS injection to perfectly instruct paper dimensions & hardware
+        function updatePageMediaStyles(w, h, mt, mb, ml, mr) {
+            let styleEl = document.getElementById('dynamic-print-rules');
+            if (!styleEl) {
+                styleEl = document.createElement('style');
+                styleEl.id = 'dynamic-print-rules';
+                document.head.appendChild(styleEl);
+            }
+            // Explicit sizing to enforce physical dimensions in modern rendering engines (Safari, Chrome)
+            styleEl.innerHTML = `
+                @media print {
+                    @page {
+                        size: ${w}mm ${h}mm;
+                        margin: 0 !important;
+                    }
+                    body {
+                        margin: 0 !important;
+                        padding: 0 !important;
+                    }
+                    .page-preview {
+                        width: ${w}mm !important;
+                        height: ${h}mm !important;
+                        padding-top: ${mt}mm !important;
+                        padding-bottom: ${mb}mm !important;
+                        padding-left: ${ml}mm !important;
+                        padding-right: ${mr}mm !important;
+                        box-sizing: border-box !important;
+                        overflow: hidden !important;
+                        page-break-after: always !important;
+                        page-break-inside: avoid !important;
+                        break-inside: avoid !important;
+                    }
+                }
+            `;
+        }
+
+        // High Fidelity Client-side PDF Creator 
+        function downloadPDF() {
+            const element = document.getElementById('print-area-wrapper');
+            const orientation = document.getElementById('orientation').value;
+            const rawW = parseFloat(document.getElementById('paperWidth').value) || 210;
+            const rawH = parseFloat(document.getElementById('paperHeight').value) || 297;
+            
+            let pWidth = orientation === 'landscape' ? Math.max(rawW, rawH) : Math.min(rawW, rawH);
+            let pHeight = orientation === 'landscape' ? Math.min(rawW, rawH) : Math.max(rawW, rawH);
+
+            const templateName = document.getElementById('template-name-input').value.trim() || '智能排版标签';
+
+            showToast("正在生成高精度PDF文件，请稍候...", "info");
+
+            // Define options matching exact pixel-perfect canvas
+            const opt = {
+                margin: 0,
+                filename: `${templateName}.pdf`,
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: { 
+                    scale: 3, // Boost resolution to avoid blur
+                    useCORS: true,
+                    letterRendering: true
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: [pWidth, pHeight], 
+                    orientation: orientation 
+                }
+            };
+
+            // Run html2pdf generator
+            html2pdf().from(element).set(opt).save().then(() => {
+                showToast("PDF 生成并下载成功！建议使用 PDF 直接打印，效果更完美。", "success");
+            }).catch(err => {
+                console.error("PDF generation failed:", err);
+                showToast("PDF 生成失败，请重试或直接使用浏览器打印", "error");
+            });
+        }
+
+        // Informative visual modal notifications instead of generic alert boxes
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bgClass = 'bg-slate-800 text-white';
+            let icon = '<i class="fa-solid fa-info-circle text-blue-400"></i>';
+            if (type === 'success') {
+                bgClass = 'bg-emerald-800 text-white border-l-4 border-emerald-500 shadow-emerald-900/10';
+                icon = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+            } else if (type === 'error') {
+                bgClass = 'bg-rose-800 text-white border-l-4 border-rose-500 shadow-rose-900/10';
+                icon = '<i class="fa-solid fa-circle-xmark text-rose-400"></i>';
+            }
+
+            toast.className = `flex items-center gap-3 py-3 px-5 rounded-xl shadow-xl transition-all duration-300 transform translate-y-2 opacity-0 text-sm pointer-events-auto ${bgClass}`;
+            toast.innerHTML = `${icon} <span class="font-medium">${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            // Animate In
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            // Auto Remove
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-10px]');
+                setTimeout(() => { toast.remove(); }, 300);
+            }, 3500);
+        }
+
+        // Modal logic definitions
+        function openGeneratorModal() {
+            document.getElementById('generator-modal').classList.remove('hidden');
+        }
+
+        // Close Generator Modal
+        function closeGeneratorModal() {
+            document.getElementById('generator-modal').classList.add('hidden');
+        }
+
+        // Apply Batch Generation
+        function applyBatchGeneration() {
+            const prefix = document.getElementById('gen-prefix').value;
+            const suffix = document.getElementById('gen-suffix').value;
+            const startVal = parseInt(document.getElementById('gen-start').value) || 1001;
+            const count = parseInt(document.getElementById('gen-count').value) || 18;
+
+            let outputLines = [];
+            for (let i = 0; i < count; i++) {
+                // Keep multiline prefix structures intact
+                const content = prefix.replace('编号：', `板纸编号：SZ-${startVal + i}`)
+                                      .replace('封边条编号：', `封边条编号：FB-${200 + i}`);
+                outputLines.push(content + suffix);
+            }
+
+            document.getElementById('labelInput').value = outputLines.join('\n');
+            closeGeneratorModal();
+            triggerLayoutUpdate();
+            showToast(`批量成功生成 ${count} 条标签！`, 'success');
+        }
+
+        // Local Template Storage backup wrapper
+        function setupLocalTemplatesMock() {
+            try {
+                const localData = localStorage.getItem('label_templates_fallback');
+                if (localData) {
+                    localTemplatesFallback = JSON.parse(localData);
+                }
+            } catch (e) {
+                console.log("LocalStorage sandbox limited.");
+            }
+            setTimeout(() => { renderTemplatesList(); }, 300);
+        }
+
+        // Load / Fetch all saved templates (RULE 2 - fetch simple query, filter/render)
+        async function loadTemplates() {
+            const listContainer = document.getElementById('templates-list-container');
+            const context = window.getFirebaseContext();
+            
+            listContainer.innerHTML = `
+                <div class="text-center py-8 text-slate-400 text-xs">
+                    <i class="fa-solid fa-spinner animate-spin text-lg mb-2 block"></i>
+                    正在载入中...
+                </div>
+            `;
+
+            // If Firebase connection is invalid or unauthenticated, fallback to in-memory/local layout templates
+            if (!context.enabled || !context.user) {
+                renderTemplatesList(localTemplatesFallback);
+                return;
+            }
+
+            try {
+                const { db, appId, user } = context;
+                // Strict RULE 1 Path
+                const collectionRef = window.collection(db, 'artifacts', appId, 'users', user.uid, 'templates');
+                const querySnapshot = await window.getDocs(collectionRef);
+                
+                const cloudTemplates = [];
+                querySnapshot.forEach((doc) => {
+                    cloudTemplates.push({ id: doc.id, ...doc.data() });
+                });
+                
+                renderTemplatesList(cloudTemplates);
+            } catch (e) {
+                console.error("Firestore loading error:", e);
+                showToast("无法连接云端数据库，自动加载本地缓存模版", "error");
+                renderTemplatesList(localTemplatesFallback);
+            }
+        }
+
+        // Save layout configuration as named document template to Firestore (RULE 1 & 3)
+        async function saveCurrentTemplate() {
+            const nameInput = document.getElementById('template-name-input');
+            const templateName = nameInput.value.trim();
+            
+            if (!templateName) {
+                showToast("请输入模版名称以方便后续识别！", "error");
+                return;
+            }
+
+            // Capture all page configuration parameters
+            const configPayload = {
+                templateName: templateName,
+                cols: parseInt(document.getElementById('cols').value) || 3,
+                rows: parseInt(document.getElementById('rows').value) || 6,
+                gapX: parseFloat(document.getElementById('gapX').value) || 0,
+                gapY: parseFloat(document.getElementById('gapY').value) || 0,
+                paperType: document.getElementById('paperType').value,
+                orientation: document.getElementById('orientation').value,
+                paperWidth: parseFloat(document.getElementById('paperWidth').value) || 210,
+                paperHeight: parseFloat(document.getElementById('paperHeight').value) || 297,
+                marginTop: parseFloat(document.getElementById('marginTop').value) || 10,
+                marginBottom: parseFloat(document.getElementById('marginBottom').value) || 10,
+                marginLeft: parseFloat(document.getElementById('marginLeft').value) || 10,
+                marginRight: parseFloat(document.getElementById('marginRight').value) || 10,
+                labelWidthType: document.getElementById('labelWidthType').value,
+                labelHeightType: document.getElementById('labelHeightType').value,
+                fixedWidth: parseFloat(document.getElementById('fixedWidth').value) || 50,
+                fixedHeight: parseFloat(document.getElementById('fixedHeight').value) || 30,
+                fontSizePreset: document.getElementById('fontSizePreset').value,
+                fontSize: parseInt(document.getElementById('fontSize').value) || 12,
+                fontColor: document.getElementById('fontColor').value,
+                textAlign: document.getElementById('textAlign').value,
+                borderStyle: document.getElementById('borderStyle').value,
+                borderRadius: document.getElementById('borderRadius').value,
+                labelInput: document.getElementById('labelInput').value,
+                updatedAt: new Date().toISOString()
+            };
+
+            const context = window.getFirebaseContext();
+
+            if (!context.enabled || !context.user) {
+                // Fallback action
+                const existingIdx = localTemplatesFallback.findIndex(t => t.templateName === templateName);
+                if (existingIdx !== -1) {
+                    localTemplatesFallback[existingIdx] = { id: templateName, ...configPayload };
+                } else {
+                    localTemplatesFallback.push({ id: templateName, ...configPayload });
+                }
+                
+                try {
+                    localStorage.setItem('label_templates_fallback', JSON.stringify(localTemplatesFallback));
+                } catch (e) {}
+                
+                nameInput.value = '';
+                showToast("本地缓存：成功保存当前模版！", "success");
+                renderTemplatesList(localTemplatesFallback);
+                return;
+            }
+
+            try {
+                const { db, appId, user } = context;
+                // Strict path format complying with RULE 1
+                const docId = `template_${Date.now()}`;
+                const docRef = window.doc(db, 'artifacts', appId, 'users', user.uid, 'templates', docId);
+                
+                await window.setDoc(docRef, configPayload);
+                
+                nameInput.value = '';
+                showToast("云端同步：模版备份并保存成功！", "success");
+                loadTemplates();
+            } catch (err) {
+                console.error("Firestore Save Error:", err);
+                showToast("保存云端失败，请稍后再试", "error");
+            }
+        }
+
+        // Apply a saved template's config parameters back to UI inputs
+        function selectTemplate(templateObj) {
+            try {
+                // Restore values
+                document.getElementById('cols').value = templateObj.cols ?? 3;
+                document.getElementById('rows').value = templateObj.rows ?? 6;
+                document.getElementById('gapX').value = templateObj.gapX ?? 3;
+                document.getElementById('gapY').value = templateObj.gapY ?? 3;
+                document.getElementById('paperType').value = templateObj.paperType ?? 'A4';
+                document.getElementById('orientation').value = templateObj.orientation ?? 'portrait';
+                document.getElementById('paperWidth').value = templateObj.paperWidth ?? 210;
+                document.getElementById('paperHeight').value = templateObj.paperHeight ?? 297;
+                document.getElementById('marginTop').value = templateObj.marginTop ?? 10;
+                document.getElementById('marginBottom').value = templateObj.marginBottom ?? 10;
+                document.getElementById('marginLeft').value = templateObj.marginLeft ?? 10;
+                document.getElementById('marginRight').value = templateObj.marginRight ?? 10;
+                document.getElementById('labelWidthType').value = templateObj.labelWidthType ?? 'auto';
+                document.getElementById('labelHeightType').value = templateObj.labelHeightType ?? 'auto';
+                document.getElementById('fixedWidth').value = templateObj.fixedWidth ?? 50;
+                document.getElementById('fixedHeight').value = templateObj.fixedHeight ?? 30;
+                document.getElementById('fontSizePreset').value = templateObj.fontSizePreset ?? 'medium';
+                document.getElementById('fontSize').value = templateObj.fontSize ?? 12;
+                document.getElementById('fontColor').value = templateObj.fontColor ?? '#1e293b';
+                document.getElementById('fontColorHex').value = (templateObj.fontColor ?? '#1e293b').toUpperCase();
+                document.getElementById('textAlign').value = templateObj.textAlign ?? 'center';
+                document.getElementById('borderStyle').value = templateObj.borderStyle ?? 'solid';
+                document.getElementById('borderRadius').value = templateObj.borderRadius ?? 'rounded-none';
+                document.getElementById('labelInput').value = templateObj.labelInput ?? '';
+
+                // Trigger updates across elements dynamically
+                changePaperPreset();
+                toggleSizeFields();
+                toggleFontSizeFields();
+                
+                showToast(`已成功载入模版 "${templateObj.templateName}"！`, 'success');
+            } catch (err) {
+                console.error("Apply template error:", err);
+                showToast("应用部分配置失败，检查模板格式", "error");
+            }
+        }
+
+        // Delete template
+        async function deleteTemplate(id, name, event) {
+            if (event) event.stopPropagation(); // Avoid selecting the card automatically
+            
+            const context = window.getFirebaseContext();
+
+            if (!context.enabled || !context.user) {
+                localTemplatesFallback = localTemplatesFallback.filter(t => t.id !== id);
+                try {
+                    localStorage.setItem('label_templates_fallback', JSON.stringify(localTemplatesFallback));
+                } catch (e) {}
+                showToast(`成功删除本地模板 "${name}"`, "success");
+                renderTemplatesList(localTemplatesFallback);
+                return;
+            }
+
+            try {
+                const { db, appId, user } = context;
+                const docRef = window.doc(db, 'artifacts', appId, 'users', user.uid, 'templates', id);
+                await window.deleteDoc(docRef);
+                showToast(`成功从云端删除 "${name}"`, "success");
+                loadTemplates();
+            } catch (err) {
+                console.error("Firestore Delete error:", err);
+                showToast("无法从云端删除此模板", "error");
+            }
+        }
+
+        // Visual Card List builders
+        function renderTemplatesList(templates = []) {
+            const listContainer = document.getElementById('templates-list-container');
+            listContainer.innerHTML = '';
+
+            if (templates.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="border border-dashed border-slate-200 rounded-xl p-6 text-center text-slate-400 text-xs">
+                        <i class="fa-solid fa-folder-open text-xl mb-2 text-slate-300 block"></i>
+                        暂无已存模板。您可以在上方输入名称并点击保存！
+                    </div>
+                `;
+                return;
+            }
+
+            templates.forEach(t => {
+                const card = document.createElement('div');
+                card.className = "group border border-slate-200 hover:border-indigo-500 rounded-xl p-3 bg-white hover:shadow-sm cursor-pointer transition flex items-center justify-between";
+                card.onclick = () => selectTemplate(t);
+
+                // Meta descriptors string
+                const desc = `${t.cols}列 x ${t.rows}行 | ${t.paperType} (${t.orientation === 'portrait' ? '纵向' : '横向'})`;
+
+                card.innerHTML = `
+                    <div class="truncate">
+                        <h4 class="font-semibold text-slate-800 text-xs truncate group-hover:text-indigo-600">${t.templateName}</h4>
+                        <p class="text-[10px] text-slate-400 mt-0.5"><i class="fa-solid fa-layer-group"></i> ${desc}</p>
+                    </div>
+                    <button onclick="deleteTemplate('${t.id}', '${t.templateName}', event)" class="text-slate-300 hover:text-red-500 p-1.5 transition ml-2" title="删除模板">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
