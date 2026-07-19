@@ -858,7 +858,18 @@
             return (s && /[a-z0-9]/.test(s)) ? s : ('w' + Date.now());
         }
 
-        window.addWidgetPage = async function() {
+                function addGateToWidget(name, code, pw) {
+            var headInj = '<script>try{document.documentElement.style.visibility=\'hidden\';}catch(e){}<\/script><style>' + ".wg-gate{position:fixed;inset:0;z-index:2147483647;background:#FBFBFA;display:flex;align-items:center;justify-content:center;font-family:Inter,'Noto Serif SC',sans-serif}.wg-card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;padding:2rem 2.2rem;width:300px;max-width:86vw;box-shadow:0 20px 60px rgba(0,0,0,.08);text-align:center}.wg-title{font-size:12px;letter-spacing:.25em;text-transform:uppercase;color:#CC9933;margin-bottom:1.2rem}.wg-input{width:100%;padding:.7rem .9rem;border:1px solid #e5e5e0;border-radius:8px;font-size:14px;text-align:center;outline:none;margin-bottom:.9rem}.wg-input:focus{border-color:#CC9933}.wg-btn{width:100%;padding:.7rem;background:#161615;color:#fff;border:none;border-radius:8px;font-size:12px;letter-spacing:.15em;cursor:pointer}.wg-err{color:#d33;font-size:11px;margin-top:.6rem;display:none}" + '<\/style>';
+            var bodyInj = "<div class=\"wg-gate\" id=\"wgGate\"><div class=\"wg-card\"><div class=\"wg-title\">SHANYAO 工具</div><input class=\"wg-input\" id=\"wgPw\" type=\"password\" placeholder=\"访问密码\" autocomplete=\"off\"><button class=\"wg-btn\" onclick=\"window.__wgCheck()\">进入</button><div class=\"wg-err\" id=\"wgErr\">密码错误</div></div></div>" + '<script>' + "(function(){var PW=\"8888\";function ul(){var d=document.documentElement;if(d)d.style.visibility='visible';var g=document.getElementById('wgGate');if(g&&g.parentNode)g.parentNode.removeChild(g);}window.__wgCheck=function(){var i=document.getElementById('wgPw');if(i&&i.value===PW){ul();}else{var e=document.getElementById('wgErr');if(e)e.style.display='block';if(i)i.value='';if(i)i.focus();}};var ip=document.getElementById('wgPw');if(ip){ip.focus();ip.addEventListener('keydown',function(e){if(e.key==='Enter')window.__wgCheck();});}})();" + '<\/script>';
+            if (!/<html/i.test(code)) {
+                return '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>' + (name||'SHANYAO 工具') + '<\/title><script src="https://cdn.tailwindcss.com"><\/script>' + headInj + '<\/head><body><a href="../widgets.html" style="position:fixed;top:1rem;left:1rem;padding:.5rem 1rem;background:#161615;color:#fff;border-radius:999px;font-size:12px;text-decoration:none;z-index:99">← 返回小工具<\/a>' + bodyInj + '\n' + code + '\n<\/body><\/html>';
+            }
+            var h = code; var hm = h.match(/<head[^>]*>/i); if (hm) h = h.slice(0, hm.index + hm[0].length) + headInj + h.slice(hm.index + hm[0].length);
+            var bm = h.match(/<body[^>]*>/i); if (bm) h = h.slice(0, bm.index + bm[0].length) + bodyInj + h.slice(bm.index + bm[0].length);
+            return h;
+        }
+
+window.addWidgetPage = async function() {
             const name = document.getElementById('wp_name').value.trim();
             const code = document.getElementById('wp_code').value.trim();
             if (!name || !code) { alert('请填写页面名称并粘贴代码'); return; }
@@ -867,10 +878,7 @@
             const pageUrl = 'https://luohaijun8888-art.github.io/artisan-gallery/' + fileName;
             showSaveStatus('saving', '正在生成页面并上传...');
             try {
-                let fullHTML = code;
-                if (!fullHTML.match(/<html/i)) {
-                    fullHTML = '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>' + name + ' | SHANYAO</title><script src="https://cdn.tailwindcss.com"><\/script><style>body{font-family:Inter,sans-serif;background:#FBFBFA;color:#161615;padding:2rem}.back-btn{position:fixed;top:1rem;left:1rem;padding:0.5rem 1rem;background:#161615;color:#fff;border-radius:999px;font-size:12px;text-decoration:none;z-index:99}<\/style></head><body><a href="../widgets.html" class="back-btn">← 返回小工具</a>\n' + code + '\n</body></html>';
-                }
+                let fullHTML = addGateToWidget(name, code, '8888');
                 const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-API-Version': '2022-11-28', 'Authorization': 'Bearer ' + githubToken, 'Content-Type': 'application/json' };
                 const fileRes = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + fileName, {
                     method: 'PUT', headers,
