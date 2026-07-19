@@ -344,6 +344,7 @@
                         <p class="text-[10px] text-neutral-400 font-light leading-relaxed">粘贴网页 HTML 代码，系统生成独立页面并托管至 widgets/ 目录，同时同步链接到「小工具」展示页。</p>
                         <input type="text" id="wp_name" placeholder="页面名称（如：房贷计算器）" class="w-full border-b border-neutral-200 py-2 outline-none text-xs bg-transparent">
                         <textarea id="wp_code" class="w-full text-xs font-mono p-3 bg-neutral-50 border border-neutral-200 rounded outline-none h-40" placeholder="粘贴完整 HTML 代码（含 &lt;html&gt; 标签，或仅 &lt;body&gt; 内容）..."></textarea>
+                        <input type="text" id="wp_pw" placeholder="访问密码（留空则用默认 8888）" class="w-full border-b border-neutral-200 py-2 outline-none text-xs bg-transparent">
                         <div class="flex gap-2">
                             <button onclick="previewWidgetPage()" class="flex-1 py-2.5 text-[10px] tracking-wider border border-neutral-200 rounded-sm hover:bg-neutral-50 transition-colors">解析预览</button>
                             <button onclick="addWidgetPage()" class="flex-1 bg-black text-white py-2.5 text-[10px] tracking-wider rounded-sm">确认生成页面</button>
@@ -356,12 +357,8 @@
                     </section>
                     <section class="space-y-3">
                         <h3 class="text-[10px] uppercase tracking-[0.15em] text-[var(--accent)] font-semibold">小工具访问密码</h3>
-                        <p class="text-[10px] text-neutral-400 font-light leading-relaxed">修改后，所有已部署的小工具页面会同步更新密码，新建页面也使用新密码。</p>
-                        <div class="flex gap-2">
-                            <input type="text" id="wp_pw_new" placeholder="输入新密码" class="flex-1 border-b border-neutral-200 py-2 outline-none text-xs bg-transparent">
-                            <button onclick="changeWidgetPassword()" class="bg-black text-white px-4 py-2 text-[10px] tracking-wider rounded-sm">更新密码</button>
-                        </div>
-                        <p id="wpPwHint" class="text-[10px] text-neutral-400"></p>
+                        <p class="text-[10px] text-neutral-400 font-light leading-relaxed">每个小工具可设置独立密码。新建时留空则使用默认密码；下方已部署列表中可单独修改每个工具的密码。</p>
+                        <p id="wpPwHint" class="text-[10px] text-neutral-400">默认密码：8888</p>
                     </section>
                 </div>
             </div>
@@ -693,7 +690,7 @@
             document.getElementById('adminWidgetSection').className = tab==='widgets'?'space-y-6':'hidden';
             document.getElementById('adminPageSection').className = tab==='pages'?'space-y-6':'hidden';
             if(tab === 'widgets') renderAdminWidgetList();
-            if(tab === 'pages'){ renderWidgetPagesList(); var h=document.getElementById('wpPwHint'); if(h) h.textContent='当前小工具密码：' + widgetGatePassword; }
+            if(tab === 'pages'){ renderWidgetPagesList(); var h=document.getElementById('wpPwHint'); if(h) h.textContent='默认密码：' + widgetGatePassword; }
         };
 
         window.addCategory = function() {
@@ -896,31 +893,22 @@
             if (!res.ok) throw new Error('写入失败 ' + path);
             return res.json();
         }
-        window.changeWidgetPassword = async function() {
-            const inp = document.getElementById('wp_pw_new');
-            const np = inp.value.trim();
-            if (!np) { alert('请输入新密码'); return; }
-            showSaveStatus('saving', '正在更新小工具密码...');
+        window.changeOneWidgetPassword = async function(id) {
+            const w = widgetPages.find(x => x.id === id); if (!w) return;
+            const inp = document.getElementById('pw_' + id);
+            const np = (inp ? inp.value.trim() : '') || widgetGatePassword;
+            showSaveStatus('saving', '正在更新「' + w.name + '」密码...');
             try {
                 const escaped = np.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                 const newDecl = 'var PW="' + escaped + '"';
-                // 更新默认值（影响今后新建页面）
-                widgetGatePassword = np;
-                // 重写所有已部署的小工具页面
-                for (const w of widgetPages) {
-                    try {
-                        const fn = 'widgets/' + w.slug + '.html';
-                        const cur = await ghGetFile(fn);
-                        if (cur.text.indexOf('var PW=') >= 0) {
-                            const newText = cur.text.replace(/var PW="[^"]*"/, newDecl);
-                            await ghPutFile(fn, newText, 'update widget password -> ' + np, cur.sha);
-                        }
-                    } catch (e) { console.error('更新页面失败', w.slug, e); }
-                }
+                const fn = 'widgets/' + w.slug + '.html';
+                const cur = await ghGetFile(fn);
+                if (cur.text.indexOf('var PW=') < 0) throw new Error('页面未含密码声明');
+                const newText = cur.text.replace(/var PW="[^"]*"/, newDecl);
+                await ghPutFile(fn, newText, 'update password for ' + w.name, cur.sha);
+                w.pw = np;
                 await saveAll();
-                showSaveStatus('saved', '小工具密码已更新为：' + np);
-                inp.value = '';
-                const h = document.getElementById('wpPwHint'); if (h) h.textContent = '当前小工具密码：' + widgetGatePassword;
+                showSaveStatus('saved', '「' + w.name + '」密码已更新');
             } catch (e) {
                 showSaveStatus('error', '更新失败: ' + e.message);
             }
@@ -935,14 +923,15 @@ window.addWidgetPage = async function() {
             const pageUrl = 'https://luohaijun8888-art.github.io/artisan-gallery/' + fileName;
             showSaveStatus('saving', '正在生成页面并上传...');
             try {
-                let fullHTML = addGateToWidget(name, code, widgetGatePassword);
+                const pwVal = (document.getElementById('wp_pw').value.trim()) || widgetGatePassword;
+                let fullHTML = addGateToWidget(name, code, pwVal);
                 const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-API-Version': '2022-11-28', 'Authorization': 'Bearer ' + githubToken, 'Content-Type': 'application/json' };
                 const fileRes = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + fileName, {
                     method: 'PUT', headers,
                     body: JSON.stringify({ message: 'add: widget page ' + name, content: btoa(unescape(encodeURIComponent(fullHTML))), branch: 'main' })
                 });
                 if (!fileRes.ok) { const err = await fileRes.json(); throw new Error(err.message || '上传失败'); }
-                widgetPages.push({ id: Date.now(), name, slug, url: pageUrl, createdAt: new Date().toISOString().split('T')[0] });
+                widgetPages.push({ id: Date.now(), name, slug, url: pageUrl, createdAt: new Date().toISOString().split('T')[0], pw: pwVal });
                 await saveAll();
                 document.getElementById('wp_name').value = '';
                 document.getElementById('wp_code').value = '';
@@ -964,7 +953,7 @@ window.addWidgetPage = async function() {
         function renderWidgetPagesList() {
             const container = document.getElementById('adminPageList'); if(!container) return;
             if(!widgetPages.length) { container.innerHTML = '<p class="text-center text-xs text-neutral-300 py-4 font-light">暂无独立页面</p>'; return; }
-            container.innerHTML = widgetPages.map(w => '<div class="flex items-center justify-between p-3 bg-neutral-50 border border-neutral-100 rounded text-xs font-light"><div><p class="text-neutral-800 font-normal">' + w.name + '</p><a href="' + w.url + '" target="_blank" class="text-[10px] text-[var(--accent)] break-all">' + w.url + '</a></div><button onclick="deleteWidgetPage(' + w.id + ')" class="text-neutral-400 hover:text-red-500 transition-colors p-1"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button></div>').join('');
+            container.innerHTML = widgetPages.map(w => '<div class="p-3 bg-neutral-50 border border-neutral-100 rounded text-xs font-light space-y-2"><div class="flex items-center justify-between"><div><p class="text-neutral-800 font-normal">' + w.name + '</p><a href="' + w.url + '" target="_blank" class="text-[10px] text-[var(--accent)] break-all">' + w.url + '</a></div><button onclick="deleteWidgetPage(' + w.id + ')" class="text-neutral-400 hover:text-red-500 transition-colors p-1"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button></div><div class="flex items-center gap-2"><input type="text" id="pw_' + w.id + '" value="' + (w.pw || widgetGatePassword) + '" placeholder="密码" class="flex-1 border-b border-neutral-200 py-1 outline-none text-xs bg-transparent"><button onclick="changeOneWidgetPassword(' + w.id + ')" class="bg-black text-white px-3 py-1 text-[10px] tracking-wider rounded-sm">改密</button></div></div>').join('');
             if (window.lucide) lucide.createIcons();
         }
 
