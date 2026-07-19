@@ -2262,49 +2262,56 @@
       "name": "索菲亚送货单和物流单",
       "slug": "w1784434048164",
       "url": "https://luohaijun8888-art.github.io/artisan-gallery/widgets/w1784434048164.html",
-      "createdAt": "2026-07-19"
+      "createdAt": "2026-07-19",
+      "pw": "9999"
     },
     {
       "id": 1784441082954,
       "name": "PDF编辑器",
       "slug": "pdf编辑器",
       "url": "https://luohaijun8888-art.github.io/artisan-gallery/widgets/pdf编辑器.html",
-      "createdAt": "2026-07-19"
+      "createdAt": "2026-07-19",
+      "pw": "8888"
     },
     {
       "id": 1784441146196,
       "name": "截图识别提取数据",
       "slug": "截图识别提取数据",
       "url": "https://luohaijun8888-art.github.io/artisan-gallery/widgets/截图识别提取数据.html",
-      "createdAt": "2026-07-19"
+      "createdAt": "2026-07-19",
+      "pw": "8888"
     },
     {
       "id": 1784441218397,
       "name": "管材计算器",
       "slug": "管材计算器",
       "url": "https://luohaijun8888-art.github.io/artisan-gallery/widgets/管材计算器.html",
-      "createdAt": "2026-07-19"
+      "createdAt": "2026-07-19",
+      "pw": "8888"
     },
     {
       "id": 1784441238767,
       "name": "标签排版",
       "slug": "标签排版",
       "url": "https://luohaijun8888-art.github.io/artisan-gallery/widgets/标签排版.html",
-      "createdAt": "2026-07-19"
+      "createdAt": "2026-07-19",
+      "pw": "8888"
     },
     {
       "id": 1784441291014,
       "name": "装柜排柜",
       "slug": "装柜排柜",
       "url": "https://luohaijun8888-art.github.io/artisan-gallery/widgets/装柜排柜.html",
-      "createdAt": "2026-07-19"
+      "createdAt": "2026-07-19",
+      "pw": "8888"
     },
     {
       "id": 1784441310732,
       "name": "CAD自动标注",
       "slug": "cad自动标注",
       "url": "https://luohaijun8888-art.github.io/artisan-gallery/widgets/cad自动标注.html",
-      "createdAt": "2026-07-19"
+      "createdAt": "2026-07-19",
+      "pw": "8888"
     }
   ]
 }
