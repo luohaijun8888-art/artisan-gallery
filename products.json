@@ -2113,5 +2113,14 @@
       "detailImages": []
     }
   ],
-  "widgets": []
+  "widgets": [],
+  "widgetPages": [
+    {
+      "id": 1784434048164,
+      "name": "索菲亚送货单和物流单",
+      "slug": "索菲亚送货单和物流单",
+      "url": "https://luohaijun8888-art.github.io/artisan-gallery/widgets/索菲亚送货单和物流单.html",
+      "createdAt": "2026-07-19"
+    }
+  ]
 }
