@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能装柜优化系统 - 增强轮廓版</title>
+    <!-- 核心库引入 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Babel 并配置 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.21.4/babel.min.js"></script>
+    <style>
+        body { margin: 0; background-color: #050507; color: #cbd5e1; overflow: hidden; font-family: sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        .glass-panel { background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(30, 41, 59, 1); backdrop-filter: blur(12px); }
+        input[type=range] { -webkit-appearance: none; background: #1e293b; height: 4px; border-radius: 2px; width: 100%; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #6366f1; cursor: pointer; border: 2px solid #fff; }
+        @keyframes scan { 0% { transform: translateY(-100%); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(100%); opacity: 0; } }
+        .scan-line { animation: scan 2s infinite linear; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-presets="react">
+        const { useState, useEffect, useRef, useMemo, useCallback } = React;
+
+        const CONTAINER_TYPES = [
+            { id: '20GP', name: '20尺标准柜', l: 5898, h: 2392, w: 2352, maxWeight: 28000, desc: '标准干货柜' },
+            { id: '40GP', name: '40尺标准柜', l: 12032, h: 2392, w: 2352, maxWeight: 26500, desc: '标准干货柜' },
+            { id: '40HC', name: '40尺高柜', l: 12032, h: 2698, w: 2352, maxWeight: 26500, desc: '加高干货柜' }
+        ];
+
+        const singlePack = (sortedItems, container, res = 10) => {
+            const { l: Cl, w: Cw, h: Ch, maxWeight } = container;
+            const gridL = Math.floor(Cl / res);
+            const gridW = Math.floor(Cw / res);
+            const hMap = Array(gridL).fill(0).map(() => new Float32Array(gridW).fill(0));
+            const packed = [];
+            let currentWeight = 0;
+            let inv = sortedItems.map(i => ({ ...i, rem: i.qty, got: 0 }));
+
+            for (let item of inv) {
+                while (item.rem > 0 && currentWeight + item.weight <= maxWeight) {
+                    let best = null;
+                    const oris = item.rot ? [
+                        { l: item.l, w: item.w, h: item.h }, 
+                        { l: item.w, w: item.l, h: item.h }
+                    ] : [{ l: item.l, w: item.w, h: item.h }];
+
+                    find: for (let x = 0; x < gridL; x += 2) { 
+                        for (let z = 0; z < gridW; z += 2) {
+                            for (let ori of oris) {
+                                const bL = Math.ceil(ori.l / res);
+                                const bW = Math.ceil(ori.w / res);
+                                if (x + bL > gridL || z + bW > gridW) continue;
+                                
+                                let maxSurfaceHeight = 0;
+                                for (let i = x; i < x + bL; i++) {
+                                    for (let j = z; j < z + bW; j++) {
+                                        if (hMap[i][j] > maxSurfaceHeight) maxSurfaceHeight = hMap[i][j];
+                                    }
+                                }
+                                
+                                if (maxSurfaceHeight + ori.h <= Ch) {
+                                    if (!best || maxSurfaceHeight < best.y || (maxSurfaceHeight === best.y && (x + z < best.x + best.z))) {
+                                        best = { x, z, y: maxSurfaceHeight, ...ori };
+                                        if (maxSurfaceHeight === 0 && x % 10 === 0 && z % 10 === 0) break find;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (best) {
+                        packed.push({
+                            pos: [best.x * res + best.l / 2, best.y + best.h / 2, best.z * res + best.w / 2],
+                            dim: [best.l, best.h, best.w],
+                            color: item.color,
+                            baseY: best.y,
+                            topY: best.y + best.h
+                        });
+                        const bL = Math.ceil(best.l / res);
+                        const bW = Math.ceil(best.w / res);
+                        const newHeight = best.y + best.h;
+                        for (let i = best.x; i < best.x + bL; i++) {
+                            for (let j = best.z; j < best.z + bW; j++) hMap[i][j] = newHeight;
+                        }
+                        currentWeight += item.weight;
+                        item.rem--;
+                        item.got++;
+                    } else break;
+                }
+            }
+            const volume = packed.reduce((a, b) => a + (b.dim[0] * b.dim[1] * b.dim[2]), 0);
+            return { packed, weight: currentWeight, inv, volume };
+        };
+
+        const multiPackOptimizer = (items, container) => {
+            const validItems = items.filter(i => i.qty > 0);
+            if (validItems.length === 0) return { packed: [], weight: 0, inv: items, volume: 0 };
+            const strategies = [
+                [...validItems].sort((a, b) => (b.l*b.w*b.h) - (a.l*a.w*a.h)),
+                [...validItems].sort((a, b) => b.h - a.h),
+                [...validItems].sort((a, b) => (b.l*b.w) - (a.l*a.w))
+            ];
+            const results = strategies.map(s => singlePack(s, container));
+            return results.reduce((prev, current) => (prev.volume > current.volume) ? prev : current);
+        };
+
+        const Scene = ({ container, packed, layerH }) => {
+            const ref = useRef();
+            useEffect(() => {
+                if (!ref.current) return;
+                const sc = new THREE.Scene();
+                sc.background = new THREE.Color(0x050507);
+                const cam = new THREE.PerspectiveCamera(45, ref.current.clientWidth / ref.current.clientHeight, 0.1, 1000);
+                const rd = new THREE.WebGLRenderer({ antialias: true });
+                rd.setSize(ref.current.clientWidth, ref.current.clientHeight);
+                ref.current.appendChild(rd.domElement);
+
+                const S = 0.001;
+                const [L, H, W] = [container.l * S, container.h * S, container.w * S];
+                cam.position.set(L*2, H*2.5, L*2);
+
+                sc.add(new THREE.AmbientLight(0xffffff, 0.8));
+                const pLight = new THREE.PointLight(0xffffff, 0.5);
+                pLight.position.set(L/2, H*5, W/2);
+                sc.add(pLight);
+
+                // --- 货柜外轮廓增强 ---
+                const cGeo = new THREE.BoxGeometry(L, H, W);
+                // 1. 半透明填充面
+                const cMat = new THREE.MeshPhongMaterial({ 
+                    color: 0x4f46e5, 
+                    transparent: true, 
+                    opacity: 0.03, 
+                    side: THREE.BackSide 
+                });
+                const cM = new THREE.Mesh(cGeo, cMat);
+                cM.position.set(L/2, H/2, W/2);
+                sc.add(cM);
+
+                // 2. 强化边缘线
+                const cEdges = new THREE.EdgesGeometry(cGeo);
+                const cLine = new THREE.LineSegments(cEdges, new THREE.LineBasicMaterial({ color: 0x6366f1, linewidth: 2, transparent: true, opacity: 0.6 }));
+                cLine.position.set(L/2, H/2, W/2);
+                sc.add(cLine);
+
+                // 3. 底部辅助网格
+                const gridHelper = new THREE.GridHelper(Math.max(L, W) * 2, 20, 0x1e293b, 0x1e293b);
+                gridHelper.position.set(L/2, 0, W/2);
+                sc.add(gridHelper);
+
+                // 渲染货物
+                packed.forEach(i => {
+                    const active = layerH === -1 || (i.baseY <= layerH && i.topY > layerH);
+                    const g = new THREE.BoxGeometry(i.dim[0]*S, i.dim[1]*S, i.dim[2]*S);
+                    const m = new THREE.MeshStandardMaterial({ 
+                        color: i.color, 
+                        transparent: true, 
+                        opacity: active ? 1 : 0.05 
+                    });
+                    const mesh = new THREE.Mesh(g, m);
+                    mesh.position.set(i.pos[0]*S, i.pos[1]*S, i.pos[2]*S);
+                    if(active) {
+                        const ed = new THREE.LineSegments(
+                            new THREE.EdgesGeometry(g), 
+                            new THREE.LineBasicMaterial({color:0x000000, opacity:0.2, transparent:true})
+                        );
+                        mesh.add(ed);
+                    }
+                    sc.add(mesh);
+                });
+
+                let aid;
+                const rot = () => {
+                    aid = requestAnimationFrame(rot);
+                    const time = Date.now() * 0.0002;
+                    cam.position.x = L/2 + Math.cos(time) * L * 1.6;
+                    cam.position.z = W/2 + Math.sin(time) * L * 1.6;
+                    cam.lookAt(L/2, H/2, W/2);
+                    rd.render(sc, cam);
+                };
+                rot();
+
+                return () => {
+                    cancelAnimationFrame(aid);
+                    rd.dispose();
+                    if(ref.current) ref.current.innerHTML = "";
+                };
+            }, [container, packed, layerH]);
+            return <div ref={ref} className="w-full h-full rounded-[2rem] overflow-hidden" />;
+        };
+
+        function App() {
+            const [ct, setCt] = useState(CONTAINER_TYPES[0]);
+            const [lh, setLh] = useState(-1);
+            const [isOptimizing, setIsOptimizing] = useState(false);
+            const [items, setItems] = useState([
+                           ]);
+
+            const [packResult, setPackResult] = useState({ packed: [], weight: 0, inv: items, volume: 0 });
+
+            // 核心计算函数
+            const handleOptimize = useCallback(() => {
+                setIsOptimizing(true);
+                // 使用 setTimeout 模拟异步计算，防止 UI 彻底冻结
+                setTimeout(() => {
+                    const result = multiPackOptimizer(items, ct);
+                    setPackResult(result);
+                    setIsOptimizing(false);
+                }, 100); 
+            }, [items, ct]);
+
+            // 移除原本的 useEffect 自动触发逻辑
+            // 仅在初次加载时执行一次默认计算
+            useEffect(() => { 
+                handleOptimize(); 
+            }, []); 
+
+            const addItem = () => {
+                const colors = ['#f43f5e', '#ec4899', '#d946ef', '#a855f7', '#8b5cf6', '#6366f1', '#3b82f6', '#0ea5e9', '#06b6d4', '#14b8a6', '#10b981', '#22c55e', '#84cc16', '#eab308', '#f59e0b', '#f97316', '#ef4444'];
+                const newId = items.length ? Math.max(...items.map(i => i.id)) + 1 : 1;
+                setItems([...items, {
+                    id: newId, name: `货品 ${newId}`, l: 500, w: 500, h: 500, qty: 10, weight: 10, color: colors[Math.floor(Math.random() * colors.length)], rot: true
+                }]);
+            };
+
+            const removeItem = (id) => setItems(items.filter(i => i.id !== id));
+
+            const volRate = useMemo(() => {
+                const cv = ct.l * ct.w * ct.h;
+                return ((packResult.volume / cv) * 100).toFixed(1);
+            }, [packResult.volume, ct]);
+
+            return (
+                <div className="flex h-screen p-6 gap-6 bg-[#050507]">
+                    <div className="w-80 flex flex-col gap-4">
+                        <div className="bg-gradient-to-br from-indigo-600 to-blue-700 p-6 rounded-[2rem] shadow-xl relative overflow-hidden shrink-0">
+                            <h1 className="text-white font-black text-xl z-10 relative">智能装柜优化</h1>
+                            <p className="text-indigo-200 text-[10px] mt-1 uppercase font-bold z-10 relative tracking-widest">Manual Trigger Mode</p>
+                        </div>
+
+                        {/* 强化后的计算按钮 */}
+                        <button 
+                            onClick={handleOptimize} 
+                            disabled={isOptimizing} 
+                            className={`w-full py-5 rounded-[1.5rem] font-black text-sm uppercase tracking-widest transition-all shadow-[0_10px_20px_rgba(16,185,129,0.2)] flex flex-col items-center justify-center gap-1 shrink-0 ${isOptimizing ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-emerald-500 hover:bg-emerald-400 text-slate-900 active:scale-95 border-b-4 border-emerald-700'}`}
+                        >
+                            {isOptimizing ? (
+                                <div className="flex items-center gap-2">
+                                    <div className="w-4 h-4 border-2 border-slate-500 border-t-transparent rounded-full animate-spin"></div>
+                                    <span>正在计算...</span>
+                                </div>
+                            ) : (
+                                <>
+                                    <span className="text-lg">🚀 开始智能排布计算</span>
+                                    <span className="text-[9px] opacity-60">APPLY ALL CHANGES</span>
+                                </>
+                            )}
+                        </button>
+
+                        <div className="glass-panel p-5 rounded-[2rem] space-y-4 shrink-0">
+                            <div className="flex items-center justify-between px-1">
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">集装箱(内空尺寸)</span>
+                                <span className="text-[10px] text-indigo-400 font-bold">单位: mm</span>
+                            </div>
+                            <div className="flex gap-2 overflow-x-auto custom-scrollbar pb-2">
+                                {CONTAINER_TYPES.map(t => (
+                                    <button key={t.id} onClick={() => {setCt(t); setLh(-1);}} className={`px-3 py-1.5 rounded-xl text-[10px] font-bold whitespace-nowrap transition-all ${ct.id === t.id ? 'bg-indigo-600 text-white shadow-lg' : 'bg-slate-800 text-slate-500 hover:bg-slate-700'}`}>{t.name}</button>
+                                ))}
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                                {['l','w','h'].map(f => (
+                                    <div key={f} className="bg-slate-900/50 p-2 rounded-xl border border-slate-800">
+                                        <p className="text-[8px] text-slate-500 uppercase font-bold">
+                                            {f === 'l' ? '内长' : f === 'w' ? '内宽' : '内高'} (mm)
+                                        </p>
+                                        <input type="number" value={ct[f]} onChange={e => setCt({...ct, [f]: parseInt(e.target.value)||0})} className="bg-transparent text-white text-xs font-mono outline-none w-full" />
+                                    </div>
+                                ))}
+                                <div className="bg-slate-900/50 p-2 rounded-xl border border-slate-800">
+                                    <p className="text-[8px] text-slate-500 uppercase font-bold">最大载重 (kg)</p>
+                                    <input type="number" value={ct.maxWeight} onChange={e => setCt({...ct, maxWeight: parseInt(e.target.value)||0})} className="bg-transparent text-emerald-400 text-xs font-mono outline-none w-full" />
+                                </div>
+                            </div>
+                            <p className="text-[9px] text-slate-600 italic px-1 leading-tight">* 注意：请务必输入去掉箱壁和角件后的净空尺寸。</p>
+                        </div>
+
+                        <div className="glass-panel p-5 rounded-[2rem] flex-1 overflow-hidden flex flex-col min-h-0">
+                            <div className="flex justify-between items-center mb-4 px-1">
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">货物管理</span>
+                                <button onClick={addItem} className="w-6 h-6 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-colors shadow-lg"><span className="text-xl leading-none">+</span></button>
+                            </div>
+                            <div className="space-y-2 overflow-y-auto custom-scrollbar flex-1 pr-1">
+                                {items.map(item => (
+                                    <div key={item.id} className="bg-slate-900/40 p-4 rounded-3xl border border-slate-800/50 hover:border-indigo-500/30 transition-colors relative group">
+                                        <button onClick={() => removeItem(item.id)} className="absolute top-2 right-2 w-5 h-5 bg-slate-800 hover:bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-xs">×</button>
+                                        <div className="flex justify-between text-xs font-bold mb-3 items-center pr-4">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-2 h-2 rounded-sm" style={{backgroundColor: item.color}}></div>
+                                                <input value={item.name} onChange={e => setItems(items.map(i => i.id === item.id ? {...i, name: e.target.value} : i))} className="bg-transparent text-slate-200 outline-none w-24" />
+                                            </div>
+                                            <span className={`px-2 py-0.5 rounded-md text-[10px] ${packResult.inv.find(i=>i.id===item.id)?.got === item.qty ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>{packResult.inv.find(i=>i.id===item.id)?.got || 0}/{item.qty}</span>
+                                        </div>
+                                        <div className="grid grid-cols-4 gap-1.5">
+                                            {['l','w','h','qty'].map(f => (
+                                                <div key={f} className="text-center">
+                                                    <p className="text-[7px] text-slate-600 uppercase mb-0.5 font-black">{f}</p>
+                                                    <input type="number" value={item[f]} onChange={e => setItems(prev => prev.map(i => i.id === item.id ? {...i, [f]: parseInt(e.target.value)||0} : i))} className="w-full bg-slate-950 text-[10px] text-center text-white p-1 rounded-lg border border-slate-800 outline-none" />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex-1 flex flex-col gap-6">
+                        <div className="grid grid-cols-3 gap-6 shrink-0">
+                            <div className="glass-panel p-6 rounded-[2.5rem] relative overflow-hidden group">
+                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">体积利用率</p>
+                                <p className="text-4xl font-black text-emerald-400 mt-2 font-mono">{volRate}%</p>
+                            </div>
+                            <div className="glass-panel p-6 rounded-[2.5rem]">
+                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">重量占比</p>
+                                <p className={`text-4xl font-black mt-2 font-mono ${packResult.weight > ct.maxWeight ? 'text-rose-500' : 'text-indigo-400'}`}>{((packResult.weight/ct.maxWeight)*100).toFixed(1)}%</p>
+                            </div>
+                            <div className="glass-panel p-6 rounded-[2.5rem]">
+                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">已装载数量</p>
+                                <p className="text-4xl font-black text-white mt-2 font-mono">{packResult.packed.length} <span className="text-xs text-slate-500 font-sans tracking-normal">件</span></p>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 relative glass-panel rounded-[3rem] p-2 overflow-hidden shadow-inner group">
+                            {isOptimizing && (
+                                <div className="absolute inset-0 z-20 bg-indigo-950/20 flex flex-col items-center justify-center backdrop-blur-sm">
+                                    <div className="w-full h-full relative overflow-hidden"><div className="absolute top-0 w-full h-[2px] bg-indigo-500/50 shadow-[0_0_15px_indigo] scan-line"></div></div>
+                                    <div className="absolute bg-slate-950 border border-slate-800 px-6 py-4 rounded-3xl shadow-2xl flex flex-col items-center gap-3">
+                                        <p className="text-xs font-black text-indigo-400 animate-pulse tracking-widest uppercase">计算装载方案中...</p>
+                                    </div>
+                                </div>
+                            )}
+                            <Scene container={ct} packed={packResult.packed} layerH={lh} />
+                            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[70%] bg-slate-950/80 backdrop-blur-xl border border-slate-800/50 p-6 rounded-[2.5rem] shadow-2xl">
+                                <div className="flex justify-between items-center mb-3">
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest opacity-60">Z轴高度切片 (显示柜内深度)</span>
+                                    <button onClick={() => setLh(-1)} className={`text-[10px] font-bold px-4 py-1.5 rounded-full transition-all ${lh === -1 ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>
+                                        {lh === -1 ? '完整预览' : `高度: ${lh}mm`}
+                                    </button>
+                                </div>
+                                <input type="range" min="-1" max={ct.h} step="10" value={lh} onChange={e => setLh(parseInt(e.target.value))} />
+                                <div className="flex justify-between mt-2 px-1 text-[8px] font-black text-slate-600 uppercase tracking-widest"><span>底部</span><span>顶部</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
