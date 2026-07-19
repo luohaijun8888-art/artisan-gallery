@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金属与木材多形状物理规格计算器</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- 导航栏 -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                    <i data-lucide="calculator" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-xl text-slate-900">万能物理规格与重量计算器</h1>
+                    <p class="text-xs text-slate-500">支持金属、木材、异形件、缩管、以及双向单位转换</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 text-sm text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
+                <span class="inline-block w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
+                <span>智能工业级物理计算引擎 v5.0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体内容 -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- 左侧：参数配置区域 (7列) -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <!-- 1. 材质选择卡片 -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <span class="bg-amber-100 text-amber-700 p-1.5 rounded-lg">
+                            <i data-lucide="layers" class="w-5 h-5"></i>
+                        </span>
+                        <h2 class="text-lg font-semibold text-slate-900">第一步：选择材质</h2>
+                    </div>
+                    
+                    <!-- 材质分类选择：金属类 -->
+                    <div class="mb-4">
+                        <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">金属材质 (Metals)</span>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="metal-grid">
+                            <!-- 铁 -->
+                            <button onclick="selectMaterial('iron')" id="btn-iron" class="material-btn border-2 border-indigo-600 bg-indigo-50/50 text-indigo-900 p-3 rounded-xl flex flex-col items-center justify-center transition-all">
+                                <span class="text-2xl mb-1">🪙</span>
+                                <span class="font-semibold text-xs sm:text-sm">铁 (Iron)</span>
+                                <span class="text-[10px] text-slate-500">7.87 g/cm³</span>
+                            </button>
+                            <!-- 铜 -->
+                            <button onclick="selectMaterial('copper')" id="btn-copper" class="material-btn border border-slate-200 hover:border-slate-300 p-3 rounded-xl flex flex-col items-center justify-center transition-all">
+                                <span class="text-2xl mb-1">🥉</span>
+                                <span class="font-semibold text-xs sm:text-sm">铜 (Copper)</span>
+                                <span class="text-[10px] text-slate-500">8.96 g/cm³</span>
+                            </button>
+                            <!-- 铝 -->
+                            <button onclick="selectMaterial('aluminum')" id="btn-aluminum" class="material-btn border border-slate-200 hover:border-slate-300 p-3 rounded-xl flex flex-col items-center justify-center transition-all">
+                                <span class="text-2xl mb-1">🪨</span>
+                                <span class="font-semibold text-xs sm:text-sm">铝 (Aluminum)</span>
+                                <span class="text-[10px] text-slate-500">2.70 g/cm³</span>
+                            </button>
+                            <!-- 不锈钢 -->
+                            <button onclick="selectMaterial('stainless')" id="btn-stainless" class="material-btn border border-slate-200 hover:border-slate-300 p-3 rounded-xl flex flex-col items-center justify-center transition-all">
+                                <span class="text-2xl mb-1">🔩</span>
+                                <span class="font-semibold text-xs sm:text-sm">不锈钢</span>
+                                <span class="text-[10px] text-slate-500">7.93 g/cm³</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 材质分类选择：木材类 -->
+                    <div class="mb-5">
+                        <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">木材材质 (Woods)</span>
+                        <div class="grid grid-cols-3 gap-3" id="wood-grid">
+                            <!-- 白蜡木 -->
+                            <button onclick="selectMaterial('ashwood')" id="btn-ashwood" class="material-btn border border-slate-200 hover:border-slate-300 p-3 rounded-xl flex flex-col items-center justify-center transition-all">
+                                <span class="text-2xl mb-1">🪵</span>
+                                <span class="font-semibold text-xs sm:text-sm">白蜡木</span>
+                                <span class="text-[10px] text-slate-500">0.67 g/cm³</span>
+                            </button>
+                            <!-- 水曲柳 -->
+                            <button onclick="selectMaterial('manchurian')" id="btn-manchurian" class="material-btn border border-slate-200 hover:border-slate-300 p-3 rounded-xl flex flex-col items-center justify-center transition-all">
+                                <span class="text-2xl mb-1">🌿</span>
+                                <span class="font-semibold text-xs sm:text-sm">水曲柳</span>
+                                <span class="text-[10px] text-slate-500">0.68 g/cm³</span>
+                            </button>
+                            <!-- 橡胶木 -->
+                            <button onclick="selectMaterial('rubberwood')" id="btn-rubberwood" class="material-btn border border-slate-200 hover:border-slate-300 p-3 rounded-xl flex flex-col items-center justify-center transition-all">
+                                <span class="text-2xl mb-1">🌳</span>
+                                <span class="font-semibold text-xs sm:text-sm">橡胶木</span>
+                                <span class="text-[10px] text-slate-500">0.61 g/cm³</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 密度微调/自定义 -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm font-medium text-slate-600">当前材质:</span>
+                            <span id="material-name-display" class="text-sm font-bold text-slate-900">铁 (碳钢)</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-slate-500">设定密度:</span>
+                            <input type="number" id="density-input" step="0.01" min="0.01" value="7.87" oninput="onDensityChange()" class="w-24 px-3 py-1 text-center border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-sm">
+                            <span class="text-xs text-slate-500">g/cm³</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 形状与空实心选择 -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <span class="bg-blue-100 text-blue-700 p-1.5 rounded-lg">
+                            <i data-lucide="shapes" class="w-5 h-5"></i>
+                        </span>
+                        <h2 class="text-lg font-semibold text-slate-900">第二步：选择形状与结构</h2>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- 形状分类选择（网格版，适应更多复杂形状） -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">基本及工业级截面形状</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                <button onclick="selectShape('circle')" id="shape-circle" class="shape-btn border-2 border-indigo-600 bg-indigo-50/30 text-indigo-900 py-2.5 rounded-xl font-medium text-xs sm:text-sm flex flex-col items-center justify-center transition-all">
+                                    <span class="text-lg mb-0.5">⚪</span>圆柱 / 圆管
+                                </button>
+                                <button onclick="selectShape('square')" id="shape-square" class="shape-btn border border-slate-200 hover:border-slate-300 py-2.5 rounded-xl font-medium text-xs sm:text-sm flex flex-col items-center justify-center transition-all">
+                                    <span class="text-lg mb-0.5">⬜</span>方柱 / 方管
+                                </button>
+                                <button onclick="selectShape('triangle')" id="shape-triangle" class="shape-btn border border-slate-200 hover:border-slate-300 py-2.5 rounded-xl font-medium text-xs sm:text-sm flex flex-col items-center justify-center transition-all">
+                                    <span class="text-lg mb-0.5">📐</span>三角柱 / 三角管
+                                </button>
+                                <button onclick="selectShape('ellipse')" id="shape-ellipse" class="shape-btn border border-slate-200 hover:border-slate-300 py-2.5 rounded-xl font-medium text-xs sm:text-sm flex flex-col items-center justify-center transition-all">
+                                    <span class="text-lg mb-0.5">⬭</span>椭圆柱 / 椭圆管
+                                </button>
+                                <button onclick="selectShape('half_circle')" id="shape-half_circle" class="shape-btn border border-slate-200 hover:border-slate-300 py-2.5 rounded-xl font-medium text-xs sm:text-sm flex flex-col items-center justify-center transition-all">
+                                    <span class="text-lg mb-0.5">🌙</span>半圆柱 / 半圆管
+                                </button>
+                                <button onclick="selectShape('quarter_circle')" id="shape-quarter_circle" class="shape-btn border border-slate-200 hover:border-slate-300 py-2.5 rounded-xl font-medium text-xs sm:text-sm flex flex-col items-center justify-center transition-all">
+                                    <span class="text-lg mb-0.5">🍕</span>1/4圆柱 / 管
+                                </button>
+                                <button onclick="selectShape('obround')" id="shape-obround" class="shape-btn border border-slate-200 hover:border-slate-300 py-2.5 rounded-xl font-medium text-xs sm:text-sm flex flex-col items-center justify-center transition-all col-span-2 sm:col-span-1">
+                                    <span class="text-lg mb-0.5">◰</span>平旦管 (扁圆)
+                                </button>
+                                <button onclick="selectShape('round_reducer')" id="shape-round_reducer" class="shape-btn border border-slate-200 hover:border-slate-300 py-2.5 rounded-xl font-medium text-xs sm:text-sm flex flex-col items-center justify-center transition-all">
+                                    <span class="text-lg mb-0.5">📉</span>圆形缩管
+                                </button>
+                                <button onclick="selectShape('square_reducer')" id="shape-square_reducer" class="shape-btn border border-slate-200 hover:border-slate-300 py-2.5 rounded-xl font-medium text-xs sm:text-sm flex flex-col items-center justify-center transition-all">
+                                    <span class="text-lg mb-0.5">▰</span>方形缩管
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 实心 / 空心 -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">结构类型</label>
+                            <div class="grid grid-cols-2 gap-2 h-[56px]">
+                                <button onclick="selectStructure('solid')" id="struct-solid" class="struct-btn border-2 border-indigo-600 bg-indigo-50/30 text-indigo-900 rounded-xl font-medium text-sm flex flex-col items-center justify-center transition-all">
+                                    <div class="flex items-center gap-1.5">
+                                        <i data-lucide="circle-dot" class="w-4 h-4 text-indigo-600"></i>
+                                        <span>实心体 (Solid)</span>
+                                    </div>
+                                </button>
+                                <button onclick="selectStructure('hollow')" id="struct-hollow" class="struct-btn border border-slate-200 hover:border-slate-300 rounded-xl font-medium text-sm flex flex-col items-center justify-center transition-all">
+                                    <div class="flex items-center gap-1.5">
+                                        <i data-lucide="circle-dashed" class="w-4 h-4 text-slate-400"></i>
+                                        <span>空心管 (Hollow / 带厚度)</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. 尺寸输入卡片 -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-emerald-100 text-emerald-700 p-1.5 rounded-lg">
+                                <i data-lucide="rulers" class="w-5 h-5"></i>
+                            </span>
+                            <h2 class="text-lg font-semibold text-slate-900">第三步：输入尺寸数据</h2>
+                        </div>
+                        
+                        <!-- 输入单位选择器 -->
+                        <div class="flex items-center space-x-2 bg-indigo-50 px-3 py-1.5 rounded-xl border border-indigo-100">
+                            <label for="unit-select" class="text-xs font-semibold text-indigo-700 flex items-center gap-1">
+                                <i data-lucide="scale" class="w-3.5 h-3.5"></i>尺寸单位:
+                            </label>
+                            <select id="unit-select" onchange="changeUnit(this.value)" class="bg-transparent text-sm font-bold text-indigo-900 focus:outline-none cursor-pointer">
+                                <option value="mm">毫米 (mm)</option>
+                                <option value="cm">厘米 (cm)</option>
+                                <option value="m">米 (m)</option>
+                                <option value="inch">英寸 (inch)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                        <!-- 左侧：动态SVG示意图 -->
+                        <div class="md:col-span-5 bg-slate-50 rounded-xl p-4 flex flex-col items-center justify-center border border-slate-100 min-h-[220px]">
+                            <span class="text-xs font-medium text-slate-400 mb-2">图形及标注参考</span>
+                            <div id="svg-container" class="w-full flex items-center justify-center">
+                                <!-- 由 JS 动态渲染 SVG 示意图 -->
+                            </div>
+                        </div>
+
+                        <!-- 右侧：动态输入表单 -->
+                        <div class="md:col-span-7 flex flex-col justify-center space-y-4" id="dimensions-form">
+                            <!-- 由 JS 动态生成输入框 -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 右侧：计算结果面板 (5列) -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <!-- 实时结果主卡片 -->
+                <div class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-2xl p-6 shadow-xl relative overflow-hidden sticky top-24">
+                    <!-- 背景装饰微弱光晕 -->
+                    <div class="absolute -right-16 -top-16 w-48 h-48 bg-indigo-500 rounded-full blur-3xl opacity-20"></div>
+                    <div class="absolute -left-16 -bottom-16 w-48 h-48 bg-sky-500 rounded-full blur-3xl opacity-20"></div>
+
+                    <div class="relative z-10">
+                        <h3 class="text-sm font-semibold tracking-wider text-indigo-200 uppercase mb-4">实时计算结果 (Result)</h3>
+
+                        <!-- 核心重量展示 & 单位选择 -->
+                        <div class="border-b border-slate-800 pb-5 mb-5">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs text-slate-400 block">估算重量 (Weight)</span>
+                                <!-- 重量输出单位设置 -->
+                                <select id="res-weight-unit" onchange="calculate()" class="bg-slate-800 text-[11px] font-bold text-amber-300 border border-slate-700 rounded px-1.5 py-0.5 focus:outline-none cursor-pointer">
+                                    <option value="kg">千克 (kg)</option>
+                                    <option value="g">克 (g)</option>
+                                    <option value="t">吨 (t)</option>
+                                    <option value="lb">磅 (lb)</option>
+                                </select>
+                            </div>
+                            <div class="flex items-baseline space-x-2">
+                                <span id="res-weight-display" class="text-5xl font-extrabold tracking-tight font-mono text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">0.0000</span>
+                                <span id="res-weight-unit-label" class="text-xl font-medium text-slate-300">kg</span>
+                            </div>
+                        </div>
+
+                        <!-- 体积展示 & 单位选择 -->
+                        <div class="bg-slate-800/40 p-3.5 rounded-xl border border-slate-800/80 mb-4">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <span class="text-xs text-slate-400 block">几何体积 (Volume)</span>
+                                <!-- 体积输出单位设置 -->
+                                <select id="res-volume-unit" onchange="calculate()" class="bg-slate-800 text-[10px] font-bold text-indigo-300 border border-slate-700 rounded px-1 py-0.5 focus:outline-none cursor-pointer">
+                                    <option value="cm3">立方厘米 (cm³)</option>
+                                    <option value="mm3">立方毫米 (mm³)</option>
+                                    <option value="dm3">立方分米 (dm³)</option>
+                                    <option value="m3">立方米 (m³)</option>
+                                    <option value="inch3">立方英寸 (in³)</option>
+                                </select>
+                            </div>
+                            <div class="flex justify-between items-baseline">
+                                <span id="res-volume-display" class="text-xl font-bold font-mono text-indigo-300">0.000</span>
+                                <span id="res-volume-unit-label" class="text-xs text-slate-400 font-mono">cm³</span>
+                            </div>
+                        </div>
+
+                        <!-- 表面积群详解及单位选择 -->
+                        <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-800/80 mb-5 space-y-3">
+                            <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                                <span class="text-xs font-semibold text-slate-300">表面积细分列表 (Surface Area)</span>
+                                <!-- 表面积输出单位设置 -->
+                                <select id="res-area-unit" onchange="calculate()" class="bg-slate-800 text-[10px] font-bold text-teal-300 border border-slate-700 rounded px-1 py-0.5 focus:outline-none cursor-pointer">
+                                    <option value="cm2">平方厘米 (cm²)</option>
+                                    <option value="mm2">平方毫米 (mm²)</option>
+                                    <option value="dm2">平方分米 (dm²)</option>
+                                    <option value="m2">平方米 (m²)</option>
+                                    <option value="inch2">平方英寸 (in²)</option>
+                                </select>
+                            </div>
+
+                            <!-- 外壁面积 -->
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-400" id="label-outer-wall">外壁/侧壁表面积:</span>
+                                <div class="text-right">
+                                    <span id="res-area-outer-display" class="font-mono font-bold text-slate-200">0.00</span>
+                                    <span class="text-slate-500 font-mono text-[10px] res-area-unit-label">cm²</span>
+                                </div>
+                            </div>
+
+                            <!-- 内壁面积 (仅空心可见) -->
+                            <div id="row-inner-wall" class="flex justify-between text-xs border-t border-slate-800/20 pt-1.5">
+                                <span class="text-slate-400">内壁表面积:</span>
+                                <div class="text-right">
+                                    <span id="res-area-inner-display" class="font-mono font-bold text-slate-200">0.00</span>
+                                    <span class="text-slate-500 font-mono text-[10px] res-area-unit-label">cm²</span>
+                                </div>
+                            </div>
+
+                            <!-- 端面面积 -->
+                            <div class="flex justify-between text-xs border-t border-slate-800/20 pt-1.5">
+                                <span class="text-slate-400" id="label-ends">两端切面总面积:</span>
+                                <div class="text-right">
+                                    <span id="res-area-ends-display" class="font-mono font-bold text-slate-200">0.00</span>
+                                    <span class="text-slate-500 font-mono text-[10px] res-area-unit-label">cm²</span>
+                                </div>
+                            </div>
+
+                            <!-- 总表面积 -->
+                            <div class="flex justify-between text-sm font-bold border-t border-slate-800/60 pt-2 text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-indigo-300">
+                                <span>总表面积 (外+内+端):</span>
+                                <div class="text-right">
+                                    <span id="res-area-total-display" class="font-mono text-teal-300">0.00</span>
+                                    <span class="text-xs text-teal-400 font-mono res-area-unit-label">cm²</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 实时参数小结 -->
+                        <div class="bg-slate-800/30 rounded-xl p-3 text-xs text-slate-300 space-y-1.5 border border-slate-800/40">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">选定结构:</span>
+                                <span id="summary-spec" class="font-medium text-indigo-300">铁 - 实心圆柱</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">计算状态:</span>
+                                <span id="summary-status" class="font-medium text-emerald-400 flex items-center">
+                                    <span class="inline-block w-1.5 h-1.5 bg-emerald-400 rounded-full mr-1"></span>
+                                    就绪
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 密度常识手册 -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+                    <h4 class="text-sm font-bold text-slate-900 mb-3 flex items-center space-x-1.5">
+                        <i data-lucide="info" class="w-4 h-4 text-slate-400"></i>
+                        <span>常见材质密度参考 (g/cm³)</span>
+                    </h4>
+                    <div class="space-y-4">
+                        <div>
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">金属材料</span>
+                            <ul class="text-xs text-slate-600 space-y-1.5">
+                                <li class="flex justify-between py-0.5 border-b border-dashed border-slate-100">
+                                    <span>🔩 304不锈钢 / 316不锈钢</span>
+                                    <span class="font-mono font-medium">7.93 / 7.98</span>
+                                </li>
+                                <li class="flex justify-between py-0.5 border-b border-dashed border-slate-100">
+                                    <span>🪙 工业纯铁 / 碳钢</span>
+                                    <span class="font-mono font-medium">7.87 / 7.85</span>
+                                </li>
+                                <li class="flex justify-between py-0.5 border-b border-dashed border-slate-100">
+                                    <span>🥉 黄铜 (H62) / 红铜 (紫铜)</span>
+                                    <span class="font-mono font-medium">8.50 / 8.96</span>
+                                </li>
+                                <li class="flex justify-between py-0.5 border-b border-dashed border-slate-100">
+                                    <span>🪨 纯铝 / 铝合金 (LY12)</span>
+                                    <span class="font-mono font-medium">2.70 / 2.73</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">木本材料（气干密度平均值）</span>
+                            <ul class="text-xs text-slate-600 space-y-1.5">
+                                <li class="flex justify-between py-0.5 border-b border-dashed border-slate-100">
+                                    <span>🪵 白蜡木 (Ash wood)</span>
+                                    <span class="font-mono font-medium">0.60 ~ 0.72 (均值0.67)</span>
+                                </li>
+                                <li class="flex justify-between py-0.5 border-b border-dashed border-slate-100">
+                                    <span>🌿 水曲柳 (Manchurian Ash)</span>
+                                    <span class="font-mono font-medium">0.60 ~ 0.75 (均值0.68)</span>
+                                </li>
+                                <li class="flex justify-between py-0.5 border-b border-dashed border-slate-100">
+                                    <span>🌳 橡胶木 (Rubberwood)</span>
+                                    <span class="font-mono font-medium">0.55 ~ 0.65 (均值0.61)</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-white border-t border-slate-200 mt-12 py-6">
+        <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-400">
+            <p>© 2026 物理重量计算工具 · 工业设计与物料估算助手</p>
+            <p class="mt-1">计算结果基于几何标准公式，实际重量可能因加工公差、含水率、材质纯度不同而存在微小偏差。</p>
+        </div>
+    </footer>
+
+    <!-- 交互脚本 -->
+    <script>
+        // 初始化 Lucide 图标
+        lucide.createIcons();
+
+        // 预设材质数据
+        const materials = {
+            iron: { name: '铁 (碳钢)', density: 7.87 },
+            copper: { name: '铜 (紫铜)', density: 8.96 },
+            aluminum: { name: '铝 (铝合金)', density: 2.70 },
+            stainless: { name: '不锈钢 (304)', density: 7.93 },
+            ashwood: { name: '白蜡木', density: 0.67 },
+            manchurian: { name: '水曲柳', density: 0.68 },
+            rubberwood: { name: '橡胶木', density: 0.61 }
+        };
+
+        // 当前选中的状态
+        let currentMaterial = 'iron';
+        let currentShape = 'circle'; 
+        let currentStructure = 'solid'; 
+        let currentUnit = 'mm'; 
+
+        // 单位对应的毫米比例因子
+        const unitToMmFactors = {
+            mm: 1.0,
+            cm: 10.0,
+            m: 1000.0,
+            inch: 25.4
+        };
+
+        // 默认输入数据（在当前所选单位下的初始值）
+        const dimensions = {
+            length: 100.0,         // 总长度 L
+            taperLength: 50.0,     // 锥长 (用于缩管)
+            outerDia: 50.0,        // 上端外径 D1 (或圆柱直径)
+            outerDiaBottom: 30.0,  // 下端外径 D2
+            wallThickness: 5.0,    // 壁厚 t
+            width: 50.0,           // 上端外宽 W1 (或截面宽)
+            height: 50.0,          // 上端外高 H1 (或截面高)
+            widthBottom: 30.0,     // 下端外宽 W2
+            heightBottom: 30.0,    // 下端外高 H2
+            sideA: 50.0,           // 三角形边A
+            sideB: 50.0,           // 三角形边B
+            sideC: 50.0,           // 三角形边C
+            outerWidth: 60.0,      // 椭圆或扁圆总宽
+            outerHeight: 40.0,     // 椭圆或扁圆高/厚
+            outerRadius: 30.0      // 1/4圆半径 R
+        };
+
+        // 切换输入单位并自动转换数值 (Auto-Conversion)
+        function changeUnit(newUnit) {
+            if (newUnit === currentUnit) return;
+
+            const oldFactor = unitToMmFactors[currentUnit];
+            const newFactor = unitToMmFactors[newUnit];
+
+            // 转换现有尺寸值并高保真四舍五入
+            for (let key in dimensions) {
+                const mmValue = dimensions[key] * oldFactor;
+                dimensions[key] = parseFloat((mmValue / newFactor).toFixed(4));
+            }
+
+            currentUnit = newUnit;
+            renderFormAndSvg();
+        }
+
+        // 选择材质
+        function selectMaterial(key) {
+            currentMaterial = key;
+            
+            document.querySelectorAll('.material-btn').forEach(btn => {
+                btn.classList.remove('border-indigo-600', 'bg-indigo-50/50', 'text-indigo-900');
+                btn.classList.add('border-slate-200', 'hover:border-slate-300');
+            });
+            const selectedBtn = document.getElementById(`btn-${key}`);
+            if (selectedBtn) {
+                selectedBtn.classList.remove('border-slate-200', 'hover:border-slate-300');
+                selectedBtn.classList.add('border-indigo-600', 'bg-indigo-50/50', 'text-indigo-900');
+            }
+
+            document.getElementById('density-input').value = materials[key].density;
+            document.getElementById('material-name-display').innerText = materials[key].name;
+
+            calculate();
+        }
+
+        // 自定义密度输入
+        function onDensityChange() {
+            currentMaterial = 'custom';
+            document.querySelectorAll('.material-btn').forEach(btn => {
+                btn.classList.remove('border-indigo-600', 'bg-indigo-50/50', 'text-indigo-900');
+                btn.classList.add('border-slate-200', 'hover:border-slate-300');
+            });
+            document.getElementById('material-name-display').innerText = '自定义材质';
+            calculate();
+        }
+
+        // 获取当前密度值
+        function getDensity() {
+            return parseFloat(document.getElementById('density-input').value) || 0;
+        }
+
+        // 选择形状
+        function selectShape(shape) {
+            currentShape = shape;
+            document.querySelectorAll('.shape-btn').forEach(btn => {
+                btn.classList.remove('border-indigo-600', 'bg-indigo-50/30', 'text-indigo-900');
+                btn.classList.add('border-slate-200', 'hover:border-slate-300');
+            });
+            const selectedBtn = document.getElementById(`shape-${shape}`);
+            if (selectedBtn) {
+                selectedBtn.classList.remove('border-slate-200', 'hover:border-slate-300');
+                selectedBtn.classList.add('border-indigo-600', 'bg-indigo-50/30', 'text-indigo-900');
+            }
+
+            renderFormAndSvg();
+        }
+
+        // 选择结构类型
+        function selectStructure(struct) {
+            currentStructure = struct;
+            document.querySelectorAll('.struct-btn').forEach(btn => {
+                btn.classList.remove('border-indigo-600', 'bg-indigo-50/30', 'text-indigo-900');
+                btn.classList.add('border-slate-200', 'hover:border-slate-300');
+                const icon = btn.querySelector('i');
+                if (icon) icon.className = icon.className.replace('text-indigo-600', 'text-slate-400');
+            });
+            const selectedBtn = document.getElementById(`struct-${struct}`);
+            if (selectedBtn) {
+                selectedBtn.classList.remove('border-slate-200', 'hover:border-slate-300');
+                selectedBtn.classList.add('border-indigo-600', 'bg-indigo-50/30', 'text-indigo-900');
+                const icon = selectedBtn.querySelector('i');
+                if (icon) icon.className = icon.className.replace('text-slate-400', 'text-indigo-600');
+            }
+
+            renderFormAndSvg();
+        }
+
+        // 输入变更统一派发
+        function handleInputChange(key, val) {
+            dimensions[key] = parseFloat(val) || 0;
+            calculate();
+        }
+
+        // 渲染表单输入和高保真SVG示意图
+        function renderFormAndSvg() {
+            const formContainer = document.getElementById('dimensions-form');
+            const svgContainer = document.getElementById('svg-container');
+            
+            let formHtml = '';
+            let svgHtml = '';
+
+            const inputField = (label, key, placeholder) => `
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">${label}</label>
+                    <div class="relative rounded-lg shadow-sm">
+                        <input type="number" step="any" min="0" value="${dimensions[key]}" 
+                            oninput="handleInputChange('${key}', this.value)" 
+                            class="block w-full px-3 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xs sm:text-sm" 
+                            placeholder="${placeholder}">
+                        <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+                            <span class="text-slate-400 text-[10px] font-semibold">${currentUnit}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const unitLabel = currentUnit;
+
+            // 针对各种形状分支动态生成表单与SVG
+            if (currentShape === 'circle') {
+                if (currentStructure === 'solid') {
+                    formHtml = `
+                        ${inputField(`圆柱直径 (D)`, 'outerDia', '请输入直径')}
+                        ${inputField(`圆柱高度/长度 (L)`, 'length', '请输入长度')}
+                    `;
+                    svgHtml = `
+                        <svg viewBox="0 0 120 120" class="w-24 h-24 text-indigo-600 animate-fade-in" fill="none" stroke="currentColor" stroke-width="2">
+                            <ellipse cx="60" cy="30" rx="30" ry="12" />
+                            <path d="M30,30 L30,90 C30,96 90,96 90,90 L90,30" />
+                            <ellipse cx="60" cy="90" rx="30" ry="12" stroke-dasharray="3,3" />
+                            <line x1="20" y1="30" x2="20" y2="90" stroke="red" stroke-width="1"/>
+                            <text x="6" y="65" fill="red" font-size="8" font-family="monospace">L (${unitLabel})</text>
+                            <line x1="30" y1="18" x2="90" y2="18" stroke="red" stroke-width="1"/>
+                            <text x="54" y="14" fill="red" font-size="8" font-family="monospace">D</text>
+                        </svg>
+                    `;
+                } else {
+                    formHtml = `
+                        ${inputField(`外圆直径 (D)`, 'outerDia', '请输入外圈直径')}
+                        ${inputField(`管壁厚度 (t)`, 'wallThickness', '请输入壁厚')}
+                        ${inputField(`圆管高度/长度 (L)`, 'length', '请输入总长度')}
+                    `;
+                    svgHtml = `
+                        <svg viewBox="0 0 120 120" class="w-24 h-24 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2">
+                            <ellipse cx="60" cy="30" rx="35" ry="14" />
+                            <path d="M25,30 L25,90 C25,98 95,98 95,90 L95,30" />
+                            <ellipse cx="60" cy="30" rx="23" ry="9" />
+                            <ellipse cx="60" cy="90" rx="35" ry="14" stroke-dasharray="3,3" />
+                            <line x1="15" y1="30" x2="15" y2="90" stroke="red" stroke-width="1"/>
+                            <text x="3" y="65" fill="red" font-size="8" font-family="monospace">L (${unitLabel})</text>
+                            <line x1="25" y1="12" x2="95" y2="12" stroke="red" stroke-width="1"/>
+                            <text x="56" y="8" fill="red" font-size="8" font-family="monospace">D</text>
+                            <line x1="25" y1="30" x2="37" y2="30" stroke="red" stroke-width="1.5"/>
+                            <text x="29" y="42" fill="red" font-size="7" font-family="monospace">t</text>
+                        </svg>
+                    `;
+                }
+            } 
+            else if (currentShape === 'square') {
+                if (currentStructure === 'solid') {
+                    formHtml = `
+                        ${inputField(`截面外宽 (W)`, 'width', '截面宽度')}
+                        ${inputField(`截面外高 (H)`, 'height', '截面高度')}
+                        ${inputField(`物体长度 (L)`, 'length', '总长度')}
+                    `;
+                    svgHtml = `
+                        <svg viewBox="0 0 120 120" class="w-24 h-24 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="40,20 90,20 75,45 25,45" />
+                            <polygon points="25,45 75,45 75,95 25,95" />
+                            <polygon points="75,45 90,20 90,70 75,95" />
+                            <line x1="25" y1="102" x2="75" y2="102" stroke="red" stroke-width="1"/>
+                            <text x="44" y="112" fill="red" font-size="8" font-family="monospace">W (${unitLabel})</text>
+                            <line x1="17" y1="45" x2="17" y2="95" stroke="red" stroke-width="1"/>
+                            <text x="4" y="73" fill="red" font-size="8" font-family="monospace">H</text>
+                        </svg>
+                    `;
+                } else {
+                    formHtml = `
+                        ${inputField(`截面外宽 (W)`, 'width', '外层宽度')}
+                        ${inputField(`截面外高 (H)`, 'height', '外层高度')}
+                        ${inputField(`管壁厚度 (t)`, 'wallThickness', '壁厚')}
+                        ${inputField(`管体长度 (L)`, 'length', '总长度')}
+                    `;
+                    svgHtml = `
+                        <svg viewBox="0 0 120 120" class="w-24 h-24 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="25" y="25" width="50" height="50" rx="3" />
+                            <rect x="33" y="33" width="34" height="34" rx="1.5" stroke-dasharray="2,1" />
+                            <line x1="75" y1="25" x2="95" y2="10" />
+                            <line x1="75" y1="75" x2="95" y2="60" />
+                            <line x1="95" y1="10" x2="95" y2="60" />
+                            <line x1="25" y1="83" x2="75" y2="83" stroke="red" stroke-width="1"/>
+                            <text x="44" y="94" fill="red" font-size="8" font-family="monospace">W (${unitLabel})</text>
+                            <line x1="17" y1="25" x2="17" y2="75" stroke="red" stroke-width="1"/>
+                            <text x="4" y="53" fill="red" font-size="8" font-family="monospace">H</text>
+                        </svg>
+                    `;
+                }
+            } 
+            else if (currentShape === 'triangle') {
+                if (currentStructure === 'solid') {
+                    formHtml = `
+                        <div class="col-span-2"><h3 class="text-xs font-semibold text-slate-400">底面三角形三边长 (${unitLabel}):</h3></div>
+                        <div class="grid grid-cols-3 gap-2 col-span-2">
+                            ${inputField('边长 A', 'sideA', 'A')}
+                            ${inputField('边长 B', 'sideB', 'B')}
+                            ${inputField('边长 C', 'sideC', 'C')}
+                        </div>
+                        ${inputField(`三角柱长度 (L)`, 'length', '总高度/轴长')}
+                    `;
+                    svgHtml = `
+                        <svg viewBox="0 0 120 120" class="w-24 h-24 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="25,85 85,85 55,45" />
+                            <line x1="55" y1="45" x2="85" y2="15" />
+                            <line x1="85" y1="85" x2="115" y2="55" />
+                            <line x1="85" y1="15" x2="115" y2="55" />
+                            <text x="53" y="96" fill="red" font-size="8" font-family="monospace">A</text>
+                            <text x="25" y="65" fill="red" font-size="8" font-family="monospace">B</text>
+                            <text x="75" y="65" fill="red" font-size="8" font-family="monospace">C</text>
+                        </svg>
+                    `;
+                } else {
+                    formHtml = `
+                        <div class="col-span-2"><h3 class="text-xs font-semibold text-slate-400">外圈三角形三边长 (${unitLabel}):</h3></div>
+                        <div class="grid grid-cols-3 gap-2 col-span-2">
+                            ${inputField('外边 A', 'sideA', 'A')}
+                            ${inputField('外边 B', 'sideB', 'B')}
+                            ${inputField('外边 C', 'sideC', 'C')}
+                        </div>
+                        ${inputField(`管壁厚度 (t)`, 'wallThickness', '壁厚')}
+                        ${inputField(`三角管长度 (L)`, 'length', '总长度')}
+                    `;
+                    svgHtml = `
+                        <svg viewBox="0 0 120 120" class="w-24 h-24 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="20,90 100,90 60,30" />
+                            <polygon points="32,82 88,82 60,42" stroke-dasharray="2,1" />
+                            <text x="56" y="101" fill="red" font-size="8" font-family="monospace">A</text>
+                            <text x="28" y="58" fill="red" font-size="8" font-family="monospace">B</text>
+                            <line x1="20" y1="90" x2="32" y2="82" stroke="red" stroke-width="1.5"/>
+                            <text x="18" y="78" fill="red" font-size="7" font-family="monospace">t</text>
+                        </svg>
+                    `;
+                }
+            } 
+            else if (currentShape === 'ellipse') {
+                if (currentStructure === 'solid') {
+                    formHtml = `
+                        ${inputField(`椭圆外宽/长轴 (W)`, 'outerWidth', '请输入椭圆总外宽')}
+                        ${inputField(`椭圆外高/短轴 (H)`, 'outerHeight', '请输入椭圆总外高')}
+                        ${inputField(`椭圆柱长度 (L)`, 'length', '柱体长度')}
+                    `;
+                } else {
+                    formHtml = `
+                        ${inputField(`椭圆外宽/长轴 (W)`, 'outerWidth', '外总宽')}
+                        ${inputField(`椭圆外高/短轴 (H)`, 'outerHeight', '外总高')}
+                        ${inputField(`管壁厚度 (t)`, 'wallThickness', '壁厚')}
+                        ${inputField(`椭圆管长度 (L)`, 'length', '椭圆管轴长')}
+                    `;
+                }
+                svgHtml = `
+                    <svg viewBox="0 0 120 120" class="w-24 h-24 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2">
+                        <ellipse cx="60" cy="35" rx="35" ry="15" />
+                        <path d="M25,35 L25,85 C25,91 95,91 95,85 L95,35" />
+                        <ellipse cx="60" cy="85" rx="35" ry="15" stroke-dasharray="3,3" />
+                        <line x1="12" y1="35" x2="12" y2="85" stroke="red" stroke-width="1"/>
+                        <text x="4" y="63" fill="red" font-size="8" font-family="monospace">L</text>
+                        <line x1="25" y1="15" x2="95" y2="15" stroke="red" stroke-width="1"/>
+                        <text x="56" y="10" fill="red" font-size="8" font-family="monospace">W</text>
+                        <line x1="60" y1="35" x2="60" y2="50" stroke="red" stroke-width="1"/>
+                        <text x="64" y="46" fill="red" font-size="8" font-family="monospace">H</text>
+                    </svg>
+                `;
+            } 
+            else if (currentShape === 'half_circle') {
+                if (currentStructure === 'solid') {
+                    formHtml = `
+                        ${inputField(`半圆截面直径 (D)`, 'outerDia', '请输入外半圆的总底面直径')}
+                        ${inputField(`半圆柱长度 (L)`, 'length', '轴线长度')}
+                    `;
+                } else {
+                    formHtml = `
+                        ${inputField(`外半圆直径 (D)`, 'outerDia', '外底面大直径')}
+                        ${inputField(`管壁厚度 (t)`, 'wallThickness', '内缩壁厚')}
+                        ${inputField(`半圆管长度 (L)`, 'length', '半圆管长度')}
+                    `;
+                }
+                svgHtml = `
+                    <svg viewBox="0 0 120 120" class="w-24 h-24 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M25,40 A35,35 0 0,1 95,40 Z" />
+                        <path d="M25,40 L25,85 A35,35 0 0,0 95,85 L95,40" />
+                        <line x1="25" y1="85" x2="95" y2="85" stroke-dasharray="3,3" />
+                        <line x1="15" y1="40" x2="15" y2="85" stroke="red" stroke-width="1"/>
+                        <text x="7" y="65" fill="red" font-size="8" font-family="monospace">L</text>
+                        <line x1="25" y1="95" x2="95" y2="95" stroke="red" stroke-width="1"/>
+                        <text x="56" y="107" fill="red" font-size="8" font-family="monospace">D</text>
+                    </svg>
+                `;
+            } 
+            else if (currentShape === 'quarter_circle') {
+                if (currentStructure === 'solid') {
+                    formHtml = `
+                        ${inputField(`1/4圆弧半径 (R)`, 'outerRadius', '1/4外圆弧半径')}
+                        ${inputField(`1/4圆柱长度 (L)`, 'length', '轴心柱体长度')}
+                    `;
+                } else {
+                    formHtml = `
+                        ${inputField(`外1/4圆弧半径 (R)`, 'outerRadius', '外侧半径')}
+                        ${inputField(`管壁厚度 (t)`, 'wallThickness', '壁厚')}
+                        ${inputField(`1/4圆管长度 (L)`, 'length', '管长度')}
+                    `;
+                }
+                svgHtml = `
+                    <svg viewBox="0 0 120 120" class="w-24 h-24 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M30,30 L65,30 A35,35 0 0,1 30,65 Z" />
+                        <path d="M30,30 L30,80" />
+                        <path d="M65,30 L65,80 A35,35 0 0,1 30,115 L30,80" />
+                        <line x1="20" y1="30" x2="20" y2="80" stroke="red" stroke-width="1"/>
+                        <text x="12" y="58" fill="red" font-size="8" font-family="monospace">L</text>
+                        <line x1="30" y1="20" x2="65" y2="20" stroke="red" stroke-width="1"/>
+                        <text x="44" y="15" fill="red" font-size="8" font-family="monospace">R</text>
+                    </svg>
+                `;
+            } 
+            else if (currentShape === 'obround') {
+                if (currentStructure === 'solid') {
+                    formHtml = `
+                        ${inputField(`截面外总宽 (W)`, 'outerWidth', '两端圆弧顶部的总外宽度')}
+                        ${inputField(`截面外高/厚度 (H)`, 'outerHeight', '平旦截面圆弧的直径高度')}
+                        ${inputField(`扁圆柱长度 (L)`, 'length', '柱体总长')}
+                    `;
+                } else {
+                    formHtml = `
+                        ${inputField(`截面外总宽 (W)`, 'outerWidth', '两端圆弧顶部的外总宽')}
+                        ${inputField(`截面外高/厚度 (H)`, 'outerHeight', '平旦外高(圆弧直径)')}
+                        ${inputField(`管壁厚度 (t)`, 'wallThickness', '管体壁厚')}
+                        ${inputField(`扁圆管长度 (L)`, 'length', '扁管总长度')}
+                    `;
+                }
+                svgHtml = `
+                    <svg viewBox="0 0 120 120" class="w-24 h-24 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M40,20 L80,20 A15,15 0 0,1 95,35 A15,15 0 0,1 80,50 L40,50 A15,15 0 0,1 25,35 A15,15 0 0,1 40,20 Z" />
+                        <path d="M25,35 L25,85 A15,15 0 0,0 40,100 L80,100 A15,15 0 0,0 95,85 L95,35" />
+                        <path d="M95,85 A15,15 0 0,1 80,100 L40,100 A15,15 0 0,1 25,85" stroke-dasharray="3,3" />
+                        <line x1="15" y1="35" x2="15" y2="85" stroke="red" stroke-width="1"/>
+                        <text x="7" y="65" fill="red" font-size="8" font-family="monospace">L</text>
+                        <line x1="25" y1="12" x2="95" y2="12" stroke="red" stroke-width="1"/>
+                        <text x="56" y="8" fill="red" font-size="8" font-family="monospace">W</text>
+                        <line x1="40" y1="20" x2="40" y2="50" stroke="red" stroke-width="1"/>
+                        <text x="44" y="38" fill="red" font-size="8" font-family="monospace">H</text>
+                    </svg>
+                `;
+            } 
+            else if (currentShape === 'round_reducer') {
+                if (currentStructure === 'solid') {
+                    formHtml = `
+                        ${inputField(`上端外圈直径 (D1)`, 'outerDia', '大直径/起始直径')}
+                        ${inputField(`下端外圈直径 (D2)`, 'outerDiaBottom', '小直径/截止直径')}
+                        ${inputField(`总长度 (L)`, 'length', '包含直段+过渡段的总高度')}
+                        ${inputField(`过渡锥长 (Lt)`, 'taperLength', '过渡平滑偏斜处的轴向高度')}
+                    `;
+                } else {
+                    formHtml = `
+                        ${inputField(`上端外圈直径 (D1)`, 'outerDia', '起始大外圈直径')}
+                        ${inputField(`下端外圈直径 (D2)`, 'outerDiaBottom', '截止小外圈直径')}
+                        ${inputField(`管壁厚度 (t)`, 'wallThickness', '管壁厚度')}
+                        ${inputField(`总长度 (L)`, 'length', '包含直段+过渡段的总长度')}
+                        ${inputField(`过渡锥长 (Lt)`, 'taperLength', '缩口锥体部分的轴向长度')}
+                    `;
+                }
+                svgHtml = `
+                    <svg viewBox="0 0 120 120" class="w-24 h-24 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2">
+                        <ellipse cx="60" cy="20" rx="30" ry="8" />
+                        <line x1="30" y1="20" x2="30" y2="50" />
+                        <line x1="90" y1="20" x2="90" y2="50" />
+                        <line x1="30" y1="50" x2="45" y2="90" />
+                        <line x1="90" y1="50" x2="75" y2="90" />
+                        <ellipse cx="60" cy="90" rx="15" ry="5" />
+                        <line x1="15" y1="20" x2="15" y2="90" stroke="red" stroke-width="1"/>
+                        <text x="6" y="58" fill="red" font-size="8" font-family="monospace">L</text>
+                        <line x1="105" y1="50" x2="105" y2="90" stroke="red" stroke-width="1"/>
+                        <text x="109" y="73" fill="red" font-size="7" font-family="monospace">Lt</text>
+                        <line x1="30" y1="10" x2="90" y2="10" stroke="red" stroke-width="1"/>
+                        <text x="54" y="6" fill="red" font-size="8" font-family="monospace">D1</text>
+                        <line x1="45" y1="100" x2="75" y2="100" stroke="red" stroke-width="1"/>
+                        <text x="54" y="110" fill="red" font-size="8" font-family="monospace">D2</text>
+                    </svg>
+                `;
+            } 
+            else if (currentShape === 'square_reducer') {
+                if (currentStructure === 'solid') {
+                    formHtml = `
+                        <div class="col-span-2"><h3 class="text-xs font-semibold text-slate-400">上端方形尺寸 (${unitLabel}):</h3></div>
+                        <div class="grid grid-cols-2 gap-2 col-span-2">
+                            ${inputField('上端宽 (W1)', 'width', 'W1')}
+                            ${inputField('上端高 (H1)', 'height', 'H1')}
+                        </div>
+                        <div class="col-span-2"><h3 class="text-xs font-semibold text-slate-400">下端方形尺寸 (${unitLabel}):</h3></div>
+                        <div class="grid grid-cols-2 gap-2 col-span-2">
+                            ${inputField('下端宽 (W2)', 'widthBottom', 'W2')}
+                            ${inputField('下端高 (H2)', 'heightBottom', 'H2')}
+                        </div>
+                        ${inputField(`总长度 (L)`, 'length', '包含直段+过渡段的总长度')}
+                        ${inputField(`过渡锥长 (Lt)`, 'taperLength', '过渡平滑处的长度')}
+                    `;
+                } else {
+                    formHtml = `
+                        <div class="col-span-2"><h3 class="text-xs font-semibold text-slate-400">上端方形尺寸 (${unitLabel}):</h3></div>
+                        <div class="grid grid-cols-2 gap-2 col-span-2">
+                            ${inputField('上外宽 (W1)', 'width', 'W1')}
+                            ${inputField('上外高 (H1)', 'height', 'H1')}
+                        </div>
+                        <div class="col-span-2"><h3 class="text-xs font-semibold text-slate-400">下端方形尺寸 (${unitLabel}):</h3></div>
+                        <div class="grid grid-cols-2 gap-2 col-span-2">
+                            ${inputField('下外宽 (W2)', 'widthBottom', 'W2')}
+                            ${inputField('下外高 (H2)', 'heightBottom', 'H2')}
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 col-span-2">
+                            ${inputField(`管壁厚度 (t)`, 'wallThickness', '壁厚')}
+                            ${inputField(`总长度 (L)`, 'length', '总高度/轴长')}
+                        </div>
+                        ${inputField(`过渡锥长 (Lt)`, 'taperLength', '锥状形体过渡长度')}
+                    `;
+                }
+                svgHtml = `
+                    <svg viewBox="0 0 120 120" class="w-24 h-24 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="35,15 85,15 75,35 25,35" />
+                        <line x1="25" y1="35" x2="25" y2="60" />
+                        <line x1="75" y1="35" x2="75" y2="60" />
+                        <line x1="85" y1="15" x2="85" y2="40" />
+                        <line x1="25" y1="60" x2="75" y2="60" />
+                        <line x1="25" y1="60" x2="40" y2="95" />
+                        <line x1="75" y1="60" x2="65" y2="95" />
+                        <line x1="85" y1="40" x2="73" y2="75" />
+                        <polygon points="40,95 65,95 55,83" stroke-dasharray="2,2" />
+                        <line x1="12" y1="15" x2="12" y2="95" stroke="red" stroke-width="1"/>
+                        <text x="4" y="58" fill="red" font-size="8" font-family="monospace">L</text>
+                    </svg>
+                `;
+            }
+
+            formContainer.innerHTML = formHtml;
+            svgContainer.innerHTML = svgHtml;
+
+            calculate();
+        }
+
+        // 椭圆周长 Ramanujan 极高精似度公式
+        function getEllipsePerimeter(A, B) {
+            if (A <= 0 || B <= 0) return 0;
+            return Math.PI * (3 * (A + B) - Math.sqrt((3 * A + B) * (A + 3 * B)));
+        }
+
+        // 核心数学计算：计算各种形状的体积、截面积、表面积
+        function calculate() {
+            const density = getDensity(); 
+            const unitFactor = unitToMmFactors[currentUnit]; 
+
+            // 统一换算为基本单位：毫米(mm) 进行极其精确计算
+            const L = dimensions.length * unitFactor;  
+            const Lt = dimensions.taperLength * unitFactor; 
+            const t = dimensions.wallThickness * unitFactor; 
+
+            let crossSectionArea = 0; // 净材料面积 (mm²) - 用于非缩管形状
+            let outerPerimeter = 0;   
+            let innerPerimeter = 0;   
+            let isValid = true;       
+
+            // 表面积拆分变量 (单位：mm²)
+            let areaOuterWall = 0;    
+            let areaInnerWall = 0;    
+            let areaEnds = 0;         
+            let areaTotal = 0;        
+            let calculatedVolumeMm3 = 0; // 总体积 (mm³)
+
+            // 三角形海伦公式
+            function getTriangleArea(a, b, c) {
+                if (a + b <= c || a + c <= b || b + c <= a) return 0;
+                const p = (a + b + c) / 2;
+                return Math.sqrt(p * (p - a) * (p - b) * (p - c));
+            }
+            function getTriangleInnerRadius(a, b, c, area) {
+                if (area <= 0) return 0;
+                return (2 * area) / (a + b + c);
+            }
+
+            // ================= 1. 圆柱/圆管 =================
+            if (currentShape === 'circle') {
+                const D = dimensions.outerDia * unitFactor; 
+                const R = D / 2;
+
+                if (D <= 0 || L <= 0) isValid = false;
+
+                if (currentStructure === 'solid') {
+                    crossSectionArea = Math.PI * Math.pow(R, 2);
+                    outerPerimeter = Math.PI * D;
+                    areaOuterWall = outerPerimeter * L;
+                    areaInnerWall = 0;
+                    areaEnds = 2 * crossSectionArea;
+                } else {
+                    if (t <= 0 || t >= R) isValid = false;
+                    const r = R - t;
+                    const outerArea = Math.PI * Math.pow(R, 2);
+                    const innerArea = Math.PI * Math.pow(r, 2);
+                    crossSectionArea = outerArea - innerArea;
+                    outerPerimeter = Math.PI * D;
+                    innerPerimeter = Math.PI * (r * 2);
+                    areaOuterWall = outerPerimeter * L;
+                    areaInnerWall = innerPerimeter * L;
+                    areaEnds = 2 * crossSectionArea;
+                }
+                calculatedVolumeMm3 = crossSectionArea * L;
+            } 
+            // ================= 2. 方柱/方管 =================
+            else if (currentShape === 'square') {
+                const W = dimensions.width * unitFactor;  
+                const H = dimensions.height * unitFactor; 
+
+                if (W <= 0 || H <= 0 || L <= 0) isValid = false;
+
+                if (currentStructure === 'solid') {
+                    crossSectionArea = W * H;
+                    outerPerimeter = 2 * (W + H);
+                    areaOuterWall = outerPerimeter * L;
+                    areaInnerWall = 0;
+                    areaEnds = 2 * crossSectionArea;
+                } else {
+                    if (t <= 0 || t >= Math.min(W, H) / 2) isValid = false;
+                    const w = W - 2 * t; 
+                    const h = H - 2 * t; 
+                    crossSectionArea = (W * H) - (w * h);
+                    outerPerimeter = 2 * (W + H);
+                    innerPerimeter = 2 * (w + h);
+                    areaOuterWall = outerPerimeter * L;
+                    areaInnerWall = innerPerimeter * L;
+                    areaEnds = 2 * crossSectionArea;
+                }
+                calculatedVolumeMm3 = crossSectionArea * L;
+            } 
+            // ================= 3. 三角柱/三角管 =================
+            else if (currentShape === 'triangle') {
+                const a = dimensions.sideA * unitFactor;
+                const b = dimensions.sideB * unitFactor;
+                const c = dimensions.sideC * unitFactor;
+
+                const outerArea = getTriangleArea(a, b, c);
+                if (outerArea <= 0 || L <= 0) isValid = false;
+
+                if (currentStructure === 'solid') {
+                    crossSectionArea = outerArea;
+                    outerPerimeter = a + b + c;
+                    areaOuterWall = outerPerimeter * L;
+                    areaInnerWall = 0;
+                    areaEnds = 2 * crossSectionArea;
+                } else {
+                    const outerP = a + b + c;
+                    const rIn = getTriangleInnerRadius(a, b, c, outerArea);
+                    if (t <= 0 || t >= rIn) {
+                        isValid = false;
+                    } else {
+                        const ratio = (rIn - t) / rIn;
+                        if (ratio <= 0) {
+                            isValid = false;
+                        } else {
+                            const innerArea = outerArea * Math.pow(ratio, 2);
+                            crossSectionArea = outerArea - innerArea;
+                            outerPerimeter = outerP;
+                            innerPerimeter = outerP * ratio;
+                            areaOuterWall = outerPerimeter * L;
+                            areaInnerWall = innerPerimeter * L;
+                            areaEnds = 2 * crossSectionArea;
+                        }
+                    }
+                }
+                calculatedVolumeMm3 = crossSectionArea * L;
+            } 
+            // ================= 4. 椭圆柱/椭圆管 =================
+            else if (currentShape === 'ellipse') {
+                const W = dimensions.outerWidth * unitFactor;  // 长轴2A
+                const H = dimensions.outerHeight * unitFactor; // 短轴2B
+                const A = W / 2;
+                const B = H / 2;
+
+                if (W <= 0 || H <= 0 || L <= 0) isValid = false;
+
+                if (currentStructure === 'solid') {
+                    crossSectionArea = Math.PI * A * B;
+                    outerPerimeter = getEllipsePerimeter(A, B);
+                    areaOuterWall = outerPerimeter * L;
+                    areaInnerWall = 0;
+                    areaEnds = 2 * crossSectionArea;
+                } else {
+                    if (t <= 0 || t >= Math.min(A, B)) {
+                        isValid = false;
+                    } else {
+                        const a_in = A - t;
+                        const b_in = B - t;
+                        const outerArea = Math.PI * A * B;
+                        const innerArea = Math.PI * a_in * b_in;
+                        crossSectionArea = outerArea - innerArea;
+                        outerPerimeter = getEllipsePerimeter(A, B);
+                        innerPerimeter = getEllipsePerimeter(a_in, b_in);
+                        areaOuterWall = outerPerimeter * L;
+                        areaInnerWall = innerPerimeter * L;
+                        areaEnds = 2 * crossSectionArea;
+                    }
+                }
+                calculatedVolumeMm3 = crossSectionArea * L;
+            } 
+            // ================= 5. 半圆柱/半圆管 =================
+            else if (currentShape === 'half_circle') {
+                const D = dimensions.outerDia * unitFactor; 
+                const R = D / 2;
+
+                if (D <= 0 || L <= 0) isValid = false;
+
+                if (currentStructure === 'solid') {
+                    crossSectionArea = 0.5 * Math.PI * R * R;
+                    outerPerimeter = Math.PI * R + D; // 弧长 + 平直底边
+                    areaOuterWall = outerPerimeter * L;
+                    areaInnerWall = 0;
+                    areaEnds = 2 * crossSectionArea;
+                } else {
+                    if (t <= 0 || t >= R) {
+                        isValid = false;
+                    } else {
+                        const r = R - t;
+                        const outerArea = 0.5 * Math.PI * R * R;
+                        const innerArea = 0.5 * Math.PI * r * r;
+                        // 带有壁厚的D型截面金属面积 = 外半圆面积 - 内半圆面积 + 平底材料区
+                        crossSectionArea = outerArea - innerArea; 
+                        outerPerimeter = Math.PI * R + D;
+                        innerPerimeter = Math.PI * r + (2 * r);
+                        areaOuterWall = outerPerimeter * L;
+                        areaInnerWall = innerPerimeter * L;
+                        areaEnds = 2 * crossSectionArea;
+                    }
+                }
+                calculatedVolumeMm3 = crossSectionArea * L;
+            } 
+            // ================= 6. 1/4圆柱/1/4圆管 =================
+            else if (currentShape === 'quarter_circle') {
+                const R = dimensions.outerRadius * unitFactor;
+
+                if (R <= 0 || L <= 0) isValid = false;
+
+                if (currentStructure === 'solid') {
+                    crossSectionArea = 0.25 * Math.PI * R * R;
+                    outerPerimeter = 0.5 * Math.PI * R + 2 * R; // 圆弧 + 两侧平直边
+                    areaOuterWall = outerPerimeter * L;
+                    areaInnerWall = 0;
+                    areaEnds = 2 * crossSectionArea;
+                } else {
+                    if (t <= 0 || t >= R) {
+                        isValid = false;
+                    } else {
+                        const r = R - t;
+                        const outerArea = 0.25 * Math.PI * R * R;
+                        const innerArea = 0.25 * Math.PI * r * r;
+                        crossSectionArea = outerArea - innerArea;
+                        outerPerimeter = 0.5 * Math.PI * R + 2 * R;
+                        innerPerimeter = 0.5 * Math.PI * r + 2 * r;
+                        areaOuterWall = outerPerimeter * L;
+                        areaInnerWall = innerPerimeter * L;
+                        areaEnds = 2 * crossSectionArea;
+                    }
+                }
+                calculatedVolumeMm3 = crossSectionArea * L;
+            } 
+            // ================= 7. 平旦管/扁圆管 =================
+            else if (currentShape === 'obround') {
+                const W = dimensions.outerWidth * unitFactor;  // 外总宽
+                const H = dimensions.outerHeight * unitFactor; // 外层高度(相当于圆弧段的直径)
+
+                // 物理学逻辑：总宽度 W 必须大于圆弧直径 H 才能组成平旦形态
+                if (W <= H || H <= 0 || L <= 0) isValid = false;
+
+                const W_flat = W - H; // 平直侧面宽度
+
+                if (currentStructure === 'solid') {
+                    crossSectionArea = W_flat * H + Math.PI * Math.pow(H / 2, 2);
+                    outerPerimeter = 2 * W_flat + Math.PI * H;
+                    areaOuterWall = outerPerimeter * L;
+                    areaInnerWall = 0;
+                    areaEnds = 2 * crossSectionArea;
+                } else {
+                    if (t <= 0 || t >= H / 2) {
+                        isValid = false;
+                    } else {
+                        const h_in = H - 2 * t; 
+                        const outerArea = W_flat * H + Math.PI * Math.pow(H / 2, 2);
+                        const innerArea = W_flat * h_in + Math.PI * Math.pow(h_in / 2, 2);
+                        crossSectionArea = outerArea - innerArea;
+                        outerPerimeter = 2 * W_flat + Math.PI * H;
+                        innerPerimeter = 2 * W_flat + Math.PI * h_in;
+                        areaOuterWall = outerPerimeter * L;
+                        areaInnerWall = innerPerimeter * L;
+                        areaEnds = 2 * crossSectionArea;
+                    }
+                }
+                calculatedVolumeMm3 = crossSectionArea * L;
+            } 
+            // ================= 8. 圆形缩管 (直管 + 锥形管) =================
+            else if (currentShape === 'round_reducer') {
+                const D1 = dimensions.outerDia * unitFactor;       // 上端大径
+                const D2 = dimensions.outerDiaBottom * unitFactor; // 下端小径
+                const R1 = D1 / 2;
+                const R2 = D2 / 2;
+
+                if (D1 <= 0 || D2 <= 0 || L <= 0 || Lt < 0 || Lt > L) isValid = false;
+
+                const L_straight = L - Lt; // 直段长度
+
+                // 锥形台体体积公式
+                function getFrustumVolume(rad1, rad2, height) {
+                    if (rad1 <= 0 || rad2 <= 0 || height < 0) return 0;
+                    return (1/3) * Math.PI * height * (rad1*rad1 + rad2*rad2 + rad1*rad2);
+                }
+                // 锥形侧壁圆台侧面积
+                function getFrustumLateralArea(rad1, rad2, height) {
+                    if (rad1 <= 0 || rad2 <= 0 || height < 0) return 0;
+                    const slantHeight = Math.sqrt(Math.pow(rad1 - rad2, 2) + height*height);
+                    return Math.PI * (rad1 + rad2) * slantHeight;
+                }
+
+                if (currentStructure === 'solid') {
+                    // 体积 = 直柱体积 + 圆锥台体积
+                    const V_straight = Math.PI * R1 * R1 * L_straight;
+                    const V_taper = getFrustumVolume(R1, R2, Lt);
+                    calculatedVolumeMm3 = V_straight + V_taper;
+
+                    // 表面积
+                    const A_top = Math.PI * R1 * R1;
+                    const A_bottom = Math.PI * R2 * R2;
+                    areaOuterWall = (2 * Math.PI * R1 * L_straight) + getFrustumLateralArea(R1, R2, Lt);
+                    areaInnerWall = 0;
+                    areaEnds = A_top + A_bottom;
+                } else {
+                    if (t <= 0 || t >= Math.min(R1, R2)) {
+                        isValid = false;
+                    } else {
+                        const r1 = R1 - t;
+                        const r2 = R2 - t;
+
+                        // 体积 = 外壁体积 - 内壁空心体积
+                        const V_straight_outer = Math.PI * R1 * R1 * L_straight;
+                        const V_straight_inner = Math.PI * r1 * r1 * L_straight;
+                        const V_taper_outer = getFrustumVolume(R1, R2, Lt);
+                        const V_taper_inner = getFrustumVolume(r1, r2, Lt);
+
+                        calculatedVolumeMm3 = (V_straight_outer - V_straight_inner) + (V_taper_outer - V_taper_inner);
+
+                        // 表面积
+                        const A_top_ring = Math.PI * (R1*R1 - r1*r1);
+                        const A_bottom_ring = Math.PI * (R2*R2 - r2*r2);
+
+                        areaOuterWall = (2 * Math.PI * R1 * L_straight) + getFrustumLateralArea(R1, R2, Lt);
+                        areaInnerWall = (2 * Math.PI * r1 * L_straight) + getFrustumLateralArea(r1, r2, Lt);
+                        areaEnds = A_top_ring + A_bottom_ring;
+                    }
+                }
+            } 
+            // ================= 9. 方形缩管 (直方管 + 棱台过渡段) =================
+            else if (currentShape === 'square_reducer') {
+                const W1 = dimensions.width * unitFactor;        // 上端宽
+                const H1 = dimensions.height * unitFactor;       // 上端高
+                const W2 = dimensions.widthBottom * unitFactor;  // 下端宽
+                const H2 = dimensions.heightBottom * unitFactor; // 下端高
+
+                if (W1 <= 0 || H1 <= 0 || W2 <= 0 || H2 <= 0 || L <= 0 || Lt < 0 || Lt > L) isValid = false;
+
+                const L_straight = L - Lt;
+
+                // 棱台体积拟柱体公式精算
+                function getPrismatoidVolume(w1, h1, w2, h2, height) {
+                    if (w1 <= 0 || h1 <= 0 || w2 <= 0 || h2 <= 0 || height < 0) return 0;
+                    return (height / 6) * (2 * w1 * h1 + 2 * w2 * h2 + w1 * h2 + w2 * h1);
+                }
+
+                // 计算四棱台四个侧斜面梯形总面积
+                function getPrismatoidLateralArea(w1, h1, w2, h2, height) {
+                    if (w1 <= 0 || h1 <= 0 || w2 <= 0 || h2 <= 0 || height < 0) return 0;
+                    // 宽度对称倾角斜高
+                    const slantW = Math.sqrt(height*height + Math.pow((h1 - h2) / 2, 2));
+                    // 高度对称倾角斜高
+                    const slantH = Math.sqrt(height*height + Math.pow((w1 - w2) / 2, 2));
+
+                    const areaWidthFaces = (w1 + w2) * slantW; 
+                    const areaHeightFaces = (h1 + h2) * slantH;
+                    return areaWidthFaces + areaHeightFaces;
+                }
+
+                if (currentStructure === 'solid') {
+                    const V_straight = W1 * H1 * L_straight;
+                    const V_taper = getPrismatoidVolume(W1, H1, W2, H2, Lt);
+                    calculatedVolumeMm3 = V_straight + V_taper;
+
+                    const A_top = W1 * H1;
+                    const A_bottom = W2 * H2;
+                    areaOuterWall = (2 * (W1 + H1) * L_straight) + getPrismatoidLateralArea(W1, H1, W2, H2, Lt);
+                    areaInnerWall = 0;
+                    areaEnds = A_top + A_bottom;
+                } else {
+                    const minBound = Math.min(W1, H1, W2, H2);
+                    if (t <= 0 || t >= minBound / 2) {
+                        isValid = false;
+                    } else {
+                        const w1 = W1 - 2 * t;
+                        const h1 = H1 - 2 * t;
+                        const w2 = W2 - 2 * t;
+                        const h2 = H2 - 2 * t;
+
+                        const V_straight_outer = W1 * H1 * L_straight;
+                        const V_straight_inner = w1 * h1 * L_straight;
+                        const V_taper_outer = getPrismatoidVolume(W1, H1, W2, H2, Lt);
+                        const V_taper_inner = getPrismatoidVolume(w1, h1, w2, h2, Lt);
+
+                        calculatedVolumeMm3 = (V_straight_outer - V_straight_inner) + (V_taper_outer - V_taper_inner);
+
+                        const A_top_ring = (W1 * H1) - (w1 * h1);
+                        const A_bottom_ring = (W2 * H2) - (w2 * h2);
+
+                        areaOuterWall = (2 * (W1 + H1) * L_straight) + getPrismatoidLateralArea(W1, H1, W2, H2, Lt);
+                        areaInnerWall = (2 * (w1 + h1) * L_straight) + getPrismatoidLateralArea(w1, h1, w2, h2, Lt);
+                        areaEnds = A_top_ring + A_bottom_ring;
+                    }
+                }
+            }
+
+            // 总面积汇算
+            areaTotal = areaOuterWall + areaInnerWall + areaEnds;
+
+            // 获取输出界面元素
+            const rowInnerWall = document.getElementById('row-inner-wall');
+            const labelOuterWall = document.getElementById('label-outer-wall');
+            const labelEnds = document.getElementById('label-ends');
+
+            // 动态切换实空侧壁标签
+            if (currentStructure === 'solid') {
+                rowInnerWall.classList.add('hidden');
+                labelOuterWall.innerText = '侧壁表面积:';
+                labelEnds.innerText = '两端面总面积:';
+            } else {
+                rowInnerWall.classList.remove('hidden');
+                labelOuterWall.innerText = '外壁表面积:';
+                labelEnds.innerText = '两端端口总面积:';
+            }
+
+            const selectedWeightUnit = document.getElementById('res-weight-unit').value;
+            const selectedVolumeUnit = document.getElementById('res-volume-unit').value;
+            const selectedAreaUnit = document.getElementById('res-area-unit').value;
+
+            // 如果全部参数无误
+            if (isValid && density > 0 && calculatedVolumeMm3 > 0) {
+                // 1. 物理换算 (基于 cm³ 做基准与密度的乘积求克重)
+                const volumeCm3 = calculatedVolumeMm3 / 1000;
+                const weightG = volumeCm3 * density;
+
+                // ---- 重量多单位转换 ----
+                let finalWeight = 0;
+                let weightLabel = '';
+                switch (selectedWeightUnit) {
+                    case 'kg': finalWeight = weightG / 1000; weightLabel = 'kg'; break;
+                    case 'g': finalWeight = weightG; weightLabel = 'g'; break;
+                    case 't': finalWeight = weightG / 1000000; weightLabel = '吨 (t)'; break;
+                    case 'lb': finalWeight = weightG * 0.0022046226; weightLabel = '磅 (lb)'; break;
+                }
+
+                // ---- 体积多单位转换 ----
+                let finalVolume = 0;
+                let volumeLabel = '';
+                switch (selectedVolumeUnit) {
+                    case 'mm3': finalVolume = calculatedVolumeMm3; volumeLabel = 'mm³'; break;
+                    case 'cm3': finalVolume = calculatedVolumeMm3 / 1000; volumeLabel = 'cm³'; break;
+                    case 'dm3': finalVolume = calculatedVolumeMm3 / 1000000; volumeLabel = 'dm³'; break;
+                    case 'm3': finalVolume = calculatedVolumeMm3 / 1000000000; volumeLabel = 'm³'; break;
+                    case 'inch3': finalVolume = calculatedVolumeMm3 / 16387.064; volumeLabel = 'in³'; break;
+                }
+
+                // ---- 面积多单位转换比例 ----
+                let areaFactor = 1.0; 
+                let areaLabel = '';
+                switch (selectedAreaUnit) {
+                    case 'mm2': areaFactor = 1.0; areaLabel = 'mm²'; break;
+                    case 'cm2': areaFactor = 0.01; areaLabel = 'cm²'; break;
+                    case 'dm2': areaFactor = 0.0001; areaLabel = 'dm²'; break;
+                    case 'm2': areaFactor = 0.000001; areaLabel = 'm²'; break;
+                    case 'inch2': areaFactor = 1.0 / 645.16; areaLabel = 'in²'; break;
+                }
+
+                // 渲染重量
+                const weightDecimals = selectedWeightUnit === 't' ? 6 : (selectedWeightUnit === 'g' ? 1 : 4);
+                document.getElementById('res-weight-display').innerText = finalWeight.toFixed(weightDecimals);
+                document.getElementById('res-weight-unit-label').innerText = weightLabel;
+
+                // 渲染体积
+                const volumeDecimals = selectedVolumeUnit === 'm3' ? 8 : 4;
+                document.getElementById('res-volume-display').innerText = finalVolume.toFixed(volumeDecimals);
+                document.getElementById('res-volume-unit-label').innerText = volumeLabel;
+
+                // 渲染各级表面积
+                document.getElementById('res-area-outer-display').innerText = (areaOuterWall * areaFactor).toFixed(3);
+                document.getElementById('res-area-inner-display').innerText = (areaInnerWall * areaFactor).toFixed(3);
+                document.getElementById('res-area-ends-display').innerText = (areaEnds * areaFactor).toFixed(3);
+                document.getElementById('res-area-total-display').innerText = (areaTotal * areaFactor).toFixed(3);
+
+                // 同步更新标签
+                document.querySelectorAll('.res-area-unit-label').forEach(el => {
+                    el.innerText = areaLabel;
+                });
+
+                // 修改状态面板
+                document.getElementById('summary-status').innerHTML = `
+                    <span class="inline-block w-1.5 h-1.5 bg-emerald-400 rounded-full mr-1 animate-pulse"></span>
+                    计算成功
+                `;
+                document.getElementById('summary-status').className = 'font-medium text-emerald-400 flex items-center';
+            } else {
+                // 如果参数无效
+                document.getElementById('res-weight-display').innerText = '0.0000';
+                document.getElementById('res-volume-display').innerText = '0.0000';
+                document.getElementById('res-area-outer-display').innerText = '0.00';
+                document.getElementById('res-area-inner-display').innerText = '0.00';
+                document.getElementById('res-area-ends-display').innerText = '0.00';
+                document.getElementById('res-area-total-display').innerText = '0.00';
+
+                document.getElementById('summary-status').innerHTML = `
+                    <span class="inline-block w-1.5 h-1.5 bg-rose-500 rounded-full mr-1"></span>
+                    输入尺寸无效 / 超限
+                `;
+                document.getElementById('summary-status').className = 'font-medium text-rose-400 flex items-center';
+            }
+
+            // 更新规格简短小结
+            const shapeNames = { 
+                circle: '圆柱/管', 
+                square: '方柱/管', 
+                triangle: '三角柱/管',
+                ellipse: '椭圆柱/管',
+                half_circle: '半圆柱/管',
+                quarter_circle: '1/4圆柱/管',
+                obround: '平旦柱/管',
+                round_reducer: '圆形缩管',
+                square_reducer: '方形缩管'
+            };
+            const structNames = { solid: '实心体', hollow: '空心管/盒' };
+            const matName = document.getElementById('material-name-display').innerText;
+            document.getElementById('summary-spec').innerText = `${matName} - ${shapeNames[currentShape] || ''}${structNames[currentStructure] || ''}`;
+        }
+
+        // 初始化载入
+        window.onload = function() {
+            selectMaterial('iron');
+            renderFormAndSvg();
+        };
+    </script>
+</body>
+</html>
