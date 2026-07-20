@@ -2253,6 +2253,99 @@
       "description": "",
       "featured": false,
       "date": "2026-07-19"
+    },
+    {
+      "id": 1784500000007,
+      "name": "学习桌 08",
+      "category": "学习桌",
+      "price": 0,
+      "page": "首页",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-08-01.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-08-02.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-08-03.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-08-04.jpg"
+      ],
+      "tags": [
+        "学习桌"
+      ],
+      "description": "",
+      "featured": false,
+      "date": "2026-07-20"
+    },
+    {
+      "id": 1784500000008,
+      "name": "学习桌 09",
+      "category": "学习桌",
+      "price": 0,
+      "page": "首页",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-09-01.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-09-02.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-09-03.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-09-04.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-09-05.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-09-06.jpg"
+      ],
+      "tags": [
+        "学习桌"
+      ],
+      "description": "",
+      "featured": false,
+      "date": "2026-07-20"
+    },
+    {
+      "id": 1784500000009,
+      "name": "学习桌 10",
+      "category": "学习桌",
+      "price": 0,
+      "page": "首页",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-10-01.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-10-02.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-10-03.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-10-04.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-10-05.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-10-06.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-10-07.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-10-08.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-10-09.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-10-10.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-10-11.jpg"
+      ],
+      "tags": [
+        "学习桌"
+      ],
+      "description": "",
+      "featured": false,
+      "date": "2026-07-20"
+    },
+    {
+      "id": 1784500000010,
+      "name": "学习桌 11",
+      "category": "学习桌",
+      "price": 0,
+      "page": "首页",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-11-01.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-11-02.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-11-03.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-11-04.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-11-05.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-11-06.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-11-07.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-11-08.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-11-09.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-11-10.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-11-11.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/desk-11-12.jpg"
+      ],
+      "tags": [
+        "学习桌"
+      ],
+      "description": "",
+      "featured": false,
+      "date": "2026-07-20"
     }
   ],
   "widgets": [],
