@@ -736,7 +736,7 @@
         window.addProduct = function() {
             const name = document.getElementById('p_name').value.trim(); const price = document.getElementById('p_price').value;
             const images = Array.from(document.querySelectorAll('.img-input')).map(i => i.value).filter(v => v);
-            if(!name || !price || !images.length) return alert('核心资产数据结构未闭环');
+            if(!name || price === '' || isNaN(Number(price)) || !images.length) return alert('核心资产数据结构未闭环');
             if(products.some(p => p.name === name)) return alert('在册库中已收录同名艺术单品');
             
             products.unshift({
@@ -755,7 +755,7 @@
         window.editProduct = function(id) {
             const p = products.find(x => x.id === id); if(!p) return;
             document.getElementById('p_name').value = p.name || '';
-            document.getElementById('p_price').value = p.price || '';
+            document.getElementById('p_price').value = (p.price == null ? '' : String(p.price));
             document.getElementById('p_category').value = p.category || '';
             document.getElementById('p_page').value = p.page || '首页';
             var imgContainer = document.getElementById('imageInputs');
@@ -777,7 +777,7 @@
             var name = document.getElementById('p_name').value.trim();
             var price = document.getElementById('p_price').value;
             var images = Array.from(document.querySelectorAll('.img-input')).map(function(i) { return i.value; }).filter(function(v) { return v; });
-            if(!name || !price || !images.length) return alert('核心资产数据结构未闭环');
+            if(!name || price === '' || isNaN(Number(price)) || !images.length) return alert('核心资产数据结构未闭环');
             var idx = products.findIndex(function(p) { return p.id === id; });
             if(idx === -1) return;
             products[idx].name = name;
