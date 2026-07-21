@@ -377,8 +377,8 @@
         // --- 核心安全管道与 GitHub 数据绑定 ---
         const GITHUB_REPO = "luohaijun8888-art/artisan-gallery";
         const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/products.json";
-            const CDN_BASE = 'https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main';
-            const DATA_URL_CDN = CDN_BASE + '/products.json';
+            const SAME_ORIGIN_DATA = location.origin + location.pathname.replace(/index.html$/, '') + 'products.json';
+            const DATA_URL_CDN = 'https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/products.json';
         const _tk=['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];
         const EMBEDDED_TOKEN=_tk.join('');
         
@@ -412,10 +412,10 @@
         }
 
         async function fetchProducts() {
-            // 优先从 jsDelivr CDN 读取，避免 GitHub API 限流导致回退旧缓存看不到新产品
+            // 优先从 GitHub Pages 同源读取（与首页同域，必定可达），其次 jsDelivr，再次 API
             try {
-                const res = await fetch(DATA_URL_CDN + '?t=' + Date.now(), { cache: 'no-store' });
-                if (!res.ok) throw new Error('CDN 数据拉取失败');
+                const res = await fetch(SAME_ORIGIN_DATA + '?t=' + Date.now(), { cache: 'no-store' });
+                if (!res.ok) throw new Error('同源数据拉取失败');
                 const content = await res.json();
                 dataSha = null;
                 categories = content.categories || categories;
