@@ -377,6 +377,8 @@
         // --- 核心安全管道与 GitHub 数据绑定 ---
         const GITHUB_REPO = "luohaijun8888-art/artisan-gallery";
         const GITHUB_API = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/products.json";
+            const CDN_BASE = 'https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main';
+            const DATA_URL_CDN = CDN_BASE + '/products.json';
         const _tk=['github_pat_11CCANEGA0','oHmccUGuDviI_5Ct5X','ZQSxg7bz0OPa3Z8PX','Vg9vRIxbP3VlVVozYQ','9c3Y5XKVFXTEMf9Ukrr'];
         const EMBEDDED_TOKEN=_tk.join('');
         
@@ -410,6 +412,25 @@
         }
 
         async function fetchProducts() {
+            // 优先从 jsDelivr CDN 读取，避免 GitHub API 限流导致回退旧缓存看不到新产品
+            try {
+                const res = await fetch(DATA_URL_CDN + '?t=' + Date.now(), { cache: 'no-store' });
+                if (!res.ok) throw new Error('CDN 数据拉取失败');
+                const content = await res.json();
+                dataSha = null;
+                categories = content.categories || categories;
+                products = content.products || [];
+                widgets = content.widgets || [];
+                widgetPages = content.widgetPages || [];
+                widgetGatePassword = content.widgetGatePassword || '8888';
+                localStorage.setItem('artisan_categories', JSON.stringify(categories));
+                localStorage.setItem('furniture_gallery_db', JSON.stringify(products));
+                localStorage.setItem('artisan_widgets', JSON.stringify(widgets));
+                renderCategories(); renderProducts(); renderWidgets();
+                return;
+            } catch(e) {
+                console.warn('CDN 读取失败，回退 GitHub API:', e.message);
+            }
             try {
                 const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
                 if (githubToken) headers['Authorization'] = 'Bearer ' + githubToken;
@@ -428,7 +449,8 @@
                 localStorage.setItem('artisan_categories', JSON.stringify(categories));
                 localStorage.setItem('furniture_gallery_db', JSON.stringify(products));
                 localStorage.setItem('artisan_widgets', JSON.stringify(widgets));
-            } catch(e) {
+            } catch(e2) {
+                console.warn('API 读取失败，使用本地缓存:', e2.message);
                 categories = JSON.parse(localStorage.getItem('artisan_categories')) || categories;
                 products = JSON.parse(localStorage.getItem('furniture_gallery_db')) || [];
                 widgets = JSON.parse(localStorage.getItem('artisan_widgets')) || [];
