@@ -2346,6 +2346,25 @@
       "description": "",
       "featured": false,
       "date": "2026-07-20"
+    },
+    {
+      "id": 1784500000011,
+      "name": "学习桌 12",
+      "category": "学习桌",
+      "price": 0,
+      "page": "首页",
+      "images": [
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-12-01.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-12-02.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-12-03.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-12-04.jpg"
+      ],
+      "tags": "NEW",
+      "description": "",
+      "featured": false,
+      "date": "2026-07-22",
+      "detailImages": [],
+      "variants": []
     }
   ],
   "widgets": [],
