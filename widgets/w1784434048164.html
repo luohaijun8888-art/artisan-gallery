@@ -238,7 +238,7 @@
 
             <div class="overflow-x-auto border border-slate-100 rounded-xl mt-4">
                 <table class="w-full text-left text-xs border-collapse">
-                    <thead class="bg-slate-50 text-slate-500"><tr><th class="p-2 border-b">收货经销商</th><th class="p-2 border-b">采购单号</th><th class="p-2 border-b">销售单号</th><th class="p-2 border-b">物料编码</th><th class="p-2 border-b">物料名称</th><th class="p-2 border-b text-center">数量</th><th class="p-2 border-b text-center">件数</th><th class="p-2 border-b text-center">原始用户需求日期</th></tr></thead>
+                    <thead class="bg-slate-50 text-slate-500"><tr><th class="p-2 border-b">收货经销商</th><th class="p-2 border-b">采购单号</th><th class="p-2 border-b">销售单号</th><th class="p-2 border-b">物料编码</th><th class="p-2 border-b">物流编码</th><th class="p-2 border-b">物料名称</th><th class="p-2 border-b text-center">数量</th><th class="p-2 border-b text-center">件数</th><th class="p-2 border-b text-center">原始用户需求日期</th></tr></thead>
                     <tbody id="diagnosticTableBody" class="divide-y divide-slate-50"></tbody>
                 </table>
             </div>
@@ -282,6 +282,7 @@
 
         // 统一签字送货日期初始设为不可用，保持原表格日期
         document.addEventListener("DOMContentLoaded", () => {
+            loadInternalDB();
             const todayStr = new Date().toISOString().slice(0, 10);
             document.getElementById('customDeliveryDate').value = todayStr;
         });
@@ -373,6 +374,28 @@
             fi.addEventListener('change', e=>{ if(e.target.files.length) handleExcelFile(e.target.files[0]); });
         }
 
+
+        // ===== 内部数据库（物料库）匹配 =====
+        let DB = [];
+        let DB_BY_CODE = {};
+        async function loadInternalDB() {
+            try {
+                const res = await fetch('widgets/sofia-db.json?t=' + Date.now(), { cache: 'no-store' });
+                if (res.ok) {
+                    DB = await res.json();
+                    if (!Array.isArray(DB)) DB = [];
+                    DB_BY_CODE = {};
+                    DB.forEach(d => { const c = (d.itemCode || '').trim(); if (c) DB_BY_CODE[c] = d; });
+                }
+            } catch (e) { DB = []; DB_BY_CODE = {}; }
+        }
+        // 按物料编码(=整包编码)查库；返回库中已知字段
+        function matchInternalDB(itemCode) {
+            const c = (itemCode || '').trim();
+            if (!c) return null;
+            return DB_BY_CODE[c] || null;
+        }
+
         function handleExcelFile(file) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -457,11 +480,19 @@
                         if(!itemCode && !itemName && quantity===0) return;
                         const province = ext.province || extractProvince(address);
 
+                        // 内部库匹配：库有的字段强制覆盖 Excel（库没有的才用 Excel）
+                        const dbRow = matchInternalDB(itemCode);
+                        const logisticsCode = (dbRow && dbRow.logisticsCode) ? dbRow.logisticsCode : (ext.logisticsCode || "");
+                        const finalSubCode = (dbRow && dbRow.subCode) ? dbRow.subCode : (ext.subCode || itemCode);
+                        const finalSubName = (dbRow && dbRow.subName) ? dbRow.subName : (ext.subName || itemName);
+                        const finalWeight = (dbRow && dbRow.weight !== undefined && dbRow.weight !== null && dbRow.weight !== "") ? (parseFloat(dbRow.weight) || 0) : weight;
+                        const finalVolume = (dbRow && dbRow.volume !== undefined && dbRow.volume !== null && dbRow.volume !== "") ? (parseFloat(dbRow.volume) || 0) : volume;
+
                         clean.push({ 
                             poNumber:po, sender, carrier, receiver, contact, address, phone, 
                             orderId, itemCode, itemName, quantity, shippingDate, 
-                            subCode:itemCode, subName:itemName, unit, packagesCount, 
-                            weight, volume, dealerCode, dealerName, rowIndex:idx+1, province 
+                            subCode:finalSubCode, subName:finalSubName, logisticsCode:logisticsCode, unit, packagesCount, 
+                            weight:finalWeight, volume:finalVolume, dealerCode, dealerName, rowIndex:idx+1, province 
                         });
                     });
 
@@ -682,6 +713,7 @@
                         <!-- 原汁原味呈现Excel中的用户需求日期作为发运计划 -->
                         <td class="px-1 py-1.5 leading-tight font-mono text-[10px] text-center align-middle">${it.shippingDate}</td>
                         <td class="px-1 py-1.5 leading-tight font-mono text-[10px] align-middle">${it.subCode}</td>
+                        <td class="px-1.5 py-1.5 text-left leading-tight break-all text-[10px] align-middle">${it.logisticsCode}</td>
                         <td class="px-1.5 py-1.5 text-left leading-tight break-all text-[10px] align-middle">${it.subName}</td>
                         <td class="px-1 py-1.5 text-center align-middle">${it.unit}</td>
                         <td class="px-1 py-1.5 font-mono text-center align-middle">${it.packagesCount}</td>
@@ -801,6 +833,10 @@
                                 <tr style="min-height: 28px; height: auto;">
                                     <td ${leftGridStyle}>分包编码</td>
                                     <td ${rightGridStyle} style="font-family: monospace;">${item.subCode}</td>
+                                </tr>
+                                <tr style="min-height: 28px; height: auto;">
+                                    <td ${leftGridStyle}>物流编码</td>
+                                    <td ${rightGridStyle} style="font-family: monospace;">${item.logisticsCode}</td>
                                 </tr>
                                 <tr style="min-height: 28px; height: auto;">
                                     <td ${leftGridStyle}>分包名称</td>
