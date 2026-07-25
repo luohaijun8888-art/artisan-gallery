@@ -82,6 +82,19 @@
         </div>
     </div>
 
+
+        <!-- 索菲亚内部物料库管理 -->
+        <section class="mt-16 max-w-[900px] border border-black/[0.06] rounded-xl p-6">
+            <h3 class="text-[10px] uppercase tracking-[0.3em] text-[var(--accent)] font-semibold mb-1">索菲亚 · 内部物料库</h3>
+            <p class="text-xs text-neutral-400 font-light mb-4">按「物料编码(整包编码)」匹配。导入 Excel 时库里有的字段（物流编码/分包编码/物料名称/重量/体积）会强制覆盖 Excel。每行一个 JSON 对象，键：itemCode, logisticsCode, subCode, subName, weight, volume。</p>
+            <div class="flex gap-2 flex-wrap mb-3">
+                <button onclick="sofiaLoadDB()" class="py-2 px-3 text-[10px] tracking-wider bg-neutral-900 text-white rounded-sm">读取库</button>
+                <button onclick="sofiaSaveDB()" class="py-2 px-3 text-[10px] tracking-wider bg-[var(--accent)] text-white rounded-sm">保存到仓库</button>
+                <span id="sofiaDbMsg" class="text-[10px] text-neutral-400 self-center"></span>
+            </div>
+            <textarea id="sofiaDbEditor" class="w-full h-64 font-mono text-[11px] border border-neutral-200 rounded p-3" placeholder='[{"itemCode":"ABC123","logisticsCode":"WL001","subCode":"PK001","subName":"xx板材","weight":12.5,"volume":0.08}]'></textarea>
+        </section>
+
     <!-- 移动端导航 -->
     <div class="mobile-nav">
         <a href="index.html" id="mNavHome"><i data-lucide="home"></i>画廊</a>
@@ -98,22 +111,6 @@
         let githubToken = EMBEDDED_TOKEN;
 
         let widgetPages = [];
-
-        
-        // 访问记录（与小工具独立页配套）
-        async function recordLog(type, detail) {
-            try {
-                if (!EMBEDDED_TOKEN) return;
-                const API = 'https://api.github.com/repos/luohaijun8888-art/artisan-gallery/contents/logs.json';
-                const headers = { 'Authorization': 'Bearer ' + EMBEDDED_TOKEN, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
-                let sha = null, logs = [];
-                const res = await fetch(API, { headers, cache: 'no-store' });
-                if (res.ok) { const j = await res.json(); sha = j.sha; try { logs = JSON.parse(decodeURIComponent(escape(atob(j.content)))); } catch (e) { logs = []; } }
-                logs.push({ t: new Date().toISOString(), type: type, detail: detail || '', ua: navigator.userAgent.slice(0, 80) });
-                if (logs.length > 500) logs = logs.slice(-500);
-                await fetch(API, { method: 'PUT', headers: Object.assign({}, headers, { 'Content-Type': 'application/json' }), body: JSON.stringify({ message: 'log: ' + type, content: btoa(unescape(encodeURIComponent(JSON.stringify(logs, null, 2)))), sha: sha || undefined }) });
-            } catch (e) {}
-        }
 
         async function fetchWidgetPages() {
             try {
@@ -142,7 +139,7 @@
 
             empty.classList.add('hidden');
             grid.innerHTML = widgetPages.map(w => `
-                <a href="${w.url}" target="_blank" class="widget-card block p-6 group" onclick="recordLog('widget', 'undefined')">
+                <a href="${w.url}" target="_blank" class="widget-card block p-6 group">
                     <div class="flex items-start justify-between mb-3">
                         <div class="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center">
                             <i data-lucide="globe" class="w-5 h-5 text-[var(--accent)]"></i>
@@ -158,8 +155,35 @@
             if (window.lucide) lucide.createIcons();
         }
 
+        async function sofiaLoadDB() {
+            const msg = document.getElementById('sofiaDbMsg');
+            try {
+                const r = await fetch('widgets/sofia-db.json?t=' + Date.now(), { cache: 'no-store' });
+                if (!r.ok) throw new Error('读取失败');
+                const arr = await r.json();
+                document.getElementById('sofiaDbEditor').value = JSON.stringify(arr, null, 2);
+                msg.textContent = '已读取 ' + (Array.isArray(arr) ? arr.length : 0) + ' 条';
+            } catch (e) { msg.textContent = '读取失败：' + e.message; }
+        }
+        async function sofiaSaveDB() {
+            const msg = document.getElementById('sofiaDbMsg');
+            const raw = document.getElementById('sofiaDbEditor').value;
+            let arr;
+            try { arr = JSON.parse(raw); if (!Array.isArray(arr)) throw new Error('必须是数组'); } catch (e) { msg.textContent = 'JSON 格式错误：' + e.message; return; }
+            try {
+                const API = 'https://api.github.com/repos/' + GITHUB_REPO + '/contents/widgets/sofia-db.json';
+                const headers = { 'Authorization': 'Bearer ' + EMBEDDED_TOKEN, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json', 'X-GitHub-Api-Version': '2022-11-28' };
+                let sha = null;
+                const g = await fetch(API, { headers, cache: 'no-store' });
+                if (g.ok) sha = (await g.json()).sha;
+                const put = await fetch(API, { method: 'PUT', headers, body: JSON.stringify({ message: 'sofia-db: update', content: btoa(unescape(encodeURIComponent(JSON.stringify(arr, null, 2)))), sha: sha || undefined }) });
+                msg.textContent = (put.ok ? '✅ 已保存 ' + arr.length + ' 条' : '❌ 保存失败 ' + put.status);
+            } catch (e) { msg.textContent = '保存异常：' + e.message; }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             fetchWidgetPages();
+            sofiaLoadDB();
             if (window.lucide) lucide.createIcons();
         });
     </script>
