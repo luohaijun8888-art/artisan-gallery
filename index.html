@@ -265,6 +265,7 @@
                     <div class="admin-tab active bg-black text-white px-3 py-1.5 rounded text-[10px] uppercase tracking-wider cursor-pointer" id="tab-products" onclick="switchAdminTab('products')">单品</div>
                     <div class="admin-tab bg-neutral-100 text-neutral-400 px-3 py-1.5 rounded text-[10px] uppercase tracking-wider cursor-pointer" id="tab-widgets" onclick="switchAdminTab('widgets')">组件</div>
                     <div class="admin-tab bg-neutral-100 text-neutral-400 px-3 py-1.5 rounded text-[10px] uppercase tracking-wider cursor-pointer" id="tab-pages" onclick="switchAdminTab('pages')">页面</div>
+                    <div class="admin-tab bg-neutral-100 text-neutral-400 px-3 py-1.5 rounded text-[10px] uppercase tracking-wider cursor-pointer" id="tab-logs" onclick="switchAdminTab('logs')">访问记录</div>
                 </div>
                 <button onclick="resetToken()" title="Reset Token" class="text-xs opacity-20 hover:opacity-100 transition-opacity">🔑</button>
                 <div class="flex items-center gap-1">
@@ -339,6 +340,22 @@
             </div>
 
                 <div id="adminPageSection" class="hidden space-y-6">
+                <div id="adminLogSection" class="hidden space-y-4">
+                    <section class="space-y-3">
+                        <h3 class="text-[10px] uppercase tracking-[0.15em] text-[var(--accent)] font-semibold">访问记录</h3>
+                        <p class="text-[10px] text-neutral-400 font-light">主页访问（每会话1次）与小工具使用记录，最近 500 条。</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <button onclick="loadLogs()" class="py-2 px-3 text-[10px] tracking-wider bg-black text-white rounded-sm">刷新</button>
+                            <span id="logCount" class="text-[10px] text-neutral-400 self-center"></span>
+                        </div>
+                        <div class="overflow-x-auto border border-neutral-100 rounded">
+                            <table class="w-full text-[10px] font-light">
+                                <thead class="bg-neutral-50 text-neutral-400"><tr><th class="text-left p-2">时间</th><th class="text-left p-2">类型</th><th class="text-left p-2">详情</th></tr></thead>
+                                <tbody id="logTableBody" class="divide-y divide-neutral-100"></tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
                     <section class="space-y-3">
                         <h3 class="text-[10px] uppercase tracking-[0.15em] text-[var(--accent)] font-semibold">生成独立小工具页面</h3>
                         <p class="text-[10px] text-neutral-400 font-light leading-relaxed">粘贴网页 HTML 代码，系统生成独立页面并托管至 widgets/ 目录，同时同步链接到「小工具」展示页。</p>
@@ -457,7 +474,41 @@
             }
             renderCategories();
             renderProducts();
+            if (typeof recordLog === 'function') recordLog('home');
             renderWidgets();
+        }
+
+        
+        // ===== 访问记录 =====
+        async function recordLog(type, detail) {
+            try {
+                if (type === 'home') {
+                    if (sessionStorage.getItem('artisan_home_logged')) return;
+                    sessionStorage.setItem('artisan_home_logged', '1');
+                }
+                if (!githubToken) return;
+                const API = 'https://api.github.com/repos/luohaijun8888-art/artisan-gallery/contents/logs.json';
+                const headers = { 'Authorization': 'Bearer ' + githubToken, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+                let sha = null, logs = [];
+                const res = await fetch(API, { headers, cache: 'no-store' });
+                if (res.ok) { const j = await res.json(); sha = j.sha; try { logs = JSON.parse(decodeURIComponent(escape(atob(j.content)))); } catch (e) { logs = []; } }
+                logs.push({ t: new Date().toISOString(), type: type, detail: detail || '', ua: navigator.userAgent.slice(0, 80), ref: document.referrer || '' });
+                if (logs.length > 500) logs = logs.slice(-500);
+                await fetch(API, { method: 'PUT', headers: Object.assign({}, headers, { 'Content-Type': 'application/json' }), body: JSON.stringify({ message: 'log: ' + type, content: btoa(unescape(encodeURIComponent(JSON.stringify(logs, null, 2)))), sha: sha || undefined }) });
+            } catch (e) { /* 静默 */ }
+        }
+
+        async function loadLogs() {
+            const body = document.getElementById('logTableBody'); if (!body) return;
+            body.innerHTML = '<tr><td colspan="3" class="p-2 text-neutral-400">加载中...</td></tr>';
+            try {
+                const res = await fetch('https://luohaijun8888-art.github.io/artisan-gallery/logs.json?t=' + Date.now(), { cache: 'no-store' });
+                if (!res.ok) throw new Error('no');
+                const logs = await res.json();
+                const c = document.getElementById('logCount'); if (c) c.textContent = '共 ' + logs.length + ' 条';
+                if (!logs.length) { body.innerHTML = '<tr><td colspan="3" class="p-2 text-neutral-400">暂无记录</td></tr>'; return; }
+                body.innerHTML = logs.slice().reverse().map(l => '<tr><td class="p-2 text-neutral-500">' + l.t + '</td><td class="p-2"><span class="px-1.5 py-0.5 rounded bg-neutral-100">' + l.type + '</span></td><td class="p-2 text-neutral-600">' + (l.detail || '') + '</td></tr>').join('');
+            } catch (e) { body.innerHTML = '<tr><td colspan="3" class="p-2 text-neutral-400">暂无记录</td></tr>'; }
         }
 
         async function saveToGitHub() {
@@ -711,7 +762,9 @@
             document.getElementById('adminProductSection').className = tab==='products'?'space-y-8':'hidden';
             document.getElementById('adminWidgetSection').className = tab==='widgets'?'space-y-6':'hidden';
             document.getElementById('adminPageSection').className = tab==='pages'?'space-y-6':'hidden';
+            document.getElementById('adminLogSection').className = tab==='logs'?'space-y-4':'hidden';
             if(tab === 'widgets') renderAdminWidgetList();
+            if(tab === 'logs') loadLogs();
             if(tab === 'pages'){ renderWidgetPagesList(); var h=document.getElementById('wpPwHint'); if(h) h.textContent='默认密码：' + widgetGatePassword; }
         };
 
