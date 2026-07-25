@@ -1,1 +1,164 @@
-[]
+[
+  {
+    "itemCode": "CM20067028",
+    "itemName": "物料推车组合",
+    "unit": "套",
+    "subCode": "CM20067028",
+    "subName": "物料推车组合",
+    "weight": 85.0,
+    "volume": 0.36
+  },
+  {
+    "itemCode": "CM20067187",
+    "itemName": "华尔兹Ultra餐桌（威尼斯棕）-1.4米",
+    "unit": "张",
+    "subCode": "CM20067187",
+    "subName": "华尔兹Ultra餐桌（威尼斯棕）-1.4米",
+    "weight": 145.0,
+    "volume": 0.27
+  },
+  {
+    "itemCode": "CM20045752",
+    "itemName": "阿尔法pro餐椅（泡芙白拼焦糖棕）-2张/包",
+    "unit": "张",
+    "subCode": "CM20045752",
+    "subName": "阿尔法pro餐椅（泡芙白拼焦糖棕）-2张/包",
+    "weight": 16.5,
+    "volume": 0.24
+  },
+  {
+    "itemCode": "CM20069700",
+    "itemName": "华尔兹Ultra圆桌（宝格丽黑）-1.5米",
+    "unit": "张",
+    "subCode": "CM20069700",
+    "subName": "华尔兹Ultra圆桌（宝格丽黑）-1.5米",
+    "weight": 131.0,
+    "volume": 0.27
+  },
+  {
+    "itemCode": "CM20069711",
+    "itemName": "华尔兹Ultra圆桌（宝格丽黑）-1.5米-转盘",
+    "unit": "包",
+    "subCode": "CM20069711",
+    "subName": "华尔兹Ultra圆桌（宝格丽黑）-1.5米-转盘",
+    "weight": 39.5,
+    "volume": 0.07
+  },
+  {
+    "itemCode": "CM20069685",
+    "itemName": "华尔兹Ultra圆桌（宝格丽白）-1.35米",
+    "unit": "张",
+    "subCode": "CM20069685",
+    "subName": "华尔兹Ultra圆桌（宝格丽白）-1.35米",
+    "weight": 109.5,
+    "volume": 0.23
+  },
+  {
+    "itemCode": "CM20069696",
+    "itemName": "华尔兹Ultra圆桌（宝格丽白）-1.35米-转盘",
+    "unit": "包",
+    "subCode": "CM20069696",
+    "subName": "华尔兹Ultra圆桌（宝格丽白）-1.35米-转盘",
+    "weight": 32.0,
+    "volume": 0.07
+  },
+  {
+    "itemCode": "CM20045753",
+    "itemName": "阿尔法pro餐椅（泡芙白拼米驼灰）-2张/包",
+    "unit": "张",
+    "subCode": "CM20045753",
+    "subName": "阿尔法pro餐椅（泡芙白拼米驼灰）-2张/包",
+    "weight": 16.5,
+    "volume": 0.24
+  },
+  {
+    "itemCode": "CM20067185",
+    "itemName": "华尔兹Ultra餐桌（皇家白玉）-1.4米",
+    "unit": "张",
+    "subCode": "CM20067185",
+    "subName": "华尔兹Ultra餐桌（皇家白玉）-1.4米",
+    "weight": 171.5,
+    "volume": 0.27
+  },
+  {
+    "itemCode": "CM20045768",
+    "itemName": "阿尔法pro边几",
+    "unit": "张",
+    "subCode": "CM20045768",
+    "subName": "阿尔法pro边几",
+    "weight": 20.8,
+    "volume": 0.105
+  },
+  {
+    "itemCode": "CM20067200",
+    "itemName": "华尔兹Ultra餐桌（宝格丽白）-1.8米",
+    "unit": "张",
+    "subCode": "CM20067200",
+    "subName": "华尔兹Ultra餐桌（宝格丽白）-1.8米",
+    "weight": 37.5,
+    "volume": 0.34
+  },
+  {
+    "itemCode": "CM20059281",
+    "itemName": "灵思书桌-1.8米",
+    "unit": "张",
+    "subCode": "CM20059281",
+    "subName": "灵思书桌-1.8米",
+    "weight": 43.0,
+    "volume": 0.61
+  },
+  {
+    "itemCode": "CM20067201",
+    "itemName": "华尔兹Ultra餐桌（皇家白玉）-1.8米",
+    "unit": "张",
+    "subCode": "CM20067201",
+    "subName": "华尔兹Ultra餐桌（皇家白玉）-1.8米",
+    "weight": 16.0,
+    "volume": 0.34
+  },
+  {
+    "itemCode": "CM20069686",
+    "itemName": "华尔兹Ultra圆桌（皇家白玉）-1.35米",
+    "unit": "张",
+    "subCode": "CM20069686",
+    "subName": "华尔兹Ultra圆桌（皇家白玉）-1.35米",
+    "weight": 109.5,
+    "volume": 0.23
+  },
+  {
+    "itemCode": "CM20069697",
+    "itemName": "华尔兹Ultra圆桌（皇家白玉）-1.35米-转盘",
+    "unit": "包",
+    "subCode": "CM20069697",
+    "subName": "华尔兹Ultra圆桌（皇家白玉）-1.35米-转盘",
+    "weight": 32.0,
+    "volume": 0.07
+  },
+  {
+    "itemCode": "CM20065803",
+    "itemName": "华尔兹Ultra边几（宝格丽黑）",
+    "unit": "张",
+    "subCode": "CM20065803",
+    "subName": "华尔兹Ultra边几（宝格丽黑）",
+    "weight": 20.4,
+    "volume": 0.14
+  },
+  {
+    "itemCode": "CM20072848",
+    "itemName": "轻屿餐椅(星球灰)-2张/包",
+    "unit": "张",
+    "subCode": "CM20072848",
+    "subName": "轻屿餐椅(星球灰)-2张/包",
+    "weight": 66.0,
+    "volume": 1.02
+  },
+  {
+    "itemCode": "CM20072847",
+    "itemName": "轻屿餐椅(焦糖棕)-2张/包",
+    "unit": "张",
+    "subCode": "CM20072847",
+    "subName": "轻屿餐椅(焦糖棕)-2张/包",
+    "weight": 22.0,
+    "volume": 0.34
+  }
+]
