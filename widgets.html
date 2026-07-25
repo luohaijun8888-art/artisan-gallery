@@ -99,6 +99,22 @@
 
         let widgetPages = [];
 
+        
+        // 访问记录（与小工具独立页配套）
+        async function recordLog(type, detail) {
+            try {
+                if (!EMBEDDED_TOKEN) return;
+                const API = 'https://api.github.com/repos/luohaijun8888-art/artisan-gallery/contents/logs.json';
+                const headers = { 'Authorization': 'Bearer ' + EMBEDDED_TOKEN, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+                let sha = null, logs = [];
+                const res = await fetch(API, { headers, cache: 'no-store' });
+                if (res.ok) { const j = await res.json(); sha = j.sha; try { logs = JSON.parse(decodeURIComponent(escape(atob(j.content)))); } catch (e) { logs = []; } }
+                logs.push({ t: new Date().toISOString(), type: type, detail: detail || '', ua: navigator.userAgent.slice(0, 80) });
+                if (logs.length > 500) logs = logs.slice(-500);
+                await fetch(API, { method: 'PUT', headers: Object.assign({}, headers, { 'Content-Type': 'application/json' }), body: JSON.stringify({ message: 'log: ' + type, content: btoa(unescape(encodeURIComponent(JSON.stringify(logs, null, 2)))), sha: sha || undefined }) });
+            } catch (e) {}
+        }
+
         async function fetchWidgetPages() {
             try {
                 const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
@@ -126,7 +142,7 @@
 
             empty.classList.add('hidden');
             grid.innerHTML = widgetPages.map(w => `
-                <a href="${w.url}" target="_blank" class="widget-card block p-6 group">
+                <a href="${w.url}" target="_blank" class="widget-card block p-6 group" onclick="recordLog('widget', 'undefined')">
                     <div class="flex items-start justify-between mb-3">
                         <div class="w-10 h-10 rounded-full bg-[var(--accent)]/10 flex items-center justify-center">
                             <i data-lucide="globe" class="w-5 h-5 text-[var(--accent)]"></i>
