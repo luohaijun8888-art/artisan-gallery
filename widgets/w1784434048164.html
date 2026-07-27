@@ -282,7 +282,6 @@
 
         // 统一签字送货日期初始设为不可用，保持原表格日期
         document.addEventListener("DOMContentLoaded", () => {
-            loadInternalDB();
             const todayStr = new Date().toISOString().slice(0, 10);
             document.getElementById('customDeliveryDate').value = todayStr;
         });
@@ -335,7 +334,7 @@
         // 正则省份智能分析
         function extractProvince(addr) {
             if(!addr) return "未知";
-            const ps = ['云南省','湖南省','重庆市','山西省','陕西省','甘肃省','四川省','贵州省','湖北省','河南省','���东省','江苏省','浙江省','福建省','广东省','广西壮族自治区','内蒙古自治区','新疆维吾尔自治区','西藏自治区','宁夏回族自治区','青海省','海南省'];
+            const ps = ['云南省','湖南省','重庆市','山西省','陕西省','甘肃省','四川省','贵州省','湖北省','河南省','���东省','江苏省','浙江省','���建省','广东省','广西壮族自治区','内蒙古自治区','新疆维吾尔自治区','西藏自治区','宁夏回族自治区','青海省','海南省'];
             for(const p of ps) if(addr.includes(p)) return p;
             const m = addr.match(/^(.*?省|.*?自治区|北京|上海|天津|重庆)/);
             return m ? m[1].trim() : addr.slice(0, 3);
@@ -375,28 +374,7 @@
         }
 
 
-        // ===== 内部数据库（物料库）匹配 =====
-        let DB = [];
-        let DB_BY_CODE = {};
-        async function loadInternalDB() {
-            try {
-                const res = await fetch('widgets/sofia-db.json?t=' + Date.now(), { cache: 'no-store' });
-                if (res.ok) {
-                    DB = await res.json();
-                    if (!Array.isArray(DB)) DB = [];
-                    DB_BY_CODE = {};
-                    DB.forEach(d => { const c = (d.itemCode || '').trim(); if (c) DB_BY_CODE[c] = d; });
-                }
-            } catch (e) { DB = []; DB_BY_CODE = {}; }
-        }
-        // 按���料编码(=整包编码)查库；返回库中已知字段
-        function matchInternalDB(itemCode) {
-            const c = (itemCode || '').trim();
-            if (!c) return null;
-            return DB_BY_CODE[c] || null;
-        }
-
-        function handleExcelFile(file) {
+        // =====         function handleExcelFile(file) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -480,19 +458,11 @@
                         if(!itemCode && !itemName && quantity===0) return;
                         const province = ext.province || extractProvince(address);
 
-                        // 内部库匹配：库有的字段强制覆盖 Excel（库没有的才用 Excel）
-                        const dbRow = matchInternalDB(itemCode);
-                        const finalSubCode = (dbRow && dbRow.subCode) ? dbRow.subCode : (ext.subCode || itemCode);
-                        const finalSubName = (dbRow && dbRow.subName) ? dbRow.subName : (ext.subName || itemName);
-                        const finalItemName = (dbRow && dbRow.itemName) ? dbRow.itemName : (ext.itemName || itemName);
-                        const finalWeight = (dbRow && dbRow.weight !== undefined && dbRow.weight !== null && dbRow.weight !== "") ? (parseFloat(dbRow.weight) || 0) : weight;
-                        const finalVolume = (dbRow && dbRow.volume !== undefined && dbRow.volume !== null && dbRow.volume !== "") ? (parseFloat(dbRow.volume) || 0) : volume;
-
-                        clean.push({ 
-                            poNumber:po, sender, carrier, receiver, contact, address, phone, 
-                            orderId, itemCode, itemName:finalItemName, quantity, shippingDate, 
-                            subCode:finalSubCode, subName:finalSubName, unit, packagesCount, 
-                            weight:finalWeight, volume:finalVolume, dealerCode, dealerName, rowIndex:idx+1, province 
+                        //                         clean.push({
+                            poNumber:po, sender, carrier, receiver, contact, address, phone,
+                            orderId, itemCode, itemName, quantity, shippingDate,
+                            subCode:ext.subCode || itemCode, subName:ext.subName || itemName, unit, packagesCount,
+                            weight, volume, dealerCode, dealerName, rowIndex:idx+1, province
                         });
                     });
 
