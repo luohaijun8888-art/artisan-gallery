@@ -2365,6 +2365,85 @@
       "date": "2026-07-22",
       "detailImages": [],
       "variants": []
+    },
+    {
+      "id": 1784500000012,
+      "name": "大理石纹台面圆",
+      "category": "学习桌",
+      "price": 0,
+      "page": "首页",
+      "images": [
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-13-01.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-13-02.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-13-03.jpg"
+      ],
+      "tags": "NEW",
+      "description": "",
+      "featured": false,
+      "date": "2026-07-30",
+      "detailImages": [],
+      "variants": []
+    },
+    {
+      "id": 1784500000013,
+      "name": "大理石纹台面方",
+      "category": "学习桌",
+      "price": 0,
+      "page": "首页",
+      "images": [
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-14-01.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-14-02.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-14-03.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-14-04.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-14-05.jpg"
+      ],
+      "tags": "NEW",
+      "description": "",
+      "featured": false,
+      "date": "2026-07-30",
+      "detailImages": [],
+      "variants": []
+    },
+    {
+      "id": 1784500000014,
+      "name": "木纹桌面圆",
+      "category": "学习桌",
+      "price": 0,
+      "page": "首页",
+      "images": [
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-15-01.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-15-02.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-15-03.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-15-04.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-15-05.jpg"
+      ],
+      "tags": "NEW",
+      "description": "",
+      "featured": false,
+      "date": "2026-07-30",
+      "detailImages": [],
+      "variants": []
+    },
+    {
+      "id": 1784500000015,
+      "name": "木纹桌面方",
+      "category": "学习桌",
+      "price": 0,
+      "page": "首页",
+      "images": [
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-16-01.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-16-02.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-16-03.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-16-04.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-16-05.jpg",
+        "https://luohaijun8888-art.github.io/artisan-gallery/images/products/desk-16-06.jpg"
+      ],
+      "tags": "NEW",
+      "description": "",
+      "featured": false,
+      "date": "2026-07-30",
+      "detailImages": [],
+      "variants": []
     }
   ],
   "widgets": [],
