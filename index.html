@@ -685,7 +685,7 @@
             const ps = document.getElementById('packingSteps');
             if(!ps) return;
             if(p.packingSteps && p.packingSteps.length) {
-                ps.innerHTML = '<div class="text-center mb-8"><p class="text-[10px] uppercase tracking-[0.3em] text-[var(--accent)] font-medium mb-2">PACKING STEPS</p><h3 class="text-lg font-light tracking-widest text-neutral-400">\u5305\u88c5\u6b65\u9aa4</h3></div>' + p.packingSteps.map((s,i) => `
+                ps.innerHTML = '<div class="text-center mb-8"><p class="text-[10px] uppercase tracking-[0.3em] text-[var(--accent)] font-medium mb-2">PACKING STEPS</p><h3 class="text-lg font-light tracking-widest text-neutral-400">\u5305\u88c5\u6b65\u9aa4</h3><button onclick="exportPackingWord()" class="mt-4 mx-auto flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white text-[11px] tracking-wider rounded-sm hover:bg-neutral-700 transition-colors"><i data-lucide="file-down" class="w-3.5 h-3.5"></i>\u5bfc\u51fa Word</button></div>' + p.packingSteps.map((s,i) => `
                     <div class="flex flex-col items-center">
                         <div class="w-full max-w-2xl bg-white rounded-sm shadow-sm overflow-hidden">
                             <img src="${s.image}" class="w-full h-auto object-cover cursor-zoom-in" loading="lazy" onclick="openZoom('${s.image}')">
@@ -699,6 +699,42 @@
                 ps.innerHTML = '';
             }
         }
+
+        window.exportPackingWord = async function() {
+            const p = currentDetail; if(!p || !p.packingSteps || !p.packingSteps.length){ alert('\u6682\u65e0\u5305\u88c5\u6b65\u9aa4\u53ef\u5bfc\u51fa'); return; }
+            const toB64 = (u) => new Promise((res, rej) => {
+                const img = new Image(); img.crossOrigin = 'anonymous'; img.onload = () => {
+                    try {
+                        const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight;
+                        c.getContext('2d').drawImage(img, 0, 0);
+                        res(c.toDataURL('image/png').split(',')[1]);
+                    } catch(e){ res(''); }
+                };
+                img.onerror = () => res(''); img.src = u + '?t=' + Date.now();
+            });
+            let rows = '';
+            for (let i = 0; i < p.packingSteps.length; i++) {
+                const s = p.packingSteps[i];
+                const b64 = await toB64(s.image);
+                const imgTag = b64 ? '<img src="data:image/png;base64,' + b64 + '" width="360" style="display:block;margin:0 auto 8px;">' : '<p style="color:red">[\u56fe\u7247\u52a0\u8f7d\u5931\u8d25]</p>';
+                const desc = (s.desc && s.desc.trim()) ? s.desc.replace(/</g,'&lt;').replace(/>/g,'&gt;') : '\u5305\u6750\u63cf\u8ff0\u5f85\u8865\u5145';
+                rows += '<div style="page-break-inside:avoid;margin-bottom:20px;text-align:center;">'
+                    + '<p style="font-weight:bold;font-size:14px;margin:0 0 6px;">\u6b65\u9aa4 ' + (i+1) + '</p>'
+                    + imgTag
+                    + '<p style="font-size:12px;margin:4px 0 0;">' + desc + '</p>'
+                    + '</div>';
+            }
+            const header = '<xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml>';
+            const html = '<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head>' + header + '<meta charset="utf-8"><title>' + (p.name||'\u5305\u88c5\u6b65\u9aa4') + '</title></head><body>'
+                + '<h1 style="text-align:center;font-size:20px;">' + (p.name||'\u5305\u88c5\u6b65\u9aa4') + ' - \u5305\u88c5\u6b65\u9aa4</h1>'
+                + rows + '</body></html>';
+            const blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = '\u5305\u88c5\u6b65\u9aa4_' + (p.name||'SYT') + '.doc';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        };
 
         function renderCarousel() {
             const imgs = getCurrentImages();
