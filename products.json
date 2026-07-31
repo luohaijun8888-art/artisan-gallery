@@ -2364,7 +2364,57 @@
       "featured": false,
       "date": "2026-07-22",
       "detailImages": [],
-      "variants": []
+      "variants": [],
+      "packingSteps": [
+        {
+          "image": "https://luohaijun8888-art.github.io/artisan-gallery/images/products/SYT-260423-pack-01.png",
+          "desc": ""
+        },
+        {
+          "image": "https://luohaijun8888-art.github.io/artisan-gallery/images/products/SYT-260423-pack-02.png",
+          "desc": ""
+        },
+        {
+          "image": "https://luohaijun8888-art.github.io/artisan-gallery/images/products/SYT-260423-pack-03.png",
+          "desc": ""
+        },
+        {
+          "image": "https://luohaijun8888-art.github.io/artisan-gallery/images/products/SYT-260423-pack-04.png",
+          "desc": ""
+        },
+        {
+          "image": "https://luohaijun8888-art.github.io/artisan-gallery/images/products/SYT-260423-pack-05.png",
+          "desc": ""
+        },
+        {
+          "image": "https://luohaijun8888-art.github.io/artisan-gallery/images/products/SYT-260423-pack-06.png",
+          "desc": ""
+        },
+        {
+          "image": "https://luohaijun8888-art.github.io/artisan-gallery/images/products/SYT-260423-pack-07.png",
+          "desc": ""
+        },
+        {
+          "image": "https://luohaijun8888-art.github.io/artisan-gallery/images/products/SYT-260423-pack-08.png",
+          "desc": ""
+        },
+        {
+          "image": "https://luohaijun8888-art.github.io/artisan-gallery/images/products/SYT-260423-pack-09.png",
+          "desc": ""
+        },
+        {
+          "image": "https://luohaijun8888-art.github.io/artisan-gallery/images/products/SYT-260423-pack-10.png",
+          "desc": ""
+        },
+        {
+          "image": "https://luohaijun8888-art.github.io/artisan-gallery/images/products/SYT-260423-pack-11.png",
+          "desc": ""
+        },
+        {
+          "image": "https://luohaijun8888-art.github.io/artisan-gallery/images/products/SYT-260423-pack-12.png",
+          "desc": ""
+        }
+      ]
     },
     {
       "id": 1784500000012,
