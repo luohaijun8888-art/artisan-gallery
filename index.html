@@ -878,11 +878,22 @@
                 return '<div class="ps-row border border-neutral-200 rounded-sm p-3 flex flex-col" data-i="'+i+'">'
                     + '<div class="flex items-center justify-between mb-2"><span class="text-[10px] font-medium text-neutral-500">\u6b65\u9aa4 '+(i+1)+'</span>'
                     + '<button type="button" onclick="removePackStep('+i+')" class="text-[10px] text-red-500 hover:underline">\u5220\u9664</button></div>'
-                    + '<div class="w-full h-32 bg-neutral-100 rounded-sm overflow-hidden mb-2"><img src="'+img+'" onerror="this.parentNode.innerHTML=\'<div class=\\\'text-[10px] text-neutral-400 flex items-center justify-center h-full\\\'>\u56fe\u7247\u52a0\u8f7d\u5931\u8d25</div>\'' onload="this.style.opacity=1" style="opacity:0;transition:opacity .3s" class="w-full h-full object-cover"></div>'
-                    + '<input type="text" placeholder="\u56fe\u7247 URL\uff08\u53ef\u7f16\u8f91\u66f4\u6362\uff09" value="'+img+'" class="ps-url-input w-full border-b border-neutral-100 py-1 text-[10px] outline-none bg-neutral-50 mb-2" oninput="var im=this.parentNode.querySelector(\'img\');if(im)im.src=this.value;">'
+                    + '<div class="w-full h-32 bg-neutral-100 rounded-sm overflow-hidden mb-2"><img src="'+img+'" onerror="packImgError(this)" onload="this.style.opacity=1" style="opacity:0;transition:opacity .3s" class="w-full h-full object-cover"></div>'
+                    + '<input type="text" placeholder="\u56fe\u7247 URL\uff08\u53ef\u7f16\u8f91\u66f4\u6362\uff09" value="'+img+'" class="ps-url-input w-full border-b border-neutral-100 py-1 text-[10px] outline-none bg-neutral-50 mb-2" oninput="packImgLive(this)">'
                     + '<textarea placeholder="\u5305\u6750\u63cf\u8ff0\uff08\u53ef\u586b\u5199\uff09" class="ps-desc-input w-full border-b border-neutral-200 py-1 text-[11px] outline-none bg-transparent resize-none">'+(s.desc||'')+'</textarea>'
                     + '</div>';
             }).join('');
+        };
+        window.packImgError = function(img) {
+            img.style.display = 'none';
+            var d = document.createElement('div');
+            d.className = 'text-[10px] text-neutral-400 flex items-center justify-center h-full';
+            d.textContent = '\u56fe\u7247\u52a0\u8f7d\u5931\u8d25';
+            img.parentNode.appendChild(d);
+        };
+        window.packImgLive = function(input) {
+            var im = input.parentNode.querySelector('img');
+            if(im) { im.src = input.value; im.style.opacity = '0'; im.style.display = ''; }
         };
                 window.removePackStep = function(i) {
             if(!window.__editingPackSteps) return;
