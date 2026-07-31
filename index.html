@@ -219,7 +219,7 @@
                 </div>
 
                 <div class="bg-[#FBFBFA] p-6 rounded border border-black/[0.01] text-xs text-neutral-400 space-y-3 font-light mt-8">
-                    <div class="flex gap-2"><span class="text-[var(--accent)]">✦</span><p><b>物料基因</b>：精选全球特级原产木域，天然质地，环保天然涂装体系。</p></div>
+                    <div class="flex gap-2"><span class="text-[var(--accent)]">✦</span><p><b>物料基因</b>：精选全球特级原产木域，天然质地，环保天然���装体系。</p></div>
                     <div class="flex gap-2"><span class="text-[var(--accent)]">✦</span><p><b>安全达</b>：专属高规防震蜂窝木框架包装，全流程极速多重保价物流。</p></div>
                 </div>
             </div>
@@ -232,6 +232,7 @@
                 <h3 class="text-lg font-light tracking-widest text-neutral-400">— 空间视觉细节 —</h3>
             </div>
             <div id="detailImages" class="space-y-4"></div>
+            <div id="packingSteps" class="space-y-8 mt-16"></div>
         </div>
     </div>
 
@@ -675,7 +676,28 @@
             } else {
                 di.innerHTML = '<p class="text-center py-12 text-xs text-neutral-300 italic font-light tracking-widest">余下画轴尚未轻展</p>';
             }
+                        renderPackingSteps();
             lucide.createIcons();
+        }
+
+        function renderPackingSteps() {
+            const p = currentDetail; if(!p) return;
+            const ps = document.getElementById('packingSteps');
+            if(!ps) return;
+            if(p.packingSteps && p.packingSteps.length) {
+                ps.innerHTML = '<div class="text-center mb-8"><p class="text-[10px] uppercase tracking-[0.3em] text-[var(--accent)] font-medium mb-2">PACKING STEPS</p><h3 class="text-lg font-light tracking-widest text-neutral-400">\u5305\u88c5\u6b65\u9aa4</h3></div>' + p.packingSteps.map((s,i) => `
+                    <div class="flex flex-col items-center">
+                        <div class="w-full max-w-2xl bg-white rounded-sm shadow-sm overflow-hidden">
+                            <img src="${s.image}" class="w-full h-auto object-cover cursor-zoom-in" loading="lazy" onclick="openZoom('${s.image}')">
+                        </div>
+                        <div class="w-full max-w-2xl mt-3 text-center">
+                            <p class="text-xs text-neutral-500 font-light leading-relaxed">${s.desc ? s.desc : '\u5305\u6750\u63cf\u8ff0\u5f85\u8865\u5145\uff08\u53ef\u5728\u540e\u53f0\u7f16\u8f91\uff09'}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                ps.innerHTML = '';
+            }
         }
 
         function renderCarousel() {
