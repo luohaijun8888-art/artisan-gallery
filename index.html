@@ -219,7 +219,7 @@
                 </div>
 
                 <div class="bg-[#FBFBFA] p-6 rounded border border-black/[0.01] text-xs text-neutral-400 space-y-3 font-light mt-8">
-                    <div class="flex gap-2"><span class="text-[var(--accent)]">✦</span><p><b>物料基因</b>：精选全球特级原产木域，天然质地，环保天然���������装体系。</p></div>
+                    <div class="flex gap-2"><span class="text-[var(--accent)]">✦</span><p><b>物料基因</b>：精选全球特级原产木域，天然质地，环保天然�����������装体系。</p></div>
                     <div class="flex gap-2"><span class="text-[var(--accent)]">✦</span><p><b>安全达</b>：专属高规防震蜂窝木框架包装，全流程极速多重保价物流。</p></div>
                 </div>
             </div>
@@ -380,7 +380,7 @@
                     </section>
                     <section class="space-y-3">
                         <h3 class="text-[10px] uppercase tracking-[0.15em] text-[var(--accent)] font-semibold">小工具访问密码</h3>
-                        <p class="text-[10px] text-neutral-400 font-light leading-relaxed">每个小工具可设置独立密码。新建时留空则使用默认密码；下方已部署列表中可单独修改每个工具的密码。</p>
+                        <p class="text-[10px] text-neutral-400 font-light leading-relaxed">每个小工具可设置独立密码。新建时留空则使用默认密码；下方已���署列表中可单独修改每个工具的密码。</p>
                         <p id="wpPwHint" class="text-[10px] text-neutral-400">默认密码：8888</p>
                     </section>
                 </div>
@@ -721,31 +721,36 @@
                 };
                 img.onerror = () => res(''); img.src = u + '?t=' + Date.now();
             });
-            let rows = '';
+            const cells = [];
             for (let i = 0; i < p.packingSteps.length; i++) {
                 const s = p.packingSteps[i];
                 const b64 = await toB64(s.image);
-                const imgTag = b64 ? '<img src="data:image/png;base64,' + b64 + '" width="360" style="display:block;margin:0 auto 8px;">' : '<p style="color:red">[\u56fe\u7247\u52a0\u8f7d\u5931\u8d25]</p>';
+                const imgTag = b64 ? '<img src="data:image/png;base64,' + b64 + '" width="300" style="display:block;margin:0 auto 8px;max-width:100%;">' : '<p style="color:red">[\u56fe\u7247\u52a0\u8f7d\u5931\u8d25]</p>';
                 const desc = (s.desc && s.desc.trim()) ? s.desc.replace(/</g,'&lt;').replace(/>/g,'&gt;') : '\u5305\u6750\u63cf\u8ff0\u5f85\u8865\u5145';
-                rows += '<div style="page-break-inside:avoid;margin-bottom:20px;text-align:center;">'
-                    + '<p style="font-weight:bold;font-size:14px;margin:0 0 6px;">\u6b65\u9aa4 ' + (i+1) + '</p>'
+                cells.push('<td style="width:50%;vertical-align:top;padding:10px;border:1px solid #eee;text-align:center;">'
+                    + '<p style="font-size:11px;font-weight:500;color:#a3a3a3;margin:0 0 6px;">\u6b65\u9aa4 ' + (i+1) + '</p>'
                     + imgTag
-                    + '<p style="font-size:12px;margin:4px 0 0;">' + desc + '</p>'
-                    + '</div>';
+                    + '<p style="font-size:16px;font-weight:bold;color:#262626;margin:6px 0 0;line-height:1.5;">' + desc + '</p>'
+                    + '</td>');
+            }
+            let rows = '';
+            for (let i = 0; i < cells.length; i += 2) {
+                const left = cells[i];
+                const right = (i+1 < cells.length) ? cells[i+1] : '<td style="width:50%;border:1px solid #eee;"></td>';
+                rows += '<tr>' + left + right + '</tr>';
             }
             const header = '<xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml>';
             const html = '<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head>' + header + '<meta charset="utf-8"><title>' + (p.name||'\u5305\u88c5\u6b65\u9aa4') + '</title></head><body>'
                 + '<h1 style="text-align:center;font-size:20px;">' + (p.name||'\u5305\u88c5\u6b65\u9aa4') + ' - \u5305\u88c5\u6b65\u9aa4</h1>'
-                + rows + '</body></html>';
+                + '<table style="width:100%;border-collapse:collapse;">' + rows + '</table>'
+                + '</body></html>';
             const blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = '\u5305\u88c5\u6b65\u9aa4_' + (p.name||'SYT') + '.doc';
             document.body.appendChild(a); a.click(); document.body.removeChild(a);
             setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-        };
-
-        function renderCarousel() {
+        };        function renderCarousel() {
             const imgs = getCurrentImages();
             const track = document.getElementById('carouselTrack');
             const dots = document.getElementById('carouselDots');
