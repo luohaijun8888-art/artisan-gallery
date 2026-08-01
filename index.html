@@ -219,7 +219,7 @@
                 </div>
 
                 <div class="bg-[#FBFBFA] p-6 rounded border border-black/[0.01] text-xs text-neutral-400 space-y-3 font-light mt-8">
-                    <div class="flex gap-2"><span class="text-[var(--accent)]">✦</span><p><b>物料基因</b>：精选全球特级原产木域，天然质地，环保天然�������装体系。</p></div>
+                    <div class="flex gap-2"><span class="text-[var(--accent)]">✦</span><p><b>物料基因</b>：精选全球特级原产木域，天然质地，环保天然���������装体系。</p></div>
                     <div class="flex gap-2"><span class="text-[var(--accent)]">✦</span><p><b>安全达</b>：专属高规防震蜂窝木框架包装，全流程极速多重保价物流。</p></div>
                 </div>
             </div>
@@ -690,16 +690,20 @@
             const ps = document.getElementById('packingSteps');
             if(!ps) return;
             if(p.packingSteps && p.packingSteps.length) {
-                ps.innerHTML = '<div class="text-center mb-8"><p class="text-[10px] uppercase tracking-[0.3em] text-[var(--accent)] font-medium mb-2">PACKING STEPS</p><h3 class="text-lg font-light tracking-widest text-neutral-400">\u5305\u88c5\u6b65\u9aa4</h3><button onclick="exportPackingWord()" class="mt-4 mx-auto flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white text-[11px] tracking-wider rounded-sm hover:bg-neutral-700 transition-colors"><i data-lucide="file-down" class="w-3.5 h-3.5"></i>\u5bfc\u51fa Word</button></div>' + p.packingSteps.map((s,i) => `
-                    <div class="flex flex-col items-center">
-                        <div class="w-full max-w-2xl bg-white rounded-sm shadow-sm overflow-hidden">
-                            <img src="${s.image}" class="w-full h-auto object-cover cursor-zoom-in" loading="lazy" onclick="openZoom('${s.image}')">
+                ps.innerHTML = '<div class="text-center mb-8"><p class="text-[10px] uppercase tracking-[0.3em] text-[var(--accent)] font-medium mb-2">PACKING STEPS</p><h3 class="text-lg font-light tracking-widest text-neutral-400">\u5305\u88c5\u6b65\u9aa4</h3><button onclick="exportPackingWord()" class="mt-4 mx-auto flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white text-[11px] tracking-wider rounded-sm hover:bg-neutral-700 transition-colors"><i data-lucide="file-down" class="w-3.5 h-3.5"></i>\u5bfc\u51fa Word</button></div>'
+                    + '<div class="grid grid-cols-1 sm:grid-cols-2 gap-8">'
+                    + p.packingSteps.map((s,i) => `
+                        <div class="flex flex-col items-center">
+                            <span class="text-[11px] font-medium text-neutral-400 mb-2 self-start">\u6b65\u9aa4 ${i+1}</span>
+                            <div class="w-full bg-white rounded-sm shadow-sm overflow-hidden">
+                                <img src="${s.image}" class="w-full h-auto object-cover cursor-zoom-in" loading="lazy" onclick="openZoom('${s.image}')">
+                            </div>
+                            <div class="w-full mt-3 text-center px-2">
+                                <p class="text-base font-bold text-neutral-800 leading-relaxed">${s.desc ? s.desc : '\u5305\u6750\u63cf\u8ff0\u5f85\u8865\u5145\uff08\u53ef\u5728\u540e\u53f0\u7f16\u8f91\uff09'}</p>
+                            </div>
                         </div>
-                        <div class="w-full max-w-2xl mt-3 text-center">
-                            <p class="text-xs text-neutral-500 font-light leading-relaxed">${s.desc ? s.desc : '\u5305\u6750\u63cf\u8ff0\u5f85\u8865\u5145\uff08\u53ef\u5728\u540e\u53f0\u7f16\u8f91\uff09'}</p>
-                        </div>
-                    </div>
-                `).join('');
+                    `).join('')
+                    + '</div>';
             } else {
                 ps.innerHTML = '';
             }
