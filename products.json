@@ -11,6 +11,51 @@
   ],
   "products": [
     {
+      "id": 2401250000001,
+      "name": "240125",
+      "price": 0,
+      "category": "学习桌",
+      "page": "首页",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/240125-01.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/240125-02.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/240125-03.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/240125-04.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/240125-05.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/240125-06.jpg"
+      ],
+      "tags": "NEW",
+      "description": "",
+      "variants": [],
+      "detailImages": [],
+      "packingSteps": [
+        {
+          "image": "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/240125-01.jpg",
+          "desc": ""
+        },
+        {
+          "image": "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/240125-02.jpg",
+          "desc": ""
+        },
+        {
+          "image": "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/240125-03.jpg",
+          "desc": ""
+        },
+        {
+          "image": "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/240125-04.jpg",
+          "desc": ""
+        },
+        {
+          "image": "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/240125-05.jpg",
+          "desc": ""
+        },
+        {
+          "image": "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/240125-06.jpg",
+          "desc": ""
+        }
+      ]
+    },
+    {
       "id": 1779527104655,
       "name": "Bestier 42\" 小型电竞桌",
       "category": "学习桌",
