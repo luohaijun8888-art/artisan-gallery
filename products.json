@@ -11,6 +11,31 @@
   ],
   "products": [
     {
+      "id": 202608070001,
+      "name": "缩略图",
+      "price": 0,
+      "category": "学习桌",
+      "page": "首页",
+      "images": [
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/thumb-01.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/thumb-02.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/thumb-03.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/thumb-04.png",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/thumb-05.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/thumb-06.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/thumb-07.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/thumb-08.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/thumb-09.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/thumb-10.jpg",
+        "https://cdn.jsdelivr.net/gh/luohaijun8888-art/artisan-gallery@main/images/products/thumb-11.jpg"
+      ],
+      "tags": "NEW",
+      "description": "",
+      "variants": [],
+      "detailImages": [],
+      "packingSteps": []
+    },
+    {
       "id": 2401250000001,
       "name": "240125",
       "price": 0,
