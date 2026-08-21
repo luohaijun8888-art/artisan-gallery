@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><script>try{document.documentElement.style.visibility='hidden';}catch(e){}</script><style>.wg-gate{position:fixed;inset:0;z-index:2147483647;visibility:visible;background:#FBFBFA;display:flex;align-items:center;justify-content:center;font-family:Inter,'Noto Serif SC',sans-serif}.wg-card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;padding:2rem 2.2rem;width:300px;max-width:86vw;box-shadow:0 20px 60px rgba(0,0,0,.08);text-align:center}.wg-title{font-size:12px;letter-spacing:.25em;text-transform:uppercase;color:#CC9933;margin-bottom:1.2rem}.wg-input{width:100%;padding:.7rem .9rem;border:1px solid #e5e5e0;border-radius:8px;font-size:14px;text-align:center;outline:none;margin-bottom:.9rem}.wg-input:focus{border-color:#CC9933}.wg-btn{width:100%;padding:.7rem;background:#161615;color:#fff;border:none;border-radius:8px;font-size:12px;letter-spacing:.15em;cursor:pointer}.wg-err{color:#d33;font-size:11px;margin-top:.6rem;display:none}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沪深多股指与期指主力 100%真实对冲多周期跟踪器</title>
+    <!-- Tailwind CSS 引入 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js 引入 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+        body {
+            font-family: 'Inter', 'SF Pro Display', -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        @keyframes pulse-fast {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.85); }
+        }
+        .live-dot {
+            animation: pulse-fast 1.2s infinite;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 min-h-screen text-slate-100 antialiased overflow-x-hidden custom-scrollbar"><div class="wg-gate" id="wgGate"><div class="wg-card"><div class="wg-title">SHANYAO 工具</div><input class="wg-input" id="wgPw" type="password" placeholder="访问密码" autocomplete="off"><button class="wg-btn" onclick="window.__wgCheck()">进入</button><div class="wg-err" id="wgErr">密码错误</div></div></div><script>(function(){var PW="8888";function ul(){var d=document.documentElement;if(d)d.style.visibility='visible';var g=document.getElementById('wgGate');if(g&&g.parentNode)g.parentNode.removeChild(g);}window.__wgCheck=function(){var i=document.getElementById('wgPw');if(i&&i.value===PW){ul();}else{var e=document.getElementById('wgErr');if(e)e.style.display='block';if(i)i.value='';if(i)i.focus();}};var ip=document.getElementById('wgPw');if(ip){ip.focus();ip.addEventListener('keydown',function(e){if(e.key==='Enter')window.__wgCheck();});}})();</script>
+    <div class="max-w-7xl mx-auto px-4 py-6 md:py-8">
+        
+        <!-- 头部导航与状态信息 -->
+        <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4 border-b border-slate-800 pb-5">
+            <div>
+                <div class="flex items-center gap-2.5">
+                    <span class="flex h-3 w-3 relative">
+                        <span id="status-dot-pulse" class="live-dot absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                        <span id="status-dot-core" class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                    </span>
+                    <h1 class="text-xl md:text-2xl font-black tracking-tight text-white bg-clip-text bg-gradient-to-r from-white via-slate-100 to-indigo-300">
+                        中金所期指主连与核心大盘 真实对冲跟踪系统
+                    </h1>
+                </div>
+                <p class="text-xs text-slate-400 mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span>行情源: <strong id="connection-status" class="text-indigo-400">正在直连东财金融行情网关...</strong></span>
+                    <span class="text-slate-700 hidden sm:inline">|</span>
+                    <span>数据属性: <strong class="text-emerald-400">100% 真实盘口 (零模拟)</strong></span>
+                    <span class="text-slate-700 hidden sm:inline">|</span>
+                    <span>休市处理: <strong class="text-amber-400">休市期间自动保持日终结算价</strong></span>
+                </p>
+            </div>
+            
+            <div class="flex items-center gap-3 w-full lg:w-auto">
+                <div id="market-badge" class="px-3 py-1.5 bg-slate-900 rounded-xl text-xs font-bold border border-slate-800 text-slate-400 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                    检测市场状态...
+                </div>
+                <button id="refresh-btn" class="w-full lg:w-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-semibold rounded-xl shadow-sm transition duration-150 flex items-center justify-center gap-2">
+                    <svg id="refresh-icon" class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 19l-1.27-1.27"></path>
+                    </svg>
+                    立即同步行情
+                </button>
+            </div>
+        </header>
+
+        <!-- 资产对配置控制中心 -->
+        <section class="bg-slate-900/40 rounded-2xl p-5 border border-slate-800/80 mb-6 backdrop-blur-xl">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                ⚙️ 真实套利对冲配置面板 (Arbitrage Configurator)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 资产A：多头/主标的 -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-semibold text-rose-400 flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> 多头标的 (资产 A)
+                    </label>
+                    <div class="relative">
+                        <select id="select-asset-a" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none appearance-none cursor-pointer">
+                            <!-- 由JS动态生成 -->
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                            ▼
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 资产B：空头/对冲标的 -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 空头对冲标的 (资产 B)
+                    </label>
+                    <div class="relative">
+                        <select id="select-asset-b" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none appearance-none cursor-pointer">
+                            <!-- 由JS动态生成 -->
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                            ▼
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 点位缩放或价差算法 -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-semibold text-indigo-400 flex items-center gap-1.5">
+                        🧬 价差算法模式 (Spread Mode)
+                    </label>
+                    <div class="grid grid-cols-2 gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800">
+                        <button id="mode-abs" class="mode-btn px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-indigo-600 text-white shadow-md" data-mode="absolute">
+                            绝对价差 (A-B)
+                        </button>
+                        <button id="mode-ratio" class="mode-btn px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-slate-100" data-mode="ratio">
+                            比价指数 (A/B)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 全股指观察板 -->
+        <div class="mb-6">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                📊 核心期货主连与各大股指行情源 (实时数据直接抓取自交易所网关)
+            </h3>
+            <div id="market-indices-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- 指数卡片由JS循环渲染注入 -->
+            </div>
+        </div>
+
+        <!-- 主面板：对冲价差大图卡 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- 资产A实时迷你卡 -->
+            <div id="mini-card-a" class="bg-gradient-to-br from-slate-900 to-slate-950 rounded-2xl p-5 border border-slate-800/80 flex flex-col justify-between h-36 relative overflow-hidden transition-all duration-300">
+                <div class="absolute top-3 right-3 text-slate-700 font-mono text-xs" id="mini-code-a">--</div>
+                <div>
+                    <span class="text-xs font-bold text-rose-400/80 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> 资产 A (多头端)
+                    </span>
+                    <h4 class="text-lg font-bold text-slate-200 mt-1" id="mini-name-a">--</h4>
+                </div>
+                <div class="flex justify-between items-baseline mt-2">
+                    <span class="text-2xl font-black font-mono tracking-tight text-white" id="mini-price-a">--</span>
+                    <span class="text-xs font-bold font-mono" id="mini-change-a">--</span>
+                </div>
+            </div>
+
+            <!-- 资产B实时迷你卡 -->
+            <div id="mini-card-b" class="bg-gradient-to-br from-slate-900 to-slate-950 rounded-2xl p-5 border border-slate-800/80 flex flex-col justify-between h-36 relative overflow-hidden transition-all duration-300">
+                <div class="absolute top-3 right-3 text-slate-700 font-mono text-xs" id="mini-code-b">--</div>
+                <div>
+                    <span class="text-xs font-bold text-emerald-400/80 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 资产 B (空头端)
+                    </span>
+                    <h4 class="text-lg font-bold text-slate-200 mt-1" id="mini-name-b">--</h4>
+                </div>
+                <div class="flex justify-between items-baseline mt-2">
+                    <span class="text-2xl font-black font-mono tracking-tight text-white" id="mini-price-b">--</span>
+                    <span class="text-xs font-bold font-mono" id="mini-change-b">--</span>
+                </div>
+            </div>
+
+            <!-- 对冲价差综合看板 -->
+            <div class="bg-gradient-to-br from-indigo-950/40 via-slate-900 to-slate-950 rounded-2xl p-5 border border-indigo-500/20 flex flex-col justify-between h-36 relative overflow-hidden">
+                <div class="absolute top-3 right-3 bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded border border-indigo-500/20 text-[10px] font-bold">
+                    Arbitrage Spread
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-indigo-300 flex items-center gap-1">
+                        ⚡ 实时对冲点差值 (Live Spread)
+                    </span>
+                    <h4 class="text-xs font-semibold text-slate-400 mt-0.5" id="spread-label">--</h4>
+                </div>
+                <div class="flex justify-between items-baseline mt-2">
+                    <span class="text-3xl font-black font-mono text-indigo-200 tracking-tight" id="spread-value">--</span>
+                    <span class="text-xs font-bold font-mono" id="spread-change">--</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 周期大图表板 -->
+        <div class="bg-slate-900/20 rounded-2xl p-6 border border-slate-800/80 mb-6 backdrop-blur-sm">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                <div>
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        📈 真实历史波动趋势图 (Historical Trend Chart)
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5" id="chart-sub-title">切换下方周期按钮查看不同级别的趋势细节</p>
+                </div>
+                
+                <!-- 周期选择卡片式 Tab -->
+                <div class="flex flex-wrap bg-slate-950 p-1.5 rounded-xl border border-slate-850/80 gap-1">
+                    <button class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition" data-period="min">当前Tick</button>
+                    <button class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-400" data-period="month">1个月 (30日)</button>
+                    <button class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-400" data-period="year">1年 (260日)</button>
+                    <button class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-400" data-period="three_year">3年 (780日)</button>
+                    <button class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-400" data-period="five_year">5年 (1300日)</button>
+                    <button class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-400" data-period="ten_year">10年 (2600日)</button>
+                </div>
+            </div>
+
+            <!-- 图表容器 -->
+            <div class="w-full relative min-h-[350px]">
+                <canvas id="mainChart" class="w-full h-88"></canvas>
+            </div>
+            
+            <!-- 统计分析器 -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-slate-800/80 text-center">
+                <div class="p-3 bg-slate-950/50 rounded-xl border border-slate-900">
+                    <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">最高价差 (Max)</div>
+                    <div id="stat-max" class="text-sm font-extrabold text-rose-400 mt-1 font-mono">--</div>
+                </div>
+                <div class="p-3 bg-slate-950/50 rounded-xl border border-slate-900">
+                    <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">最低价差 (Min)</div>
+                    <div id="stat-min" class="text-sm font-extrabold text-emerald-400 mt-1 font-mono">--</div>
+                </div>
+                <div class="p-3 bg-slate-950/50 rounded-xl border border-slate-900">
+                    <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">平均价差 (Avg)</div>
+                    <div id="stat-avg" class="text-sm font-extrabold text-slate-200 mt-1 font-mono">--</div>
+                </div>
+                <div class="p-3 bg-slate-950/50 rounded-xl border border-slate-900">
+                    <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">当前极差 (Range)</div>
+                    <div id="stat-range" class="text-sm font-extrabold text-indigo-400 mt-1 font-mono">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 历史K线状态通知 -->
+        <div id="history-banner" class="hidden flex items-center justify-between p-3 bg-indigo-950/30 border border-indigo-500/20 rounded-xl text-xs text-indigo-300 mb-6">
+            <span class="flex items-center gap-2">
+                📢 <span id="history-banner-text">正在并行同步10年真实K线数据，极佳的时间精确度，请稍候...</span>
+            </span>
+            <button onclick="document.getElementById('history-banner').classList.add('hidden')" class="text-indigo-400 hover:text-indigo-200 font-bold px-1.5">✕</button>
+        </div>
+    </div>
+
+    <script>
+        // 全套利资源配置 (含核心股指与期指主连)
+        const INDICES = {
+            'IMM': { name: '中证1000期指主连', market: 'cffex', secid: '220.IMM', theme: 'border-indigo-900/40' },
+            'ICM': { name: '中证500期指主连', market: 'cffex', secid: '220.ICM', theme: 'border-emerald-900/40' },
+            '000300': { name: '沪深300指数', market: 'sh', secid: '1.000300', theme: 'border-blue-900/30' },
+            '000016': { name: '上证50指数', market: 'sh', secid: '1.000016', theme: 'border-slate-800' },
+            '000001': { name: '上证指数', market: 'sh', secid: '1.000001', theme: 'border-slate-800' },
+            '399001': { name: '深证成指', market: 'sz', secid: '0.399001', theme: 'border-slate-800' },
+            '399006': { name: '创业板指', market: 'sz', secid: '0.399006', theme: 'border-slate-800' },
+            '000688': { name: '科创50指数', market: 'sh', secid: '1.000688', theme: 'border-purple-900/30' }
+        };
+
+        // 数据存储池
+        let store = {
+            realtime: {}, // 格式: { 'IMM': { price, change, percent, lastClose } }
+            history: {
+                raw_klines: {} // 储存各大指数最高2600个交易日(10年)的真实历史日K数据
+            },
+            tick_data: []     // 存储实时加载以来的真实Tick走势
+        };
+
+        // 默认对冲对：中证1000期指主连 VS 中证500期指主连
+        let currentAssetA = 'IMM'; 
+        let currentAssetB = 'ICM'; 
+        let currentMode = 'absolute'; // 'absolute' 绝对价差 A-B, 'ratio' 比价指数 A/B
+        let currentActivePeriod = 'min'; 
+        let chartInstance = null;
+        let isFetchingRealtime = false;
+        let intervalTimer = null;
+
+        // 格式化时间函数
+        function getNowTimeStr() {
+            return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
+        // 交易时间检测
+        function checkMarketStatus() {
+            const now = new Date();
+            const day = now.getDay();
+            if (day === 0 || day === 6) {
+                return { open: false, text: "休市 (周末)", color: "bg-slate-500" };
+            }
+            const hour = now.getHours();
+            const min = now.getMinutes();
+            const totalMin = hour * 60 + min;
+            
+            // 股指期货交易时间 09:30-11:30 (570~690), 13:00-15:00 (780~900)
+            const isMorning = totalMin >= 570 && totalMin <= 690;
+            const isAfternoon = totalMin >= 780 && totalMin <= 900;
+            
+            if (isMorning || isAfternoon) {
+                return { open: true, text: "交易中 (高频同步)", color: "bg-emerald-500" };
+            } else {
+                return { open: false, text: "已收盘 (日终结算价)", color: "bg-amber-500" };
+            }
+        }
+
+        function updateMarketBadge() {
+            const badge = document.getElementById('market-badge');
+            const status = checkMarketStatus();
+            badge.innerHTML = `
+                <span class="w-2 h-2 rounded-full ${status.color} ${status.open ? 'live-dot' : ''}"></span>
+                ${status.text}
+            `;
+            
+            // 交易时间与非交易时间的连接文字修饰
+            const statusPulse = document.getElementById('status-dot-pulse');
+            const statusCore = document.getElementById('status-dot-core');
+            if (status.open) {
+                statusPulse.className = "live-dot absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75";
+                statusCore.className = "relative inline-flex rounded-full h-3 w-3 bg-emerald-500";
+            } else {
+                statusPulse.className = "absolute inline-flex h-full w-full rounded-full bg-slate-700 opacity-0";
+                statusCore.className = "relative inline-flex rounded-full h-3 w-3 bg-slate-500";
+            }
+        }
+
+        // 核心：直连东财真实行情网络，100%拒绝模拟
+        async function fetchRealtimeQuote(code) {
+            const info = INDICES[code];
+            if (!info) return null;
+            
+            // 东方财富跨域网关，利用 fltt=2 获取处理完成的浮点数值，拒绝模拟数据
+            const url = `https://push2.eastmoney.com/api/qt/stock/get?secid=${info.secid}&ut=fa5fd1943c7b386f172d6893dbfba10b&fltt=2&invt=2&fields=f43,f57,f58,f169,f170,f60,f44,f45`;
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('API网关连接异常');
+                const res = await response.json();
+                
+                if (res && res.data) {
+                    const data = res.data;
+                    let price = parseFloat(data.f43);
+                    const change = parseFloat(data.f169);
+                    const percent = parseFloat(data.f170);
+                    const lastClose = parseFloat(data.f60);
+                    
+                    // 如果遇到休市期间最新价格字段可能为空白的情况，退而求其次使用昨收昨结值以保障画面的完整度
+                    if (isNaN(price)) {
+                        price = lastClose;
+                    }
+
+                    if (!isNaN(price)) {
+                        return {
+                            price: price,
+                            change: isNaN(change) ? 0.00 : change,
+                            percent: isNaN(percent) ? 0.00 : percent,
+                            lastClose: isNaN(lastClose) ? price : lastClose
+                        };
+                    }
+                }
+            } catch (err) {
+                console.error(`行情源获取故障[${code}]:`, err);
+            }
+            return null;
+        }
+
+        // 拉取东方财富历史日K线数据，进行超长周期的均值对冲分析
+        async function loadIndexHistory(code) {
+            const info = INDICES[code];
+            if (!info) return [];
+            try {
+                // 东财官方无限制K线数据接口 (lmt=2600 代表最大请求 10 年)
+                const url = `https://push2his.eastmoney.com/api/qt/stock/kline/get?secid=${info.secid}&fields1=f1,f2&fields2=f51,f53&klt=101&fqt=1&end=20500101&lmt=2600`;
+                const response = await fetch(url);
+                const res = await response.json();
+                if (res?.data?.klines) {
+                    return res.data.klines.map(row => {
+                        const [date, close] = row.split(',');
+                        return { date, value: parseFloat(close) };
+                    });
+                }
+            } catch (err) {
+                console.error(`[K线网络请求受阻] [${info.name}] 无法获取到历史K线:`, err);
+            }
+            return [];
+        }
+
+        // 并行加载全部真实10年K线并同步
+        async function loadAllHistory() {
+            const banner = document.getElementById('history-banner');
+            const bannerText = document.getElementById('history-banner-text');
+            banner.classList.remove('hidden');
+            bannerText.innerText = '正在建立长周期均值中枢，开始安全获取核心期指与股指10年历史数据...';
+
+            const codes = Object.keys(INDICES);
+            const promises = codes.map(async code => {
+                const data = await loadIndexHistory(code);
+                store.history.raw_klines[code] = data;
+            });
+
+            await Promise.all(promises);
+            bannerText.innerText = '✅ 10年跨度日线对冲数据成功对齐。您可以切换日线周期进行中长线观察。';
+            setTimeout(() => banner.classList.add('hidden'), 4000);
+            renderChartByPeriod(currentActivePeriod);
+        }
+
+        // 构建观察板块
+        function buildIndexGrid() {
+            const grid = document.getElementById('market-indices-grid');
+            grid.innerHTML = '';
+            Object.entries(INDICES).forEach(([code, item]) => {
+                const card = document.createElement('div');
+                card.id = `grid-card-${code}`;
+                card.className = `p-4 bg-slate-900/40 rounded-xl border ${item.theme} flex flex-col justify-between h-24 hover:bg-slate-900/80 transition-all cursor-pointer`;
+                
+                // 一击变动，快速设为对冲标的
+                card.onclick = () => {
+                    handleQuickSelect(code);
+                };
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-bold text-slate-300">${item.name}</span>
+                        <span class="text-[10px] font-mono text-slate-500">${code}</span>
+                    </div>
+                    <div class="flex justify-between items-baseline mt-2">
+                        <span id="grid-price-${code}" class="text-lg font-black font-mono tracking-tight text-slate-400">正在获取</span>
+                        <span id="grid-change-${code}" class="text-[10px] font-bold font-mono text-slate-500">--</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function handleQuickSelect(code) {
+            if (currentAssetA === code) return;
+            if (currentAssetB === code) {
+                // 如果用户点了B，那把A和B进行对调
+                currentAssetB = currentAssetA;
+                currentAssetA = code;
+            } else {
+                currentAssetA = code;
+            }
+            
+            document.getElementById('select-asset-a').value = currentAssetA;
+            document.getElementById('select-asset-b').value = currentAssetB;
+            
+            syncSelectedPairConfig();
+        }
+
+        // 核心仪表盘刷新流程
+        async function loopSyncDashboard(isManual = false) {
+            if (isFetchingRealtime) return;
+            isFetchingRealtime = true;
+
+            const btn = document.getElementById('refresh-btn');
+            const icon = document.getElementById('refresh-icon');
+            const connStatus = document.getElementById('connection-status');
+
+            if (isManual) {
+                btn.disabled = true;
+                icon.classList.add('animate-spin');
+                connStatus.innerText = '正在强制获取最新买卖盘报价...';
+            }
+
+            try {
+                // 实时查询各交易物
+                const codes = Object.keys(INDICES);
+                const quotes = await Promise.all(codes.map(code => fetchRealtimeQuote(code)));
+                
+                let successCount = 0;
+                codes.forEach((code, idx) => {
+                    if (quotes[idx]) {
+                        store.realtime[code] = quotes[idx];
+                        successCount++;
+                    }
+                });
+
+                if (successCount === 0) {
+                    throw new Error("全部行情直连失效");
+                }
+
+                updateMarketBadge();
+
+                // 刷新主行情卡片网格
+                codes.forEach(code => {
+                    const q = store.realtime[code];
+                    if (!q) return;
+
+                    const priceEl = document.getElementById(`grid-price-${code}`);
+                    const changeEl = document.getElementById(`grid-change-${code}`);
+                    const cardEl = document.getElementById(`grid-card-${code}`);
+                    
+                    priceEl.innerText = q.price.toFixed(2);
+                    const prefix = q.change >= 0 ? '+' : '';
+                    changeEl.innerText = `${prefix}${q.percent.toFixed(2)}%`;
+                    
+                    if (q.change > 0) {
+                        changeEl.className = "text-[10px] font-bold font-mono text-rose-400";
+                        priceEl.className = "text-lg font-black font-mono text-rose-500 tracking-tight";
+                    } else if (q.change < 0) {
+                        changeEl.className = "text-[10px] font-bold font-mono text-emerald-400";
+                        priceEl.className = "text-lg font-black font-mono text-emerald-500 tracking-tight";
+                    } else {
+                        changeEl.className = "text-[10px] font-bold font-mono text-slate-400";
+                        priceEl.className = "text-lg font-black font-mono text-slate-100 tracking-tight";
+                    }
+
+                    // 突出显示已被选定为当前套利对的两方
+                    if (code === currentAssetA) {
+                        cardEl.style.background = "rgba(244, 63, 94, 0.08)";
+                        cardEl.style.borderColor = "rgba(244, 63, 94, 0.6)";
+                    } else if (code === currentAssetB) {
+                        cardEl.style.background = "rgba(16, 185, 129, 0.08)";
+                        cardEl.style.borderColor = "rgba(16, 185, 129, 0.6)";
+                    } else {
+                        cardEl.style.background = "rgba(15, 23, 42, 0.4)";
+                        cardEl.style.borderColor = "rgba(30, 41, 59, 0.8)";
+                    }
+                });
+
+                // 更新活跃套利核心卡片
+                renderActiveMiniCards();
+
+                connStatus.innerText = `直连成功 | 最新快照: ${getNowTimeStr()}`;
+                connStatus.className = 'text-emerald-400 font-bold';
+
+            } catch (err) {
+                console.error(err);
+                connStatus.innerText = '⚠️ 部分物理期指通道延迟，等待网关重试...';
+                connStatus.className = 'text-amber-500 font-bold';
+            } finally {
+                isFetchingRealtime = false;
+                if (isManual) {
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        icon.classList.remove('animate-spin');
+                    }, 500);
+                }
+            }
+        }
+
+        // 渲染活跃的多头和空头以及算出的价差
+        function renderActiveMiniCards() {
+            const qA = store.realtime[currentAssetA];
+            const qB = store.realtime[currentAssetB];
+            if (!qA || !qB) return;
+
+            // 1. 渲染多头卡 (Asset A)
+            document.getElementById('mini-code-a').innerText = `${currentAssetA}`;
+            document.getElementById('mini-name-a').innerText = INDICES[currentAssetA].name;
+            document.getElementById('mini-price-a').innerText = qA.price.toFixed(2);
+            let prefixA = qA.change >= 0 ? '+' : '';
+            document.getElementById('mini-change-a').innerText = `${prefixA}${qA.change.toFixed(2)} (${prefixA}${qA.percent.toFixed(2)}%)`;
+            document.getElementById('mini-change-a').className = `text-xs font-bold font-mono ${qA.change >= 0 ? 'text-rose-400' : 'text-emerald-400'}`;
+            document.getElementById('mini-card-a').style.borderColor = qA.change >= 0 ? 'rgba(244, 63, 94, 0.3)' : 'rgba(16, 185, 129, 0.3)';
+
+            // 2. 渲染空头卡 (Asset B)
+            document.getElementById('mini-code-b').innerText = `${currentAssetB}`;
+            document.getElementById('mini-name-b').innerText = INDICES[currentAssetB].name;
+            document.getElementById('mini-price-b').innerText = qB.price.toFixed(2);
+            let prefixB = qB.change >= 0 ? '+' : '';
+            document.getElementById('mini-change-b').innerText = `${prefixB}${qB.change.toFixed(2)} (${prefixB}${qB.percent.toFixed(2)}%)`;
+            document.getElementById('mini-change-b').className = `text-xs font-bold font-mono ${qB.change >= 0 ? 'text-rose-400' : 'text-emerald-400'}`;
+            document.getElementById('mini-card-b').style.borderColor = qB.change >= 0 ? 'rgba(244, 63, 94, 0.3)' : 'rgba(16, 185, 129, 0.3)';
+
+            // 3. 计算价差/比价数值 (拒绝模拟，由真实行情算出)
+            let spread, spreadLabel;
+            if (currentMode === 'absolute') {
+                spread = +(qA.price - qB.price).toFixed(2);
+                spreadLabel = `${INDICES[currentAssetA].name} - ${INDICES[currentAssetB].name} [绝对价差]`;
+            } else {
+                spread = +(qA.price / qB.price).toFixed(4);
+                spreadLabel = `${INDICES[currentAssetA].name} ÷ ${INDICES[currentAssetB].name} [比价指数]`;
+            }
+
+            document.getElementById('spread-label').innerText = spreadLabel;
+            
+            // 获取最新价差并跟上一个点做比对
+            const prevSpread = store.tick_data.length > 0 ? store.tick_data[store.tick_data.length - 1].value : null;
+            const spreadValEl = document.getElementById('spread-value');
+            const spreadChangeEl = document.getElementById('spread-change');
+            
+            spreadValEl.innerText = currentMode === 'absolute' ? spread.toFixed(2) : spread.toFixed(4);
+
+            if (prevSpread !== null) {
+                const diff = +(spread - prevSpread).toFixed(currentMode === 'absolute' ? 2 : 4);
+                if (diff > 0) {
+                    spreadChangeEl.innerText = `最新变动: +${diff} ▲`;
+                    spreadChangeEl.className = "text-xs font-extrabold font-mono text-rose-400";
+                } else if (diff < 0) {
+                    spreadChangeEl.innerText = `最新变动: ${diff} ▼`;
+                    spreadChangeEl.className = "text-xs font-extrabold font-mono text-emerald-400";
+                } else {
+                    spreadChangeEl.innerText = `最新变动: 保持平衡 =`;
+                    spreadChangeEl.className = "text-xs font-extrabold font-mono text-slate-400";
+                }
+            } else {
+                spreadChangeEl.innerText = `盘口连接正常`;
+                spreadChangeEl.className = "text-xs font-extrabold font-mono text-indigo-400";
+            }
+
+            // 存入实盘开市以来的 Tick 数据流
+            const timeSec = getNowTimeStr();
+            
+            // 避免重复记录同一秒的数据
+            if (store.tick_data.length === 0 || store.tick_data[store.tick_data.length - 1].time !== timeSec) {
+                store.tick_data.push({ time: timeSec, value: spread });
+                if (store.tick_data.length > 100) store.tick_data.shift();
+            }
+
+            renderChartByPeriod(currentActivePeriod);
+        }
+
+        // 统计学极值分析
+        function calculateStats(dataArray) {
+            if (!dataArray || dataArray.length === 0) return { min: 0, max: 0, avg: 0, range: 0 };
+            const vals = dataArray.map(d => d.value);
+            const min = Math.min(...vals);
+            const max = Math.max(...vals);
+            const sum = vals.reduce((a, b) => a + b, 0);
+            const avg = +(sum / vals.length).toFixed(currentMode === 'absolute' ? 2 : 4);
+            const range = +(max - min).toFixed(currentMode === 'absolute' ? 2 : 4);
+            return { min, max, avg, range };
+        }
+
+        // 核心：将两个真实K线日期的历史数据按相同日期完美对齐
+        function getAlignedHistoryData(limit) {
+            const histA = store.history.raw_klines[currentAssetA] || [];
+            const histB = store.history.raw_klines[currentAssetB] || [];
+            
+            const mapB = new Map();
+            histB.forEach(item => mapB.set(item.date, item.value));
+
+            const aligned = [];
+            histA.forEach(item => {
+                if (mapB.has(item.date)) {
+                    const priceA = item.value;
+                    const priceB = mapB.get(item.date);
+                    const calcVal = currentMode === 'absolute' ? +(priceA - priceB).toFixed(2) : +(priceA / priceB).toFixed(4);
+                    aligned.push({
+                        time: item.date,
+                        value: calcVal
+                    });
+                }
+            });
+
+            return aligned.slice(-limit);
+        }
+
+        // 渲染图表
+        function renderChartByPeriod(period) {
+            let chartData = [];
+            let subTitleText = '';
+            
+            if (period === 'min') {
+                chartData = store.tick_data;
+                subTitleText = `当前周期: 实盘Tick变动 (显示自您开启页面以来, 实盘中最新 100 个真实价格跳动的价差轨迹)`;
+            } else if (period === 'month') {
+                chartData = getAlignedHistoryData(30);
+                subTitleText = `当前周期: 日线级月中对冲波动 (展示过去 30 个交易日的收盘对冲价差)`;
+            } else if (period === 'year') {
+                chartData = getAlignedHistoryData(260);
+                subTitleText = `当前周期: 日线级 1 年期宏观趋势 (展示 260 个完整交易日收盘套利基差)';`;
+            } else if (period === 'three_year') {
+                chartData = getAlignedHistoryData(780);
+                subTitleText = `当前周期: 中长线 3 年期偏离大图 (展示 780 个真实交易日主力对冲，极具套利均值回归指导价值)`;
+            } else if (period === 'five_year') {
+                chartData = getAlignedHistoryData(1300);
+                subTitleText = `当前周期: 💡 5年期宏观牛熊大周期走势 (覆盖 1300 交易日，还原完整的资金强弱转换轨迹)`;
+            } else if (period === 'ten_year') {
+                chartData = getAlignedHistoryData(2600);
+                subTitleText = `当前周期: 🏛️ 10年跨牛熊终极基准中枢 (覆盖 2600 交易日，完整呈现极长历史区间的极值分位数)`;
+            }
+
+            const subTitle = document.getElementById('chart-sub-title');
+            subTitle.innerText = subTitleText;
+
+            // 更新下方统计数值
+            const stats = calculateStats(chartData);
+            const digits = currentMode === 'absolute' ? 2 : 4;
+            document.getElementById('stat-max').innerText = stats.max.toFixed(digits);
+            document.getElementById('stat-min').innerText = stats.min.toFixed(digits);
+            document.getElementById('stat-avg').innerText = stats.avg.toFixed(digits);
+            document.getElementById('stat-range').innerText = stats.range.toFixed(digits);
+
+            const labels = chartData.map(item => item.time);
+            const values = chartData.map(item => item.value);
+
+            let borderCol = '#6366f1'; 
+            let fillColStart = 'rgba(99, 102, 241, 0.2)';
+            let fillColEnd = 'rgba(99, 102, 241, 0)';
+
+            if (chartInstance) {
+                chartInstance.data.labels = labels;
+                chartInstance.data.datasets[0].data = values;
+                chartInstance.update('none'); // 取消动效，保障秒级高频更新的超凡流畅
+            } else {
+                const ctx = document.getElementById('mainChart').getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, 0, 320);
+                gradient.addColorStop(0, fillColStart);
+                gradient.addColorStop(1, fillColEnd);
+
+                chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '实盘对冲波动轨迹',
+                            data: values,
+                            borderColor: borderCol,
+                            borderWidth: 2,
+                            backgroundColor: gradient,
+                            fill: true,
+                            tension: 0.1,
+                            pointRadius: (context) => {
+                                const count = context.chart.data.labels.length;
+                                return count > 120 ? 0 : 2; // 极多历史点位下隐藏多余圆点，降低CPU绘制开销
+                            },
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: borderCol,
+                            pointBorderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: { duration: 0 },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                enabled: true,
+                                backgroundColor: '#0f172a',
+                                titleColor: '#94a3b8',
+                                bodyColor: '#ffffff',
+                                bodyFont: { weight: 'bold' },
+                                borderColor: 'rgba(99, 102, 241, 0.3)',
+                                borderWidth: 1,
+                                padding: 12,
+                                cornerRadius: 12,
+                                displayColors: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `实盘对冲值: ${context.parsed.y} ${currentMode === 'absolute' ? '点' : '比率'}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { color: '#1e293b', tickColor: 'transparent' },
+                                ticks: {
+                                    color: '#64748b',
+                                    font: { size: 10 },
+                                    maxTicksLimit: ['three_year', 'five_year', 'ten_year'].includes(period) ? 15 : 10
+                                }
+                            },
+                            y: {
+                                grid: { color: '#1e293b' },
+                                ticks: {
+                                    color: '#64748b',
+                                    font: { size: 10 }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // 当策略配置改变时，刷新重绘整个系统
+        function syncSelectedPairConfig() {
+            currentAssetA = document.getElementById('select-asset-a').value;
+            currentAssetB = document.getElementById('select-asset-b').value;
+            
+            // 清空旧标的的实时记录，防止两类资产价位差异导致图表缩放失衡
+            store.tick_data = [];
+            
+            loopSyncDashboard();
+        }
+
+        // 渲染下拉配置框
+        function initSelectOptions() {
+            const selectA = document.getElementById('select-asset-a');
+            const selectB = document.getElementById('select-asset-b');
+
+            selectA.innerHTML = '';
+            selectB.innerHTML = '';
+
+            Object.entries(INDICES).forEach(([code, item]) => {
+                const optA = document.createElement('option');
+                optA.value = code;
+                optA.innerText = `${item.name} (${code})`;
+                selectA.appendChild(optA);
+
+                const optB = document.createElement('option');
+                optB.value = code;
+                optB.innerText = `${item.name} (${code})`;
+                selectB.appendChild(optB);
+            });
+
+            // 预选套利对
+            selectA.value = currentAssetA;
+            selectB.value = currentAssetB;
+
+            selectA.addEventListener('change', syncSelectedPairConfig);
+            selectB.addEventListener('change', syncSelectedPairConfig);
+        }
+
+        window.addEventListener('load', async () => {
+            initSelectOptions();
+            buildIndexGrid();
+
+            // 周期 Tab 交互控制
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => {
+                if (tab.dataset.period === 'min') {
+                    tab.classList.add('bg-indigo-600', 'text-white', 'shadow-md');
+                } else {
+                    tab.classList.add('text-slate-400');
+                }
+
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => {
+                        t.classList.remove('bg-indigo-600', 'text-white', 'shadow-md');
+                        t.classList.add('text-slate-400');
+                    });
+                    this.classList.add('bg-indigo-600', 'text-white', 'shadow-md');
+                    this.classList.remove('text-slate-400');
+
+                    currentActivePeriod = this.dataset.period;
+                    renderChartByPeriod(currentActivePeriod);
+                });
+            });
+
+            // 模式算法控制（绝对价差 / 比价）
+            const modeBtns = document.querySelectorAll('.mode-btn');
+            modeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    modeBtns.forEach(b => {
+                        b.classList.remove('bg-indigo-600', 'text-white', 'shadow-md');
+                        b.classList.add('text-slate-400', 'hover:text-slate-100');
+                    });
+                    this.classList.add('bg-indigo-600', 'text-white', 'shadow-md');
+                    this.classList.remove('text-slate-400', 'hover:text-slate-100');
+
+                    currentMode = this.dataset.mode;
+                    store.tick_data = []; // 重置Tick记录
+                    
+                    loopSyncDashboard();
+                });
+            });
+
+            // 1. 同步初始实时行情
+            await loopSyncDashboard();
+
+            // 2. 异步并行加载10年真实K线数据 (静默校准历史偏离中枢)
+            await loadAllHistory();
+
+            // 3. 打开1秒级纯实时循环同步器
+            intervalTimer = setInterval(() => loopSyncDashboard(false), 1000);
+        });
+
+        document.getElementById('refresh-btn').addEventListener('click', () => {
+            loopSyncDashboard(true);
+        });
+    </script>
+</body>
+</html>
