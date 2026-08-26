@@ -2657,14 +2657,6 @@
   "widgets": [],
   "widgetPages": [
     {
-      "id": 1784441082954,
-      "name": "PDF编辑器",
-      "slug": "pdf编辑器",
-      "url": "https://luohaijun8888-art.github.io/artisan-gallery/widgets/pdf编辑器.html",
-      "createdAt": "2026-07-19",
-      "pw": "8888"
-    },
-    {
       "id": 1784441146196,
       "name": "截图识别提取数据",
       "slug": "截图识别提取数据",
