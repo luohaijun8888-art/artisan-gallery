@@ -449,7 +449,8 @@
                 localStorage.setItem('artisan_categories', JSON.stringify(categories));
                 localStorage.setItem('furniture_gallery_db', JSON.stringify(products));
                 localStorage.setItem('artisan_widgets', JSON.stringify(widgets));
-                renderCategories(); renderProducts(); renderWidgets();
+                renderCategories(); renderProducts();
+            tryOpenDeepLink(); renderWidgets();
                 return;
             } catch(e) {
                 console.warn('CDN 读取失败，回退 GitHub API:', e.message);
@@ -633,9 +634,18 @@
             renderAdminProductList();
         }
 
+        // 深链：数据就绪后自动打开 ?product= 指定的产品
+        function tryOpenDeepLink(){
+            const id = window.__deepLinkId;
+            if(!id) return;
+            const p = products.find(x => String(x.id) === String(id));
+            if(p){ window.openDetail(p.id); }
+        }
         window.openDetail = function(id) {
             const p = products.find(x => x.id === id); if(!p) return;
-            currentDetail = p; currentVariantIdx = 0; carouselIdx = 0;
+            currentDetail = p; currentVariantIdx = 0
+            // 深链：更新地址栏为 ?product=ID（不刷新、不留历史）
+            try { history.replaceState(null, '', '?product=' + encodeURIComponent(p.id)); } catch(e) {}; carouselIdx = 0;
             document.getElementById('homePage').classList.add('hidden');
             document.getElementById('detailPage').classList.remove('hidden');
             document.getElementById('detailTopTitle').textContent = `COLLECTION / ${p.category}`;
@@ -1166,7 +1176,11 @@ window.addWidgetPage = async function() {
             }; reader.readAsText(file, 'utf-8');
         };
 
-        window.addEventListener('DOMContentLoaded', () => { fetchProducts(); lucide.createIcons(); });
+        window.addEventListener('DOMContentLoaded', () => {
+            // 深链：捕获 URL 中的 ?product=ID
+            window.__deepLinkId = new URLSearchParams(location.search).get('product');
+            fetchProducts(); lucide.createIcons();
+        });
     </script>
 </body>
 </html>
