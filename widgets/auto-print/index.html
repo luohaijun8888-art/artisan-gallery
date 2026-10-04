@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><script>try{document.documentElement.style.visibility='hidden';}catch(e){}</script><style>.wg-gate{position:fixed;inset:0;z-index:2147483647;visibility:visible;background:#FBFBFA;display:flex;align-items:center;justify-content:center;font-family:Inter,'Noto Serif SC',sans-serif}.wg-card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;padding:2rem 2.2rem;width:300px;max-width:86vw;box-shadow:0 20px 60px rgba(0,0,0,.08);text-align:center}.wg-title{font-size:12px;letter-spacing:.25em;text-transform:uppercase;color:#CC9933;margin-bottom:1.2rem}.wg-input{width:100%;padding:.7rem .9rem;border:1px solid #e5e5e0;border-radius:8px;font-size:14px;text-align:center;outline:none;margin-bottom:.9rem}.wg-input:focus{border-color:#CC9933}.wg-btn{width:100%;padding:.7rem;background:#161615;color:#fff;border:none;border-radius:8px;font-size:12px;letter-spacing:.15em;cursor:pointer}.wg-err{color:#d33;font-size:11px;margin-top:.6rem;display:none}</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>索菲亚 自动打单工具 · 纯前端</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark">索菲亚</span>
+      <div class="brand-text">
+        <h1>自动打单工具</h1>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- BOM 数据库管理 -->
+    <section class="card">
+      <div class="card-title"><span class="step">1</span> BOM 数据库（Excel 导入 / 导出 JSON）</div>
+
+      <div class="db-toolbar">
+        <label class="btn-mini">
+          从 Excel 导入
+          <input type="file" id="file-bom" accept=".xlsx,.xls" hidden />
+        </label>
+        <button class="btn-mini" id="btn-export-json">导出 JSON</button>
+        <label class="btn-mini">
+          导入 JSON
+          <input type="file" id="file-bom-json" accept=".json" hidden />
+        </label>
+        <button class="btn-mini" id="btn-toggle-db">浏览数据库</button>
+        <span class="db-stat" id="db-stat">父件 0 · 条目 0</span>
+      </div>
+
+      <div class="db-table-wrap hidden">
+        <table class="db-table">
+          <thead>
+            <tr>
+              <th>父件编码</th><th>父件名称</th><th>子件编码</th><th>子件名称</th>
+              <th>子件数量</th><th>重量</th><th>体积</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="db-tbody"></tbody>
+        </table>
+        <div class="empty" id="db-empty">数据库为空，请从 Excel 导入。</div>
+      </div>
+    </section>
+
+    <!-- 装车计划 -->
+    <section class="card">
+      <div class="card-title"><span class="step">2</span> 上传装车计划</div>
+      <label class="drop" id="drop-plan">
+        <input type="file" id="file-plan" accept=".xlsx,.xls" hidden />
+        <div class="drop-inner">
+          <div class="drop-icon">🚚</div>
+          <div class="drop-title">装车计划</div>
+          <div class="drop-sub" id="plan-name">点击或拖拽选择 .xlsx（含装车明细表）</div>
+        </div>
+      </label>
+      <p class="hint">文件只在你的浏览器内解析，不会上传到任何服务器。</p>
+    </section>
+
+    <!-- 配置 -->
+    <section class="card">
+      <div class="card-title"><span class="step">3</span> 配置</div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="sender-name">送货方名称</label>
+          <input type="text" id="sender-name" value="索菲亚家居股份有限公司" />
+        </div>
+        <div class="field">
+          <label for="sender-person">送货人</label>
+          <input type="text" id="sender-person" placeholder="选填" />
+        </div>
+        <div class="field">
+          <label for="sender-phone">送货人电话</label>
+          <input type="text" id="sender-phone" placeholder="选填" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field-inline">
+          <span class="label">匹配方式</span>
+          <label class="radio"><input type="radio" name="matchmode" value="code" checked /> 优先物料编码</label>
+          <label class="radio"><input type="radio" name="matchmode" value="name" /> 优先物料名称</label>
+        </div>
+        <label class="check"><input type="checkbox" id="expand-combo" /> 展开组合柜子件（一行拆多行）</label>
+      </div>
+      <div class="form-row">
+        <label class="check"><input type="checkbox" id="gen-delivery" checked /> 生成送货单（A4 横向）</label>
+        <label class="check"><input type="checkbox" id="gen-logistics" checked /> 生成物流单（100×150mm）</label>
+      </div>
+    </section>
+
+    <!-- 生成 -->
+    <section class="card">
+      <div class="card-title"><span class="step">4</span> 生成</div>
+      <div class="gen-bar">
+        <button id="btn-generate" class="btn-primary" disabled><span class="spinner hidden" id="gen-spinner"></span>生成 PDF</button>
+        <span id="gen-status" class="gen-status"></span>
+      </div>
+      <div class="gen-progress hidden" id="gen-progress"><div class="gen-progress-bar" id="gen-progress-bar"></div></div>
+      <div id="stats" class="stats hidden"></div>
+    </section>
+
+    <!-- 结果 -->
+    <section class="card result hidden" id="result-card">
+      <div class="card-title">结果预览</div>
+      <div class="warn-box hidden" id="unmatched-warn">
+        <div class="warn-title">⚠ 有 <span id="unmatched-count">0</span> 项装车计划未在 BOM 中匹配到，请直接填写并保存到数据库（保存后可重新生成以匹配）：</div>
+        <div id="unmatched-list"></div>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="delivery">送货单</button>
+        <button class="tab" data-tab="logistics">物流单</button>
+      </div>
+      <div class="tab-body">
+        <div class="tab-pane active" id="pane-delivery">
+          <div class="preview-actions">
+            <a id="dl-delivery" class="btn-download" download>⬇ 下载送货单 PDF</a>
+            <button id="print-delivery" class="btn-ghost">🖨 打印 / 新窗口打开</button>
+          </div>
+          <iframe id="preview-delivery" class="preview" title="送货单预览"></iframe>
+          <div class="empty" id="empty-delivery">未生成送货单</div>
+        </div>
+        <div class="tab-pane" id="pane-logistics">
+          <div class="preview-actions">
+            <a id="dl-logistics" class="btn-download" download>⬇ 下载物流单 PDF</a>
+            <button id="print-logistics" class="btn-ghost">🖨 打印 / 新窗口打开</button>
+          </div>
+          <iframe id="preview-logistics" class="preview" title="物流单预览"></iframe>
+          <div class="empty" id="empty-logistics">未生成物流单</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 历史记录 -->
+    <section class="card" id="history-card">
+      <div class="card-title"><span class="step">5</span> 历史记录 <span class="db-stat" id="history-count"></span></div>
+      <div class="db-toolbar">
+        <button class="btn-mini" id="btn-toggle-history">查看历史记录</button>
+        <span class="hint" style="margin:0;">生成的送货单 / 物流单会保存在本机（IndexedDB），可随时下载或删除</span>
+      </div>
+      <div class="history-list hidden" id="history-list"></div>
+      <div class="empty hidden" id="history-empty">暂无历史记录，生成 PDF 后会自动保存到这里</div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>BOM 数据库保存在本浏览器（localStorage），关掉网页也在；换设备可用「导出/导入 JSON」迁移。字体子集基于 Noto Sans SC（GB2312 常用汉字）。</span>
+  </footer>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- 内嵌字体（base64），使 file:// 直接打开也能渲染中文 -->
+  <script src="fonts/fonts-data.js"></script>
+  <!-- 第三方库（浏览器 / Node 通用 UMD 构建） -->
+  <script src="lib/xlsx.full.min.js"></script>
+  <script src="lib/pdf-lib.min.js"></script>
+  <script src="lib/fontkit.umd.min.js"></script>
+  <!-- 业务模块 -->
+  <script src="js/match.js"></script>
+  <script src="js/pdfgen.js"></script>
+  <script src="js/app.js"></script>
+    <a href="../../widgets.html" style="position:fixed;top:1rem;left:1rem;padding:.5rem 1rem;background:#161615;color:#fff;border-radius:999px;font-size:12px;text-decoration:none;z-index:99">← 返回小工具</a>
+  <div class="wg-gate" id="wgGate"><div class="wg-card"><div class="wg-title">SHANYAO 工具</div><input class="wg-input" id="wgPw" type="password" placeholder="访问密码" autocomplete="off"><button class="wg-btn" onclick="window.__wgCheck()">进入</button><div class="wg-err" id="wgErr">密码错误</div></div></div><script>(function(){var PW="8888";function ul(){var d=document.documentElement;if(d)d.style.visibility='visible';var g=document.getElementById('wgGate');if(g&&g.parentNode)g.parentNode.removeChild(g);}window.__wgCheck=function(){var i=document.getElementById('wgPw');if(i&&i.value===PW){ul();}else{var e=document.getElementById('wgErr');if(e)e.style.display='block';if(i)i.value='';if(i)i.focus();}};var ip=document.getElementById('wgPw');if(ip){ip.focus();ip.addEventListener('keydown',function(e){if(e.key==='Enter')window.__wgCheck();});}})();</script>
+</body>
+</html>
