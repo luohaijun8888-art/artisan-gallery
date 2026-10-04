@@ -2727,6 +2727,14 @@
       "url": "https://luohaijun8888-art.github.io/artisan-gallery/widgets/pdf.html",
       "createdAt": "2026-08-26",
       "pw": "8888"
+    },
+    {
+      "id": 1791076350783,
+      "name": "出货打单",
+      "slug": "auto-print",
+      "url": "https://luohaijun8888-art.github.io/artisan-gallery/widgets/auto-print/index.html",
+      "createdAt": "2026-10-04",
+      "pw": "8888"
     }
   ],
   "widgetGatePassword": "8888"
